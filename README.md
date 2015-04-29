@@ -20,6 +20,6 @@ Minumum are the reccomended for running Unity games, reccomended are a very roug
 
 **Graphics Card**: AMD Radeon R9 2xx series | Nvidia GTX 6xx series or above
 
-**CPU**: AMD FX Piledriver or Intel I5 PCU
+**CPU**: AMD FX Piledriver or Intel I5 CPU
 
 **RAM**: 2GB 
