@@ -1,7 +1,7 @@
 # BallisticNG
 BallisticNG is a tribute to the original Wipeout games on the Playstation 1.
 
-If you would like to help work on the game in any way, send me a message for access to the private repository on BitBucket.
+If you would like to help work on the game in any way, send me a message for access to the private repository on BitBucket. An open source version of the game will be pushed to this repository later in the future.
 
 # System Requirements
 Minumum are the reccomended for running Unity games, reccomended are a very rough guess based on 2-3 performance reports so far.
