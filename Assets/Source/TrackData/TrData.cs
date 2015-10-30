@@ -18,6 +18,7 @@ namespace BnG.TrackData
 
         [Header("[ MESH REFERENCES ]")]
         public bool reloadTrackData;
+        public bool resetTypes;
         public MeshFilter MESH_TRACKFLOOR;
         private MeshFilter MESH_TRACKFLOOR_PREV;
         public MeshFilter MESH_TRACKWALL;
@@ -35,6 +36,12 @@ namespace BnG.TrackData
         public E_SECTIONTYPE[] CACHE_SECTIONS;
         public Color32[] LIGHTS_TILES_FLOOR;
         public Color32[] LIGHTS_TILES_WALL;
+
+        // spawning
+        public List<Vector3> spawnPositions = new List<Vector3>();
+        public List<Quaternion> spawnRotations = new List<Quaternion>();
+        public Vector3 cameraStart;
+        public Vector3 cameraEnd;
 
         // editor references
         [HideInInspector]
@@ -85,12 +92,14 @@ namespace BnG.TrackData
         private void Start()
         {
             UpdateTrackData();
+            FindSpawnTiles();
         }
 
         private void Update()
         {
             CheckPaintChange();
             UpdateTrackData();
+            ResetTRTypes();
         }
 
 #endregion
@@ -179,6 +188,37 @@ namespace BnG.TrackData
                     LIGHTS_TILES_WALL = new Color32[MESH_TRACKWALL.sharedMesh.colors32.Length];
 
             }
+        }
+
+        private void FindSpawnTiles()
+        {
+            // search through each tile for spawn tiles
+            for (int i = 0; i < TRACK_DATA.TILES_FLOOR.Count; i++)
+            {
+                // if this tile is a spawn tile then add it to the spawn transform arrays
+                if (TRACK_DATA.TILES_FLOOR[i].TILE_TYPE == E_TILETYPE.SPAWN)
+                {
+                    Vector3 spawnPos = TRACK_DATA.TILES_FLOOR[i].TILE_POSITION;
+                    spawnPos.y += 0.5f;
+
+                    spawnPositions.Add(spawnPos);
+                    spawnRotations.Add(TrackDataHelper.SectionGetRotation(TRACK_DATA.TILES_FLOOR[i].TILE_SECTION));
+                }
+            }
+        }
+
+        private void ResetTRTypes()
+        {
+            if (!resetTypes)
+                return;
+
+            for (int i = 0; i < TRACK_DATA.TILES_FLOOR.Count; i++)
+                TRACK_DATA.TILES_FLOOR[i].TILE_TYPE = E_TILETYPE.FLOOR;
+
+            for (int i = 0; i < TRACK_DATA.SECTIONS.Count; i++)
+                TRACK_DATA.SECTIONS[i].SECTION_TYPE = E_SECTIONTYPE.NORMAL;
+
+            resetTypes = false;
         }
 
 #endregion
