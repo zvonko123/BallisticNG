@@ -1,0 +1,1 @@
+This folder is a place to store external assets that are not to be used in the game (source files for meshes for example).
