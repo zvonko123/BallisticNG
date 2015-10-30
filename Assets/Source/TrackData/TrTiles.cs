@@ -11,6 +11,9 @@ namespace BnG.TrackData
         // the index of this tile
         public int TILE_INDEX;
 
+        // if this tile is the second in a group of 2
+        public bool TILE_SECOND;
+
         // the type of tile this is
         public E_TILETYPE TILE_TYPE;
 

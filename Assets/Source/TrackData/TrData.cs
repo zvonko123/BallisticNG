@@ -35,6 +35,10 @@ namespace BnG.TrackData
         public E_SECTIONTYPE[] CACHE_SECTIONS;
         public Color32[] LIGHTS_TILES_FLOOR;
         public Color32[] LIGHTS_TILES_WALL;
+
+        // editor references
+        [HideInInspector]
+        public TrSection highlightedSection;
         
 #endregion
 
@@ -46,6 +50,7 @@ namespace BnG.TrackData
 
             Vector3 pos = Vector3.zero;
             Vector3 pos2 = Vector3.zero;
+            Color gizmoColor = Color.white;
             for (int i = 0; i < TRACK_DATA.SECTIONS.Count; i++)
             {
                 // get positions to draw line
@@ -53,6 +58,12 @@ namespace BnG.TrackData
                 pos2 = pos + TRACK_DATA.SECTIONS[i].SECTION_NORMAL * 1;
 
                 // draw sphere and line
+                gizmoColor = Color.white;
+                if (TR_FLAGPAINTER != null && TRACK_DATA.SECTIONS[i] == highlightedSection && PAINT_MODE == E_PAINTMODE.SECTION) 
+                {
+                    gizmoColor = Color.red;
+                }
+                Gizmos.color = gizmoColor;
                 Gizmos.DrawWireSphere(pos, 0.2f);
                 Gizmos.DrawWireSphere(pos2, 0.2f);
                 Gizmos.DrawLine(pos, pos2);

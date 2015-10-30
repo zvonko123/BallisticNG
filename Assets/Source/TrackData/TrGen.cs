@@ -155,6 +155,7 @@ namespace BnG.TrackData
                 // add section to tiles
                 tiles[0].TILE_SECTION = newSection;
                 tiles[1].TILE_SECTION = newSection;
+                tiles[1].TILE_SECOND = true;
 
                 index++;
             }
