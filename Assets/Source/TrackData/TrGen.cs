@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace BnG.TrackData
@@ -50,6 +51,7 @@ namespace BnG.TrackData
             #endregion
 
             // create floor tiles
+            int index = 0;
             for (int i = 0; i < tris.Length - 3; i += 6)
             {
                 // create new tile
@@ -70,6 +72,7 @@ namespace BnG.TrackData
                 newTile.TILE_TYPE = E_TILETYPE.FLOOR;
                 newTile.TILE_COLOR = Color.white;
                 newTile.TILE_POSITION = pMid;
+                newTile.TILE_INDEX = index;
 
                 // add tile to list
                 gen.TILES_FLOOR.Add(newTile);
@@ -77,10 +80,13 @@ namespace BnG.TrackData
                 mappedFloor[i + 0] = newTile;
                 mappedFloor[i + 1] = newTile;
                 mappedFloor[i + 2] = newTile;
-                mappedFloor[i + 4] = newTile;
+                mappedFloor[i + 3] = newTile;
+
+                index++;
             }
 
             // create wall tiles
+            index = 0;
             for (int i = 0; i < tris2.Length - 3; i += 6)
             {
                 // create new tile
@@ -101,6 +107,7 @@ namespace BnG.TrackData
                 newTile.TILE_TYPE = E_TILETYPE.FLOOR;
                 newTile.TILE_COLOR = Color.white;
                 newTile.TILE_POSITION = pMid;
+                newTile.TILE_INDEX = 0;
 
                 // add tile to list
                 gen.TILES_WALL.Add(newTile);
@@ -109,9 +116,12 @@ namespace BnG.TrackData
                 mappedWall[i + 1] = newTile;
                 mappedWall[i + 2] = newTile;
                 mappedWall[i + 4] = newTile;
+
+                index++;
             }
 
             // create sections
+            index = 0;
             for (int i = 0; i < gen.TILES_FLOOR.Count - 1; i += 2)
             {
                 // setup section and get tiles
@@ -123,6 +133,7 @@ namespace BnG.TrackData
                 // set section defaults
                 newSection.SECTION_TYPE = E_SECTIONTYPE.NORMAL;
                 newSection.SECTION_TILES = tiles;
+                newSection.SECTION_INDEX = index;
 
                 // set section position
                 p1 = floorT.transform.TransformPoint(verts[tiles[0].TILE_INDICES[0]]);
@@ -140,6 +151,12 @@ namespace BnG.TrackData
 
                 // add section
                 gen.SECTIONS.Add(newSection);
+
+                // add section to tiles
+                tiles[0].TILE_SECTION = newSection;
+                tiles[1].TILE_SECTION = newSection;
+
+                index++;
             }
 
             // set next sections
@@ -150,6 +167,10 @@ namespace BnG.TrackData
                 else
                     gen.SECTIONS[i].SECTION_NEXT = gen.SECTIONS[i + 1];
             }
+
+            // add mapped tiles to gendata
+            for (int i = 0; i < mappedFloor.Length; i++)
+                gen.TILES_FLOOR_MAPPED.Add(mappedFloor[i]);
 
             return gen;
         }

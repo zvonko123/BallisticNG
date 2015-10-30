@@ -8,6 +8,9 @@ namespace BnG.TrackData
     /// </summary>
     public class TrTile
     {
+        // the index of this tile
+        public int TILE_INDEX;
+
         // the type of tile this is
         public E_TILETYPE TILE_TYPE;
 

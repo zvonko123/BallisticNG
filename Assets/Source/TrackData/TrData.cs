@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using BnG.Helpers;
+using BnG.TrackTools;
 using System.Collections.Generic;
 
 namespace BnG.TrackData
@@ -9,20 +11,34 @@ namespace BnG.TrackData
     [ExecuteInEditMode]
     public class TrData : MonoBehaviour
     {
-        #region VARS-PUBLIC
+#region VARS-PUBLIC
 
         // track tiles and sections
         public TrGenData TRACK_DATA;
 
         [Header("[ MESH REFERENCES ]")]
+        public bool reloadTrackData;
         public MeshFilter MESH_TRACKFLOOR;
         private MeshFilter MESH_TRACKFLOOR_PREV;
         public MeshFilter MESH_TRACKWALL;
         private MeshFilter MESH_TRACKWALL_PREV;
-        
-        #endregion
 
-        #region OVERRIDES
+        [Header("[ FLAG PAINTING ] ")]
+        public bool PAINT_FLAGS;
+        private TrFlagPainter TR_FLAGPAINTER;
+        public Color PAINT_VERTEXCOLOR;
+        public E_PAINTMODE PAINT_MODE;
+        [Space(10)]
+
+        // cached tile types
+        public E_TILETYPE[] CACHE_TILES;
+        public E_SECTIONTYPE[] CACHE_SECTIONS;
+        public Color32[] LIGHTS_TILES_FLOOR;
+        public Color32[] LIGHTS_TILES_WALL;
+        
+#endregion
+
+#region OVERRIDES
         private void OnDrawGizmos()
         {
             if (TRACK_DATA == null)
@@ -50,10 +66,9 @@ namespace BnG.TrackData
 
                 // draw orientation
                 pos = pos + TRACK_DATA.SECTIONS[i].SECTION_NORMAL * 0.5f;
-                pos2 = pos + (SectionGetRotation(TRACK_DATA.SECTIONS[i]) * Vector3.forward) * 1;
+                pos2 = pos + (TrackDataHelper.SectionGetRotation(TRACK_DATA.SECTIONS[i]) * Vector3.forward) * 1;
                 Gizmos.DrawLine(pos, pos2);
             }
-            
         }
 
         private void Start()
@@ -63,12 +78,28 @@ namespace BnG.TrackData
 
         private void Update()
         {
+            CheckPaintChange();
             UpdateTrackData();
         }
 
-        #endregion
+#endregion
 
-        #region METHODS
+#region METHODS
+
+
+        private void CheckPaintChange()
+        {
+            if (PAINT_FLAGS && TR_FLAGPAINTER == null)
+                TR_FLAGPAINTER = gameObject.AddComponent<TrFlagPainter>();
+            else if (!PAINT_FLAGS && TR_FLAGPAINTER != null)
+                DestroyImmediate(TR_FLAGPAINTER);
+
+            if (PAINT_FLAGS)
+            {
+                TR_FLAGPAINTER.TRACK_DATA = TRACK_DATA;
+                TR_FLAGPAINTER.DATA_FE = this;
+            }
+        }
 
         /// <summary>
         /// Forces the track data to be regenerated.
@@ -76,8 +107,10 @@ namespace BnG.TrackData
         public void UpdateTrackData()
         {
             // if there is no track data or the meshes have changed then generate new track data
-            if (TRACK_DATA == null || MESH_TRACKFLOOR_PREV != MESH_TRACKFLOOR || MESH_TRACKWALL != MESH_TRACKWALL_PREV)
+            if (TRACK_DATA == null || MESH_TRACKFLOOR_PREV != MESH_TRACKFLOOR || MESH_TRACKWALL != MESH_TRACKWALL_PREV || reloadTrackData)
             {
+                reloadTrackData = false;
+
                 // makes sure both track and wall meshes are present before updating
                 if (MESH_TRACKFLOOR == null || MESH_TRACKWALL == null)
                     return;
@@ -85,75 +118,59 @@ namespace BnG.TrackData
                 TRACK_DATA = TrGen.GenerateTrack(MESH_TRACKFLOOR.sharedMesh, MESH_TRACKWALL.sharedMesh, MESH_TRACKFLOOR.transform, MESH_TRACKWALL.transform);
                 MESH_TRACKFLOOR_PREV = MESH_TRACKFLOOR;
                 MESH_TRACKWALL_PREV = MESH_TRACKWALL;
+
+                // fetch tile and section types from cache
+                if (CACHE_TILES.Length > 0)
+                {
+                    for (int i = 0; i < CACHE_TILES.Length; i++)
+                    {
+                        TRACK_DATA.TILES_FLOOR[i].TILE_TYPE = CACHE_TILES[i];
+                    }
+                }
+
+                if (CACHE_SECTIONS.Length > 0)
+                {
+                    for (int i = 0; i < CACHE_SECTIONS.Length; i++)
+                    {
+                        TRACK_DATA.SECTIONS[i].SECTION_TYPE = CACHE_SECTIONS[i];
+                    }
+                }
+
+                // set cache array lengths
+                if (CACHE_TILES.Length != TRACK_DATA.TILES_FLOOR.Count)
+                    CACHE_TILES = new E_TILETYPE[TRACK_DATA.TILES_FLOOR.Count];
+                if (CACHE_SECTIONS.Length != TRACK_DATA.SECTIONS.Count)
+                    CACHE_SECTIONS = new E_SECTIONTYPE[TRACK_DATA.SECTIONS.Count];
+
+                // fetch colors for tiles
+                if (LIGHTS_TILES_FLOOR.Length > 0)
+                {
+                    Color32[] newCols = MESH_TRACKFLOOR.sharedMesh.colors32;
+                    for (int i = 0; i < MESH_TRACKFLOOR.sharedMesh.colors32.Length; i++)
+                    {
+                        newCols[i] = LIGHTS_TILES_FLOOR[i];
+                    }
+                }
+
+                if (LIGHTS_TILES_WALL.Length > 0)
+                {
+                    Color32[] newCols = MESH_TRACKWALL.sharedMesh.colors32;
+                    for (int i = 0; i < MESH_TRACKWALL.sharedMesh.colors32.Length; i++)
+                    {
+                        newCols[i] = LIGHTS_TILES_WALL[i];
+                    }
+                }
+
+                // set light array lengths
+                if (LIGHTS_TILES_FLOOR.Length != MESH_TRACKFLOOR.sharedMesh.colors32.Length)
+                    LIGHTS_TILES_FLOOR = new Color32[MESH_TRACKFLOOR.sharedMesh.colors32.Length];
+                if (LIGHTS_TILES_WALL.Length != MESH_TRACKWALL.sharedMesh.colors32.Length)
+                    LIGHTS_TILES_WALL = new Color32[MESH_TRACKWALL.sharedMesh.colors32.Length];
+
             }
         }
 
-        /// <summary>
-        /// Get all tiles in a section.
-        /// </summary>
-        /// <param name="section"></param>
-        /// <returns></returns>
-        public TrTile[] SectionGetTiles(TrSection section)
-        {
-            return section.SECTION_TILES;
-        }
-
-        /// <summary>
-        /// Get the rotation of a section.
-        /// </summary>
-        /// <param name="section"></param>
-        /// <returns></returns>
-        public Quaternion SectionGetRotation(TrSection section)
-        {
-            // get positions
-            Vector3 sectionPosition = section.SECTION_POSITION;
-            Vector3 nextPosition = section.SECTION_NEXT.SECTION_POSITION;
-
-            // get the forward direction from positions and then the normal
-            Vector3 forward = (nextPosition - sectionPosition);
-            Vector3 normal = section.SECTION_NORMAL;
-
-            // return lookat
-            return Quaternion.LookRotation(forward.normalized, normal.normalized);
-        }
-
-        /// <summary>
-        /// Get the section a tile belongs to.
-        /// </summary>
-        /// <param name="tile"></param>
-        /// <returns></returns>
-        public TrSection TileGetSection(TrTile tile)
-        {
-            return tile.TILE_SECTION;
-        }
-
-        /// <summary>
-        /// Get a tile from a vertex.
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        public TrTile TileFromVertex(int index, E_TRACKMESH meshType)
-        {
-            if (meshType == E_TRACKMESH.FLOOR)
-            {
-                if (TRACK_DATA.TILES_FLOOR_MAPPED[index] != null)
-                    return TRACK_DATA.TILES_FLOOR_MAPPED[index];
-                else
-                    return null;
-            } else if (meshType == E_TRACKMESH.WALL)
-            {
-                if (TRACK_DATA.TILES_WALL_MAPPED[index] != null)
-                    return TRACK_DATA.TILES_WALL_MAPPED[index];
-                else
-                    return null;
-            } else
-            {
-                return null;
-            }
-
-        }
-
-        #endregion
+#endregion
 
 
     }

@@ -8,6 +8,9 @@ namespace BnG.TrackData
     /// </summary>
     public class TrSection
     {
+        // the index of this section
+        public int SECTION_INDEX;
+
         // what type of section this is
         public E_SECTIONTYPE SECTION_TYPE;
 
@@ -49,6 +52,7 @@ namespace BnG.TrackData
         JUMP_END            = 2,
         JUNCTION_START      = 3,
         JUNCTION_END        = 4,
-        LOGIC_STARTLINE     = 5
+        PITLANE_ENTRANCE    = 5,
+        LOGIC_STARTLINE     = 6
     }
 }
