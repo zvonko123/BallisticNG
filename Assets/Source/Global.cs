@@ -44,7 +44,7 @@ public class GameSettings
 public class AudioSettings
 {
     // audio settings
-    public static float VOLUME_MAIN = 0.75f;
+    public static float VOLUME_MAIN = 1.0f;
     public static float VOLUME_MUSIC;
     public static float VOLUME_SFX;
     public static float VOLUME_VOICES;

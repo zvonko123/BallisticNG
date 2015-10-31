@@ -165,6 +165,15 @@ namespace BnG.TrackData
                     {
                         newCols[i] = LIGHTS_TILES_FLOOR[i];
                     }
+                } else
+                {
+                    Color32[] newColors = new Color32[MESH_TRACKFLOOR.sharedMesh.vertices.Length];
+                    for (int i = 0; i < newColors.Length; i++)
+                    {
+                        newColors[i] = Color.white;
+                    }
+                    MESH_TRACKFLOOR.sharedMesh.colors32 = newColors;
+                    LIGHTS_TILES_FLOOR = newColors;
                 }
 
                 if (LIGHTS_TILES_WALL.Length > 0)

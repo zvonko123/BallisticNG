@@ -25,9 +25,12 @@ public class ShipPosition : ShipBase {
 
     void FixedUpdate()
     {
-        UpdateInitialSection();
-        UpdateCurrentSection();
-        UpdateDirection();
+        if (!r.isRespawning)
+        {
+            UpdateInitialSection();
+            UpdateCurrentSection();
+            UpdateDirection();
+        }
     }
 
     private void UpdateInitialSection()

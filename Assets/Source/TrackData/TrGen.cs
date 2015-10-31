@@ -173,6 +173,14 @@ namespace BnG.TrackData
             for (int i = 0; i < mappedFloor.Length; i++)
                 gen.TILES_FLOOR_MAPPED.Add(mappedFloor[i]);
 
+            // set default vertex colors
+            Color32[] cols = new Color32[trackFloor.vertices.Length];
+            for (int i = 0; i < trackFloor.vertices.Length; i++)
+            {
+                cols[i] = Color.white;
+            }
+
+
             return gen;
         }
     }
