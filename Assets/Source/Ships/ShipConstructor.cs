@@ -26,7 +26,7 @@ public class ShipConstructor : MonoBehaviour {
         axis.transform.localRotation = Quaternion.identity;
 
         // parent prefab to axis
-        prefab.transform.parent = anim.transform;
+        prefab.transform.parent = axis.transform;
         prefab.transform.localPosition = Vector3.zero;
         prefab.transform.localRotation = Quaternion.identity;
 
@@ -40,13 +40,23 @@ public class ShipConstructor : MonoBehaviour {
         ShipRefs r = gameObject.AddComponent<ShipRefs>();
         r.settings = settings;
         r.position = gameObject.AddComponent<ShipPosition>();
+        r.position.r = r;
+
         r.effects = gameObject.AddComponent<ShipEffects>();
+        r.effects.r = r;
+
         r.input = gameObject.AddComponent<ShipInput>();
+        r.input.r = r;
+
         r.sim = gameObject.AddComponent<ShipSim>();
+        r.sim.r = r;
+
         r.body = body;
         r.mesh = settings.REF_MESH;
         r.cam = CreateNewCamera(isAI, r);
         r.shield = settings.DAMAGE_SHIELD;
+        r.axis = axis;
+        r.anim = anim;
 
         // attach mesh collider to mesh
         MeshCollider mc = r.mesh.AddComponent<MeshCollider>();

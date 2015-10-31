@@ -20,7 +20,7 @@ public class ShipSettings : MonoBehaviour {
     [Header("[ ENGINE POWER ]")]
     public float ENGINE_POWER_GAIN_SPARK;
     public float ENGINE_POWER_FALLOFF_SPARK;
-    public float ENGINE_POWER_GAIN_TOXOIC;
+    public float ENGINE_POWER_GAIN_TOXIC;
     public float ENGINE_POWER_FALLOFF_TOXIC;
     public float ENGINE_POWER_GAIN_APEX;
     public float ENGINE_POWER_FALLOFF_APEX;

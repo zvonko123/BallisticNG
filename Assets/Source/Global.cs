@@ -16,7 +16,7 @@ public class RaceSettings
     public static int laps = 1;
     public static E_SPEEDCLASS speedclass = E_SPEEDCLASS.SPECTRE;
     public static E_SHIPS playerShip = E_SHIPS.MTECHP1;
-    public static bool shipsRestrained = true;
+    public static bool shipsRestrained = false;
 
     // countdown
     public static bool countdownReady;

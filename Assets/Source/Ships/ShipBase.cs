@@ -40,7 +40,9 @@ public class ShipRefs : MonoBehaviour
     public int tCurrentIndex;
 
     // others
-    public bool shipRestrained; 
+    public bool shipRestrained;
+    public bool isRespawning;
+    public bool facingFoward;
     #endregion
 
     #region METHODS
