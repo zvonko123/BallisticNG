@@ -7,8 +7,8 @@ using System.Collections.Generic;
 public class RaceSettings
 {
     // race references
-    public TrData trackData;
-    public static GameObject currentCamera;
+    public static TrData trackData;
+    public static Camera currentCamera;
     public static List<ShipBase> SHIPS = new List<ShipBase>();
 
     // race settings

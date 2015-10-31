@@ -39,6 +39,7 @@ namespace BnG.TrackData
 
         // spawning
         public List<Vector3> spawnPositions = new List<Vector3>();
+        public List<Vector3> spawnCameraLocations = new List<Vector3>();
         public List<Quaternion> spawnRotations = new List<Quaternion>();
         public Vector3 cameraStart;
         public Vector3 cameraEnd;
@@ -87,12 +88,6 @@ namespace BnG.TrackData
                 pos2 = pos + (TrackDataHelper.SectionGetRotation(TRACK_DATA.SECTIONS[i]) * Vector3.forward) * 1;
                 Gizmos.DrawLine(pos, pos2);
             }
-        }
-
-        private void Start()
-        {
-            UpdateTrackData();
-            FindSpawnTiles();
         }
 
         private void Update()
@@ -190,8 +185,12 @@ namespace BnG.TrackData
             }
         }
 
-        private void FindSpawnTiles()
+        public void FindSpawnTiles()
         {
+            // clear any previous spawns
+            spawnPositions.Clear();
+            spawnRotations.Clear();
+
             // search through each tile for spawn tiles
             for (int i = 0; i < TRACK_DATA.TILES_FLOOR.Count; i++)
             {
@@ -203,6 +202,11 @@ namespace BnG.TrackData
 
                     spawnPositions.Add(spawnPos);
                     spawnRotations.Add(TrackDataHelper.SectionGetRotation(TRACK_DATA.TILES_FLOOR[i].TILE_SECTION));
+
+                    Vector3 cameraPos = TRACK_DATA.TILES_FLOOR[i].TILE_SECTION.SECTION_POSITION;
+                    cameraPos.y += 0.5f;
+                    spawnCameraLocations.Add(cameraPos);
+
                 }
             }
         }

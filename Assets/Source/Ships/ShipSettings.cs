@@ -89,6 +89,7 @@ public class ShipSettings : MonoBehaviour {
     public AudioClip SFX_STARTBOOST;
 
     [Header("[ REFERENCES ]")]
+    public GameObject REF_MESH;
     public TrailRenderer REF_VAPE_LEFT;
     public TrailRenderer REF_VAPE_RIGHT;
     public GameObject REF_ENGINE_FLARE;

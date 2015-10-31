@@ -26,12 +26,11 @@ public class ShipRefs : MonoBehaviour
     public ShipInput input;
     public ShipSim sim;
 
-
     // components
     public GameObject axis;
     public GameObject anim;
     public GameObject mesh;
-    public GameObject cam;
+    public Camera cam;
     public Rigidbody body;
 
     // track data
@@ -39,6 +38,9 @@ public class ShipRefs : MonoBehaviour
     public TrSection initialSection;
 
     public int tCurrentIndex;
+
+    // others
+    public bool shipRestrained; 
     #endregion
 
     #region METHODS
