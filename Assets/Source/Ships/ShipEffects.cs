@@ -50,7 +50,7 @@ public class ShipEffects : ShipBase {
             else if (tile.TILE_TYPE == E_TILETYPE.WEAPON)
                 shipColor = Color.red;
             else
-                shipColor = Color.Lerp(shipColor, m.colors32[tri /3], Time.deltaTime * 15);
+                shipColor = Color.Lerp(shipColor, m.colors32[m.triangles[hit.triangleIndex * 3]], Time.deltaTime * 15);
         }
         r.mesh.GetComponent<Renderer>().material.SetColor("_Color", shipColor);
 

@@ -21,6 +21,7 @@
             {
                 float4 position : SV_POSITION;
                 float3 texcoord : TEXCOORD;
+				fixed4 color : COLOR;
             };
 
             sampler2D _MainTex;
@@ -28,7 +29,7 @@
             float4 _Color;
             float _GeoRes;
 
-            v2f vert(appdata_base v)
+            v2f vert(appdata_full v)
             {
                 v2f o;
 
@@ -40,6 +41,7 @@
 
                 float2 uv = TRANSFORM_TEX(v.texcoord, _MainTex);
                 o.texcoord = float3(uv * sp.w, sp.w);
+				o.color = v.color * _Color;
 
                 return o;
             }
@@ -47,7 +49,7 @@
             fixed4 frag(v2f i) : SV_Target
             {
                 float2 uv = i.texcoord.xy / i.texcoord.z;
-				return tex2D(_MainTex, uv) * _Color;
+				return tex2D(_MainTex, uv) * i.color;
             }
 
             ENDCG

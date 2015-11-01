@@ -185,6 +185,7 @@ namespace BnG.TrackData
                     }
                 }
 
+
                 // set light array lengths
                 if (LIGHTS_TILES_FLOOR.Length != MESH_TRACKFLOOR.sharedMesh.colors32.Length)
                     LIGHTS_TILES_FLOOR = new Color32[MESH_TRACKFLOOR.sharedMesh.colors32.Length];
