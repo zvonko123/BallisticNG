@@ -17,30 +17,14 @@ public class VertexLightMapper : MonoBehaviour {
     public Light directionalLight;
 
     public bool bakeMap;
-    public bool realtimeUpdate;
-    private float realtimeTimer;
     
     void Update()
     {
-        if (!realtimeUpdate)
-        {
-            if (!bakeMap)
-                return;
-            else
-                bakeMap = false;
-        } else
-        {
-            realtimeTimer += 0.1f;
-            if (realtimeTimer > 2)
-            {
-                realtimeTimer = 0;
-            } else
-            {
-                return;
-            }
-        }
+        if (!bakeMap)
+            return;
+        else
+            bakeMap = false;
 
-        
 
         FindObjects();
         LightmapPass();
@@ -79,10 +63,13 @@ public class VertexLightMapper : MonoBehaviour {
                 }
             }
         }
+
+        Debug.Log(string.Format("Found {0} meshes!", foundMeshes.ToString()));
     }
 
     private void LightmapPass()
     {
+
         // find all lights
         Light[] lights = FindObjectsOfType(typeof(Light)) as Light[];
 
@@ -106,16 +93,18 @@ public class VertexLightMapper : MonoBehaviour {
 
             Color32[] newColors = new Color32[m.vertices.Length];
             Color32 newColor;
-            for (int j = 0; j < m.triangles.Length - 3; j += 6)
+            for (int j = 0; j < m.triangles.Length; j += 3)
             {
                 newColor = ambientLight;
                 if (directionalLight != null)
                 {
                     // check that there isn't anything obscuring the vertex from the light direction
                     Vector3 vPos = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j]]);
-                    if (!Physics.Raycast(vPos, -directionalLight.transform.forward))
+                    int ignoreTrack = ~(1 << LayerMask.NameToLayer("TrackFloor") | 1 << LayerMask.NameToLayer("TrackWall"));
+                    if (!Physics.Raycast(vPos, -directionalLight.transform.forward, Mathf.Infinity, ignoreTrack) 
+                        || directionalLight.GetComponent<Light>().shadows == LightShadows.None)
                     {
-                        float dot = Mathf.Abs(Vector3.Dot(m.normals[m.triangles[j]], -directionalLight.transform.forward.normalized));
+                        float dot = Vector3.Dot(m.normals[m.triangles[j]], directionalLight.transform.up);
                         Color dotColor = new Color();
                         dotColor.r = dot;
                         dotColor.g = dot;
@@ -135,13 +124,14 @@ public class VertexLightMapper : MonoBehaviour {
                         Vector3 toLight = lights[k].transform.position;
 
                         // linecast to light (shadows)
-                        if (!Physics.Raycast(vPos, toLight) || lights[k].shadows == LightShadows.None)
+                        int ignoreTrack = ~(1 << LayerMask.NameToLayer("TrackFloor") | 1 << LayerMask.NameToLayer("TrackWall"));
+                        if (!Physics.Linecast(vPos, toLight, ignoreTrack) || lights[k].shadows == LightShadows.None)
                         {
-                            float dist = Vector3.Distance(toLight, vPos);
+                            float dist = Vector3.Distance(toLight, vPos) / lights[k].range;
                             //dist *= dist;
-                            //dist = Mathf.Clamp(dist, 0.0f, 1.0f);
+                            dist = Mathf.Clamp(dist, 0.0f, 1.0f);
 
-                            float atten = lights[k].range / (lights[k].range + 25.0f * dist);
+                            float atten = 1.0f / (1.0f + 25.0f * dist);
                             Color attenColor = new Color();
                             attenColor.r = atten;
                             attenColor.g = atten;
@@ -154,9 +144,6 @@ public class VertexLightMapper : MonoBehaviour {
                 newColors[m.triangles[j]] = newColor;
                 newColors[m.triangles[j + 1]] = newColor;
                 newColors[m.triangles[j + 2]] = newColor;
-                newColors[m.triangles[j + 3]] = newColor;
-                newColors[m.triangles[j + 4]] = newColor;
-                newColors[m.triangles[j + 5]] = newColor;
             }
             m.colors32 = newColors;
         }

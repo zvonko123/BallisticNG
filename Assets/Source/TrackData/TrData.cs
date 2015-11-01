@@ -37,6 +37,11 @@ namespace BnG.TrackData
         public Color32[] LIGHTS_TILES_FLOOR;
         public Color32[] LIGHTS_TILES_WALL;
 
+        // original vert lenghts
+        private bool hasCachedVerts;
+        private Mesh originalFloorMesh;
+        private Mesh originalWallMesh;
+
         // spawning
         public List<Vector3> spawnPositions = new List<Vector3>();
         public List<Vector3> spawnCameraLocations = new List<Vector3>();
@@ -130,6 +135,18 @@ namespace BnG.TrackData
                 if (MESH_TRACKFLOOR == null || MESH_TRACKWALL == null)
                     return;
 
+                // restore original meshes before regenerating track data
+                if (!hasCachedVerts)
+                {
+                    originalFloorMesh = MESH_TRACKFLOOR.sharedMesh;
+                    originalWallMesh = MESH_TRACKWALL.sharedMesh;
+                    hasCachedVerts = true;
+                } else if (hasCachedVerts)
+                {
+                    MESH_TRACKFLOOR.sharedMesh = originalFloorMesh;
+                    MESH_TRACKWALL.sharedMesh = originalWallMesh;
+                }
+
                 TRACK_DATA = TrGen.GenerateTrack(MESH_TRACKFLOOR.sharedMesh, MESH_TRACKWALL.sharedMesh, MESH_TRACKFLOOR.transform, MESH_TRACKWALL.transform);
                 MESH_TRACKFLOOR_PREV = MESH_TRACKFLOOR;
                 MESH_TRACKWALL_PREV = MESH_TRACKWALL;
@@ -156,41 +173,6 @@ namespace BnG.TrackData
                     CACHE_TILES = new E_TILETYPE[TRACK_DATA.TILES_FLOOR.Count];
                 if (CACHE_SECTIONS.Length != TRACK_DATA.SECTIONS.Count)
                     CACHE_SECTIONS = new E_SECTIONTYPE[TRACK_DATA.SECTIONS.Count];
-
-                // fetch colors for tiles
-                if (LIGHTS_TILES_FLOOR.Length > 0)
-                {
-                    Color32[] newCols = MESH_TRACKFLOOR.sharedMesh.colors32;
-                    for (int i = 0; i < MESH_TRACKFLOOR.sharedMesh.colors32.Length; i++)
-                    {
-                        newCols[i] = LIGHTS_TILES_FLOOR[i];
-                    }
-                } else
-                {
-                    Color32[] newColors = new Color32[MESH_TRACKFLOOR.sharedMesh.vertices.Length];
-                    for (int i = 0; i < newColors.Length; i++)
-                    {
-                        newColors[i] = Color.white;
-                    }
-                    MESH_TRACKFLOOR.sharedMesh.colors32 = newColors;
-                    LIGHTS_TILES_FLOOR = newColors;
-                }
-
-                if (LIGHTS_TILES_WALL.Length > 0)
-                {
-                    Color32[] newCols = MESH_TRACKWALL.sharedMesh.colors32;
-                    for (int i = 0; i < MESH_TRACKWALL.sharedMesh.colors32.Length; i++)
-                    {
-                        newCols[i] = LIGHTS_TILES_WALL[i];
-                    }
-                }
-
-
-                // set light array lengths
-                if (LIGHTS_TILES_FLOOR.Length != MESH_TRACKFLOOR.sharedMesh.colors32.Length)
-                    LIGHTS_TILES_FLOOR = new Color32[MESH_TRACKFLOOR.sharedMesh.colors32.Length];
-                if (LIGHTS_TILES_WALL.Length != MESH_TRACKWALL.sharedMesh.colors32.Length)
-                    LIGHTS_TILES_WALL = new Color32[MESH_TRACKWALL.sharedMesh.colors32.Length];
 
             }
         }

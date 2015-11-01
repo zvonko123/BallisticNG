@@ -16,6 +16,46 @@ namespace BnG.TrackData
 
             TrGenData gen = new TrGenData();
 
+            // re-build floor mesh so all tris have unique verts
+            Vector3[] newVertices = new Vector3[trackFloor.triangles.Length];
+            Vector2[] newUV = new Vector2[trackFloor.triangles.Length];
+            Vector3[] newNormals = new Vector3[trackFloor.triangles.Length];
+            int[] newTriangles = new int[trackFloor.triangles.Length];
+
+            for (int i = 0; i < trackFloor.triangles.Length; i++)
+            {
+                newVertices[i] = trackFloor.vertices[trackFloor.triangles[i]];
+                newUV[i] = trackFloor.uv[trackFloor.triangles[i]];
+                newNormals[i] = trackFloor.normals[trackFloor.triangles[i]];
+                newTriangles[i] = i;
+            }
+
+
+            trackFloor.vertices = newVertices;
+            trackFloor.uv = newUV;
+            trackFloor.normals = newNormals;
+            trackFloor.triangles = newTriangles;
+
+            // re-build wall mesh
+            newVertices = new Vector3[trackWall.triangles.Length];
+            newUV = new Vector2[trackWall.triangles.Length];
+            newNormals = new Vector3[trackWall.triangles.Length];
+            newTriangles = new int[trackWall.triangles.Length];
+
+            for (int i = 0; i < trackWall.triangles.Length; i++)
+            {
+                newVertices[i] = trackWall.vertices[trackWall.triangles[i]];
+                newUV[i] = trackWall.uv[trackWall.triangles[i]];
+                newNormals[i] = trackWall.normals[trackWall.triangles[i]];
+                newTriangles[i] = i;
+            }
+
+
+            trackWall.vertices = newVertices;
+            trackWall.uv = newUV;
+            trackWall.normals = newNormals;
+            trackWall.triangles = newTriangles;
+
             #region TEMPS
 
             // verts
