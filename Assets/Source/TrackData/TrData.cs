@@ -19,6 +19,8 @@ namespace BnG.TrackData
         [Header("[ MESH REFERENCES ]")]
         public bool reloadTrackData;
         public bool resetTypes;
+        public bool setTileColors;
+        public bool cacheSectionPosition;
         public MeshFilter MESH_TRACKFLOOR;
         private MeshFilter MESH_TRACKFLOOR_PREV;
         public MeshFilter MESH_TRACKWALL;
@@ -26,16 +28,24 @@ namespace BnG.TrackData
 
         [Header("[ FLAG PAINTING ] ")]
         public bool PAINT_FLAGS;
+        public bool EDIT_SECITIONPOSITIONS;
+        public int SECTION_CURRENT;
+        public float Section_MOVEAMOUNT;
+        public bool SECTION_MOVELEFT;
+        public bool SECTION_MOVERIGHT;
+
+        public bool SECTION_MOVEFORWARD;
+        public bool SECTION_MOVEBACK;
+
         private TrFlagPainter TR_FLAGPAINTER;
         public Color PAINT_VERTEXCOLOR;
         public E_PAINTMODE PAINT_MODE;
         [Space(10)]
 
-        // cached tile types
+        // cached data
         public E_TILETYPE[] CACHE_TILES;
         public E_SECTIONTYPE[] CACHE_SECTIONS;
-        public Color32[] LIGHTS_TILES_FLOOR;
-        public Color32[] LIGHTS_TILES_WALL;
+        public List<Vector3> CACHE_SECTIONPOSITIONS = new List<Vector3>();
 
         // original vert lenghts
         private bool hasCachedVerts;
@@ -72,7 +82,8 @@ namespace BnG.TrackData
 
                 // draw sphere and line
                 gizmoColor = Color.white;
-                if (TR_FLAGPAINTER != null && TRACK_DATA.SECTIONS[i] == highlightedSection && PAINT_MODE == E_PAINTMODE.SECTION) 
+                if ((TR_FLAGPAINTER != null && TRACK_DATA.SECTIONS[i] == highlightedSection && PAINT_MODE == E_PAINTMODE.SECTION) 
+                    || (EDIT_SECITIONPOSITIONS && i == SECTION_CURRENT)) 
                 {
                     gizmoColor = Color.red;
                 }
@@ -100,6 +111,21 @@ namespace BnG.TrackData
             CheckPaintChange();
             UpdateTrackData();
             ResetTRTypes();
+            UpdateTileColors();
+            reloadTrackData = false;
+
+            if (EDIT_SECITIONPOSITIONS)
+                MoveSection();
+
+            if (cacheSectionPosition)
+            {
+                CACHE_SECTIONPOSITIONS.Clear();
+                for (int i = 0; i < TRACK_DATA.SECTIONS.Count; i++)
+                {
+                    CACHE_SECTIONPOSITIONS.Add(TRACK_DATA.SECTIONS[i].SECTION_POSITION);
+                }
+                cacheSectionPosition = false;
+            }
         }
 
 #endregion
@@ -129,8 +155,8 @@ namespace BnG.TrackData
             // if there is no track data or the meshes have changed then generate new track data
             if (TRACK_DATA == null || MESH_TRACKFLOOR_PREV != MESH_TRACKFLOOR || MESH_TRACKWALL != MESH_TRACKWALL_PREV || reloadTrackData)
             {
-                reloadTrackData = false;
 
+                reloadTrackData = false;
                 // makes sure both track and wall meshes are present before updating
                 if (MESH_TRACKFLOOR == null || MESH_TRACKWALL == null)
                     return;
@@ -174,6 +200,15 @@ namespace BnG.TrackData
                 if (CACHE_SECTIONS.Length != TRACK_DATA.SECTIONS.Count)
                     CACHE_SECTIONS = new E_SECTIONTYPE[TRACK_DATA.SECTIONS.Count];
 
+                // load cached section positions
+                if (CACHE_SECTIONPOSITIONS.Count > 0)
+                {
+                    for (int i = 0; i < CACHE_SECTIONPOSITIONS.Count; i++)
+                    {
+                        TRACK_DATA.SECTIONS[i].SECTION_POSITION = CACHE_SECTIONPOSITIONS[i];
+                    }
+                }
+
             }
         }
 
@@ -215,6 +250,60 @@ namespace BnG.TrackData
                 TRACK_DATA.SECTIONS[i].SECTION_TYPE = E_SECTIONTYPE.NORMAL;
 
             resetTypes = false;
+        }
+
+        private void UpdateTileColors()
+        {
+            if (!setTileColors)
+                return;
+            else
+                setTileColors = false;
+
+            Color32[] cols = MESH_TRACKFLOOR.sharedMesh.colors32;
+            for (int i = 0; i < MESH_TRACKFLOOR.sharedMesh.triangles.Length; i += 3)
+            {
+                TrTile tile = TrackDataHelper.TileFromTriangleIndex(i / 3, E_TRACKMESH.FLOOR, TRACK_DATA);
+                if (tile.TILE_TYPE == E_TILETYPE.BOOST)
+                {
+                    Debug.Log("Found boost!");
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 0]] = Color.blue;
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 1]] = Color.blue;
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 2]] = Color.blue;
+                }
+            }
+            MESH_TRACKFLOOR.sharedMesh.colors32 = cols;
+
+        }
+
+        private void MoveSection()
+        {
+            if (SECTION_MOVELEFT)
+            {
+                Vector3 left = TrackDataHelper.SectionGetRotation(TRACK_DATA.SECTIONS[SECTION_CURRENT]) * -Vector3.right;
+                TRACK_DATA.SECTIONS[SECTION_CURRENT].SECTION_POSITION += left * Section_MOVEAMOUNT;
+                SECTION_MOVELEFT = false;
+            }
+
+            if (SECTION_MOVERIGHT)
+            {
+                Vector3 right = TrackDataHelper.SectionGetRotation(TRACK_DATA.SECTIONS[SECTION_CURRENT]) * Vector3.right;
+                TRACK_DATA.SECTIONS[SECTION_CURRENT].SECTION_POSITION += right * Section_MOVEAMOUNT;
+                SECTION_MOVERIGHT = false;
+            }
+
+            if (SECTION_MOVEFORWARD)
+            {
+                Vector3 forward = TrackDataHelper.SectionGetRotation(TRACK_DATA.SECTIONS[SECTION_CURRENT]) * Vector3.forward;
+                TRACK_DATA.SECTIONS[SECTION_CURRENT].SECTION_POSITION += forward * Section_MOVEAMOUNT;
+                SECTION_MOVEFORWARD = false;
+            }
+
+            if (SECTION_MOVEBACK)
+            {
+                Vector3 back = TrackDataHelper.SectionGetRotation(TRACK_DATA.SECTIONS[SECTION_CURRENT]) * Vector3.back;
+                TRACK_DATA.SECTIONS[SECTION_CURRENT].SECTION_POSITION += back * Section_MOVEAMOUNT;
+                SECTION_MOVEBACK = false;
+            }
         }
 
 #endregion

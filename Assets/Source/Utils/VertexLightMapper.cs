@@ -128,8 +128,7 @@ public class VertexLightMapper : MonoBehaviour {
                         if (!Physics.Linecast(vPos, toLight, ignoreTrack) || lights[k].shadows == LightShadows.None)
                         {
                             float dist = Vector3.Distance(toLight, vPos) / lights[k].range;
-                            //dist *= dist;
-                            dist = Mathf.Clamp(dist, 0.0f, 1.0f);
+                            dist *= dist;
 
                             float atten = 1.0f / (1.0f + 25.0f * dist);
                             Color attenColor = new Color();
