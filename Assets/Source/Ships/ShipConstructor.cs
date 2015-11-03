@@ -87,6 +87,7 @@ public class ShipConstructor : MonoBehaviour {
 
         // attach all components needed for cameras
         Camera c = newCamera.AddComponent<Camera>();
+        c.backgroundColor = Color.black;
         newCamera.AddComponent<GUILayer>();
         newCamera.AddComponent<FlareLayer>();
         newCamera.AddComponent<AudioListener>();
