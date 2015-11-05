@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using BnG.Files;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -17,18 +18,43 @@ public class VertexLightMapper : MonoBehaviour {
     public Light directionalLight;
 
     public bool bakeMap;
+    public string lightmapName;
+    public bool foundMap;
     
+    void Start()
+    {
+        CheckForExistingMap();
+    }
+
     void Update()
     {
         if (!bakeMap)
+        {
             return;
+        }
         else
+        {
             bakeMap = false;
-
+        }
 
         FindObjects();
         LightmapPass();
         RemoveMeshColliders();
+    }
+
+    private void CheckForExistingMap()
+    {
+        string path = Application.dataPath + "/Resources/BakedLighting/" + lightmapName + ".vcm";
+        if (System.IO.File.Exists(path))
+        {
+            VCM.Load(lightmapName);
+            foundMap = true;
+        }
+        else
+        {
+            Debug.Log("Couldn't find " + path + "!");
+        }
+
     }
 
     private void FindObjects()
@@ -73,13 +99,18 @@ public class VertexLightMapper : MonoBehaviour {
         // find all lights
         Light[] lights = FindObjectsOfType(typeof(Light)) as Light[];
 
-
+        Color32 newColor;
+        Color32 dotColor;
+        Color32 attenColor;
+        Vector3 vPos;
+        Vector3 toLight;
+        List<VCMData> data = new List<VCMData>();
         for (int i = 0; i < foundObjects.Count; i++)
         {
             Mesh m = foundObjects[i].GetComponent<MeshFilter>().sharedMesh;
 
             Color32[] newColors = new Color32[m.vertices.Length];
-            Color32 newColor;
+
             for (int j = 0; j < m.vertices.Length; j++)
             {
                 newColors[j] = ambientLight;
@@ -92,23 +123,19 @@ public class VertexLightMapper : MonoBehaviour {
             Mesh m = trackObjects[i].GetComponent<MeshFilter>().sharedMesh;
 
             Color32[] newColors = new Color32[m.vertices.Length];
-            Color32 newColor;
             for (int j = 0; j < m.triangles.Length; j += 3)
             {
                 newColor = ambientLight;
                 if (directionalLight != null)
                 {
                     // check that there isn't anything obscuring the vertex from the light direction
-                    Vector3 vPos = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j]]);
+                    vPos = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j]]);
                     int ignoreTrack = ~(1 << LayerMask.NameToLayer("TrackFloor") | 1 << LayerMask.NameToLayer("TrackWall"));
                     if (!Physics.Raycast(vPos, -directionalLight.transform.forward, Mathf.Infinity, ignoreTrack) 
                         || directionalLight.GetComponent<Light>().shadows == LightShadows.None)
                     {
                         float dot = Vector3.Dot(m.normals[m.triangles[j]], directionalLight.transform.up);
-                        Color dotColor = new Color();
-                        dotColor.r = dot;
-                        dotColor.g = dot;
-                        dotColor.b = dot;
+                        dotColor = new Color(dot, dot, dot, 1.0f);
 
                         newColor += dotColor * directionalLight.GetComponent<Light>().color;
                     }
@@ -120,8 +147,8 @@ public class VertexLightMapper : MonoBehaviour {
                 {
                     if (lights[k].type == LightType.Point)
                     {
-                        Vector3 vPos = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j]]);
-                        Vector3 toLight = lights[k].transform.position;
+                        vPos = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j]]);
+                        toLight = lights[k].transform.position;
 
                         // linecast to light (shadows)
                         int ignoreTrack = ~(1 << LayerMask.NameToLayer("TrackFloor") | 1 << LayerMask.NameToLayer("TrackWall"));
@@ -131,10 +158,7 @@ public class VertexLightMapper : MonoBehaviour {
                             dist *= dist;
 
                             float atten = 1.0f / (1.0f + 25.0f * dist);
-                            Color attenColor = new Color();
-                            attenColor.r = atten;
-                            attenColor.g = atten;
-                            attenColor.b = atten;
+                            attenColor = new Color(atten, atten, atten, 1.0f);
 
                             newColor += attenColor * lights[k].color * (lights[k].intensity);
                         }
@@ -145,7 +169,26 @@ public class VertexLightMapper : MonoBehaviour {
                 newColors[m.triangles[j + 2]] = newColor;
             }
             m.colors32 = newColors;
+
+            data.Add(new VCMData());
+            if (trackObjects[i].GetComponent<VCMID>())
+                    DestroyImmediate(trackObjects[i].GetComponent<VCMID>());
+
+            trackObjects[i].AddComponent<VCMID>();
+            trackObjects[i].GetComponent<VCMID>().ID = i;
+            data[i].ID = i;
+            for (int j = 0; j < newColors.Length; j++)
+            {
+                data[i].colors.Add(newColors[j]);
+            }
+
         }
+        VCM.Save(lightmapName, data.ToArray());
+    }
+
+    private void SaveVCM()
+    {
+
     }
 
     private void RemoveMeshColliders()
