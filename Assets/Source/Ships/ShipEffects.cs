@@ -14,6 +14,7 @@ public class ShipEffects : ShipBase {
     private AudioSource turbulanceSFX;
     private AudioSource droidSFX;
     private AudioSource scrapeSFX;
+    private AudioSource rechargeSFX;
 
     // audio modifiers
     private float enginePitch = 0.5f;
@@ -36,6 +37,8 @@ public class ShipEffects : ShipBase {
         RaycastHit hit;
         Vector3 to = r.currentSection.SECTION_POSITION;
         to.y -= 5;
+
+        r.recharging = false;
         if (Physics.Linecast(transform.position, to, out hit, 1 << LayerMask.NameToLayer("TrackFloor")))
         {
             int tri = hit.triangleIndex;
@@ -51,8 +54,16 @@ public class ShipEffects : ShipBase {
                 shipColor = Color.red;
             else
                 shipColor = Color.Lerp(shipColor, m.colors32[m.triangles[hit.triangleIndex * 3]], Time.deltaTime * 15);
+
+            if (tile.TILE_TYPE == E_TILETYPE.RECHARGE)
+                r.recharging = true;
         }
         r.mesh.GetComponent<Renderer>().material.SetColor("_Color", shipColor);
+
+        if (r.recharging)
+            rechargeSFX.volume = 1.0f;
+        else
+            rechargeSFX.volume = 0.0f;
 
     }
 
@@ -105,6 +116,9 @@ public class ShipEffects : ShipBase {
         turbulanceSFX = AttachNewSound(r.settings.SFX_TURBULENCE, r.isAI, aiMinDistance, aiMaxDistance, true, true);
         scrapeSFX = AttachNewSound(r.settings.SFX_SCRAPE, r.isAI, aiMinDistance, aiMaxDistance, true, true);
         scrapeSFX.volume = 0.0f;
+        rechargeSFX = AttachNewSound(r.settings.SFX_RECHARGE, r.isAI, aiMinDistance, aiMaxDistance, true, true);
+        rechargeSFX.volume = 0.0f;
+        
     }
 
     private AudioSource AttachNewSound(AudioClip clip, bool isAi, float minDistance, float maxDistance, bool loop, bool play)

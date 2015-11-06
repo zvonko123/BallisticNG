@@ -252,7 +252,7 @@ namespace BnG.TrackData
             resetTypes = false;
         }
 
-        private void UpdateTileColors()
+        public void UpdateTileColors()
         {
             if (!setTileColors)
                 return;
@@ -269,6 +269,14 @@ namespace BnG.TrackData
                     cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 0]] = Color.blue;
                     cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 1]] = Color.blue;
                     cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 2]] = Color.blue;
+                }
+
+                if (tile.TILE_TYPE == E_TILETYPE.RECHARGE)
+                {
+                    Debug.Log("Found Recharge!");
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 0]] = new Color(0.0f, 0.4f, 1.0f);
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 1]] = new Color(0.0f, 0.4f, 1.0f);
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 2]] = new Color(0.0f, 0.4f, 1.0f);
                 }
             }
             MESH_TRACKFLOOR.sharedMesh.colors32 = cols;

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using BnG.Files;
+using BnG.TrackData;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -10,6 +11,7 @@ using System.Collections.Generic;
 [ExecuteInEditMode]
 public class VertexLightMapper : MonoBehaviour {
 
+    public TrData trackData;
     public GameObject sceneParent;
     private List<GameObject> foundObjects = new List<GameObject>();
     private List<GameObject> trackObjects = new List<GameObject>();
@@ -24,6 +26,7 @@ public class VertexLightMapper : MonoBehaviour {
     void Start()
     {
         CheckForExistingMap();
+        trackData.setTileColors = true;
     }
 
     void Update()
@@ -40,6 +43,7 @@ public class VertexLightMapper : MonoBehaviour {
         FindObjects();
         LightmapPass();
         RemoveMeshColliders();
+        trackData.setTileColors = true;
     }
 
     private void CheckForExistingMap()

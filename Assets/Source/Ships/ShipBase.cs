@@ -43,9 +43,18 @@ public class ShipRefs : MonoBehaviour
     public bool shipRestrained;
     public bool isRespawning;
     public bool facingFoward;
+    public bool recharging;
     #endregion
 
     #region METHODS
+    private void FixedUpdate()
+    {
+        if (recharging)
+            shield += Time.deltaTime * 20;
+
+        if (shield > settings.DAMAGE_SHIELD)
+            shield = settings.DAMAGE_SHIELD;
+    }
     public void PlayOneShot(AudioClip clip)
     {
         if (isAI)

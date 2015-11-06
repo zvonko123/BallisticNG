@@ -87,6 +87,7 @@ public class ShipSettings : MonoBehaviour {
     public AudioClip SFX_SCRAPE;
     public AudioClip SFX_WALLHIT;
     public AudioClip SFX_STARTBOOST;
+    public AudioClip SFX_RECHARGE;
 
     [Header("[ REFERENCES ]")]
     public GameObject REF_MESH;
