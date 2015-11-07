@@ -90,6 +90,8 @@ public class ShipSettings : MonoBehaviour {
     public AudioClip SFX_RECHARGE;
 
     [Header("[ REFERENCES ]")]
+    public Color REF_ENGINECOL_BRIGHT;
+    public Color REF_ENGINECOL;
     public GameObject REF_MESH;
     public GameObject REF_RECHARGEFX;
     public TrailRenderer REF_VAPE_LEFT;

@@ -460,7 +460,6 @@ public class ShipSim : ShipBase {
                 r.body.velocity = wv;
 
             // Slow ship down slightly
-            enginePower *= 0.8f;
             engineThrust *= 0.8f;
 
             // Push away from other ship

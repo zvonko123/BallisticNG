@@ -14,6 +14,7 @@ public class ShipCamera : ShipBase {
     private float tcDirectionLag;
     private Vector3 tcActualOffset;
     private float tcPitchOffset;
+    private float tcPitchHeight;
     private float tcInputOffset;
 
     private Vector3 tcTrackOffset;
@@ -152,6 +153,8 @@ public class ShipCamera : ShipBase {
         // increase/decrease distance to ship on slopes
         float upDir = Vector3.Dot(Vector3.up, r.transform.forward);
         tcPitchOffset = Mathf.Lerp(tcPitchOffset, upDir * 0.2f, Time.deltaTime * tcSpeed);
+        tcPitchHeight = Mathf.Lerp(tcPitchHeight, upDir * 0.2f, Time.deltaTime * (tcSpeed * 0.3f));
+
 
         // fall Offsets
         if (r.sim.isShipGrounded)
@@ -178,7 +181,7 @@ public class ShipCamera : ShipBase {
         }
 
         // apply camera offset
-        transform.localPosition = new Vector3(r.settings.CAMERA_OFFSET_TRACK.x + tcX, r.settings.CAMERA_OFFSET_TRACK.y + tcY + tcFallLagY, r.settings.CAMERA_OFFSET_TRACK.z + tcZ + tcPitchOffset + tcFallLagZ);
+        transform.localPosition = new Vector3(r.settings.CAMERA_OFFSET_TRACK.x + tcX, r.settings.CAMERA_OFFSET_TRACK.y + tcY + tcFallLagY + tcPitchHeight, r.settings.CAMERA_OFFSET_TRACK.z + tcZ + tcPitchOffset + tcFallLagZ);
 
         // update Rotation
         transform.rotation = r.transform.rotation;

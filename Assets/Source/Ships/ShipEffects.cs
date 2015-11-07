@@ -20,15 +20,36 @@ public class ShipEffects : ShipBase {
     private float enginePitch = 0.5f;
     private float turbulanceVolume = 0.0f;
 
+    // vape trails
+    private float vapeTrailOpacity;
+
+    // engine effects
+    private Material engineFlare;
+    private Material engineTrail;
+
+    private Color engineColor;
+    private float engineColorTimer;
+    private float engineColorTimer2;
+    private Vector3 engineFlareSize;
+
     void Start()
     {
         CreateAudioEffects();
+        SetupEngineEffects();
     }
 
     void FixedUpdate()
     {
         UpdateShipLighting();
         UpdateSounds();
+        UpdateEngine();
+    }
+
+    private void SetupEngineEffects()
+    {
+        engineFlare = r.settings.REF_ENGINE_FLARE.GetComponent<Renderer>().material;
+        engineTrail = r.settings.REF_ENGINE_TRAIL_PLAYER.GetComponent<Renderer>().material;
+        engineFlareSize = r.settings.REF_ENGINE_FLARE.transform.localScale;
     }
 
     private void UpdateShipLighting()
@@ -48,13 +69,7 @@ public class ShipEffects : ShipBase {
             // get tile
             TrTile tile = TrackDataHelper.TileFromTriangleIndex(tri, E_TRACKMESH.FLOOR, RaceSettings.trackData.TRACK_DATA);
 
-            if (tile.TILE_TYPE == E_TILETYPE.BOOST)
-                shipColor = Color.blue;
-            else if (tile.TILE_TYPE == E_TILETYPE.WEAPON)
-                shipColor = Color.red;
-            else
-                shipColor = Color.Lerp(shipColor, m.colors32[m.triangles[hit.triangleIndex * 3]], Time.deltaTime * 15);
-
+            shipColor = m.colors32[m.triangles[hit.triangleIndex * 3]];
             if (tile.TILE_TYPE == E_TILETYPE.RECHARGE)
                 r.recharging = true;
         }
@@ -70,8 +85,8 @@ public class ShipEffects : ShipBase {
     private void UpdateSounds()
     {
         // engine sfx
-        float wantedPitch = ((r.transform.InverseTransformDirection(r.body.velocity).z * 12) * Time.deltaTime);
-        wantedPitch = Mathf.Clamp(wantedPitch, 0.5f, 0.95f);
+        float wantedPitch = ((r.transform.InverseTransformDirection(r.body.velocity).z * 7) * Time.deltaTime);
+        wantedPitch = Mathf.Clamp(wantedPitch, 0.5f, 2.0f);
         enginePitch = Mathf.Lerp(enginePitch, wantedPitch, Time.deltaTime * 1.5f);
         engineSFX.pitch = enginePitch;
         engineSFX.volume = AudioSettings.VOLUME_MAIN;
@@ -103,6 +118,56 @@ public class ShipEffects : ShipBase {
             if (scrapeSFX.volume < 0.1f & scrapeSFX.isPlaying)
                 scrapeSFX.Stop();
         }
+    }
+
+    private void UpdateEngine()
+    {
+        // vape trails
+        float maxSpeed = 0.0f;
+        switch(RaceSettings.speedclass)
+        {
+            case E_SPEEDCLASS.SPARK:
+                maxSpeed = r.settings.ENGINE_MAXSPEED_SPARK;
+                break;
+            case E_SPEEDCLASS.TOXIC:
+                maxSpeed = r.settings.ENGINE_MAXSPEED_TOXIC;
+                break;
+            case E_SPEEDCLASS.APEX:
+                maxSpeed = r.settings.ENGINE_MAXSPEED_APEX;
+                break;
+            case E_SPEEDCLASS.HALBERD:
+                maxSpeed = r.settings.ENGINE_MAXSPEED_HALBERD;
+                break;
+            case E_SPEEDCLASS.SPECTRE:
+                maxSpeed = r.settings.ENGINE_MAXSPEED_SPECTRE;
+                break;
+        }
+
+        float engineNorm = ((r.sim.engineThrust * 0.3f) / maxSpeed) * 0.3f;
+        vapeTrailOpacity = engineNorm;
+        r.settings.REF_VAPE_LEFT.material.SetColor("_TintColor", new Color(1.0f, 1.0f, 1.0f, vapeTrailOpacity));
+        r.settings.REF_VAPE_RIGHT.material.SetColor("_TintColor", new Color(1.0f, 1.0f, 1.0f, vapeTrailOpacity));
+
+        // engine flare and trail
+        engineNorm = (Mathf.Clamp01((r.sim.enginePower * 5)) / 1.0f);
+        Vector3 size = Mathf.Clamp(engineNorm, 0.7f, 1.0f) * engineFlareSize;
+        r.settings.REF_ENGINE_FLARE.transform.localScale = size;
+
+        engineColorTimer2 += Time.deltaTime;
+        float colSinSin = Mathf.Abs(Mathf.Sin(engineColorTimer2));
+        colSinSin = Mathf.Clamp(colSinSin, 0.3f, 1.0f);
+
+        engineColorTimer += Time.deltaTime * 20;
+        float colSin = Mathf.Sin(engineColorTimer);
+
+        engineColor = Color.Lerp(r.settings.REF_ENGINECOL, r.settings.REF_ENGINECOL_BRIGHT, Mathf.Abs(colSin) * colSinSin);
+        engineColor.a = engineNorm * 0.4f;
+        engineFlare.SetColor("_TintColor", engineColor);
+
+        engineNorm = (Mathf.Clamp01((r.sim.enginePower * 2)) / 1.0f);
+        engineColor.a = engineNorm * r.settings.REF_ENGINECOL.a;
+        engineTrail.SetColor("_TintColor", engineColor);
+
     }
 
     private void CreateAudioEffects()

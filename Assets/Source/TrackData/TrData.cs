@@ -49,6 +49,10 @@ namespace BnG.TrackData
         public List<Vector3> CACHE_SECTIONPOSITIONS = new List<Vector3>();
         public List<int> CACHE_SECTIONNEXT= new List<int>();
 
+        public List<int> ANIM_RECHARGE = new List<int>();
+        private Color32 rechargeColor;
+        private float rechargeTimer;
+
         // original vert lenghts
         private bool hasCachedVerts;
         private Mesh originalFloorMesh;
@@ -118,6 +122,7 @@ namespace BnG.TrackData
             UpdateTrackData();
             ResetTRTypes();
             UpdateTileColors();
+            TrackAnimations();
             reloadTrackData = false;
 
             if (EDIT_SECITIONPOSITIONS)
@@ -275,9 +280,9 @@ namespace BnG.TrackData
                 if (tile.TILE_TYPE == E_TILETYPE.BOOST)
                 {
                     Debug.Log("Found boost!");
-                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 0]] = Color.blue;
-                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 1]] = Color.blue;
-                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 2]] = Color.blue;
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 0]] = new Color(0.2f, 0.5f, 1.0f);
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 1]] = new Color(0.2f, 0.5f, 1.0f);
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 2]] = new Color(0.2f, 0.5f, 1.0f);
                 }
 
                 if (tile.TILE_TYPE == E_TILETYPE.RECHARGE)
@@ -286,6 +291,10 @@ namespace BnG.TrackData
                     cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 0]] = new Color(0.0f, 0.4f, 1.0f);
                     cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 1]] = new Color(0.0f, 0.4f, 1.0f);
                     cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 2]] = new Color(0.0f, 0.4f, 1.0f);
+
+                    ANIM_RECHARGE.Add(MESH_TRACKFLOOR.sharedMesh.triangles[i + 0]);
+                    ANIM_RECHARGE.Add(MESH_TRACKFLOOR.sharedMesh.triangles[i + 1]);
+                    ANIM_RECHARGE.Add(MESH_TRACKFLOOR.sharedMesh.triangles[i + 2]);
                 }
             }
             MESH_TRACKFLOOR.sharedMesh.colors32 = cols;
@@ -321,6 +330,22 @@ namespace BnG.TrackData
                 TRACK_DATA.SECTIONS[SECTION_CURRENT].SECTION_POSITION += back * Section_MOVEAMOUNT;
                 SECTION_MOVEBACK = false;
             }
+        }
+
+        private void TrackAnimations()
+        {
+            // recharge color
+            rechargeTimer += Time.deltaTime * 2;
+            float rechargeSin = Mathf.Abs(Mathf.Sin(rechargeTimer));
+
+            rechargeColor = Color.Lerp(new Color(0.0f, 0.2f, 0.6f), new Color(0.0f, 0.5f, 1.0f), rechargeSin);
+
+            Color32[] cols = MESH_TRACKFLOOR.sharedMesh.colors32;
+            for (int i = 0; i < ANIM_RECHARGE.Count; i++)
+            {
+                cols[ANIM_RECHARGE[i]] = rechargeColor; 
+            }
+            MESH_TRACKFLOOR.sharedMesh.colors32 = cols;
         }
 
 #endregion
