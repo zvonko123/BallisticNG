@@ -241,8 +241,6 @@ namespace BnG.TrackTools
                         // apply change
                         tile.TILE_SECTION.SECTION_TYPE = currentSectionType;
 
-                        // cache change
-                        thisTarget.DATA_FE.CACHE_SECTIONS[tile.TILE_SECTION.SECTION_INDEX] = currentSectionType;
                     }
                 }
             }

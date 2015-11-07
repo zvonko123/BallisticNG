@@ -91,6 +91,7 @@ public class ShipSettings : MonoBehaviour {
 
     [Header("[ REFERENCES ]")]
     public GameObject REF_MESH;
+    public GameObject REF_RECHARGEFX;
     public TrailRenderer REF_VAPE_LEFT;
     public TrailRenderer REF_VAPE_RIGHT;
     public GameObject REF_ENGINE_FLARE;

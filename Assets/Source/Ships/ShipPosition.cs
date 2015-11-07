@@ -36,6 +36,7 @@ public class ShipPosition : ShipBase {
     private void UpdateInitialSection()
     {
         // try to find track section using a raycast
+        /*
         RaycastHit hit;
         if (Physics.Raycast(transform.position, -transform.up, out hit, 1000.0f, 1 << LayerMask.NameToLayer("TrackFloor")))
         {
@@ -68,6 +69,18 @@ public class ShipPosition : ShipBase {
         } else
         {
             iSectionFound = false;
+        }
+        */
+        float distance = Mathf.Infinity;
+        for (int i = 0; i < RaceSettings.trackData.TRACK_DATA.SECTIONS.Count; i++)
+        {
+            float newDistance = Vector3.Distance(transform.position, RaceSettings.trackData.TRACK_DATA.SECTIONS[i].SECTION_POSITION);
+            if (newDistance < distance)
+            {
+                distance = newDistance;
+                iSectionFound = true;
+                r.currentSection = RaceSettings.trackData.TRACK_DATA.SECTIONS[i];
+            }
         }
 
     }

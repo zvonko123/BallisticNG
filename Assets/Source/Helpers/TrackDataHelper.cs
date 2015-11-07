@@ -49,6 +49,21 @@ namespace BnG.Helpers
         }
 
         /// <summary>
+        /// Get a section by its index.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        public static TrSection SectionFromIndex(int index, TrGenData data)
+        {
+            for (int i = 0; i < data.SECTIONS.Count; i++)
+            {
+                if (data.SECTIONS[i].SECTION_INDEX == index)
+                    return data.SECTIONS[i];
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Get a tile from a vertex.
         /// </summary>
         /// <param name="index"></param>

@@ -31,6 +31,7 @@ public class ShipSim : ShipBase {
     public float tiltGain;
     public float tiltFalloff;
     public bool tiltGainReset;
+    private float tiltBounce;
 
     // gravity
     private float gravityForce;
@@ -47,6 +48,8 @@ public class ShipSim : ShipBase {
 
     // collision
     public bool isShipScraping;
+    private float collisionBounce;
+    private float wantedCollisionBounce;
 
     void FixedUpdate()
     {
@@ -221,7 +224,13 @@ public class ShipSim : ShipBase {
         transform.Rotate(Vector3.up * (turnAmount + airbrakeAmount));
 
         // apply tilt
-        r.axis.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, tiltAmount);
+        r.axis.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, tiltAmount + tiltBounce);
+
+        // wall bounce
+        wantedCollisionBounce = Mathf.Lerp(wantedCollisionBounce, 0.0f, Time.deltaTime * 10.0f);
+        collisionBounce = Mathf.Lerp(collisionBounce, wantedCollisionBounce, Time.deltaTime * 50.0f);
+        tiltBounce = Mathf.Lerp(tiltBounce, (-collisionBounce * 80), Time.deltaTime * 5);
+        transform.Rotate(Vector3.up * collisionBounce);
     }
 
     private void ShipGravity()
@@ -309,7 +318,7 @@ public class ShipSim : ShipBase {
         }
 
         // Respawn if under track
-        if (transform.position.y < ground - r.settings.AG_HOVER_HEIGHT * 50)
+        if (transform.position.y < ground - r.settings.AG_HOVER_HEIGHT * 10)
             r.isRespawning = true;
 
         // Rotate Ship
@@ -400,6 +409,7 @@ public class ShipSim : ShipBase {
             // Get Collision impact
             float impact = Vector3.Dot(other.contacts[0].normal, other.relativeVelocity);
             float hitDot = Vector3.Dot(other.contacts[0].normal, transform.forward);
+            Vector3 impactDir = transform.InverseTransformPoint(other.contacts[0].point);
 
             if (Mathf.Abs(impact) > 1 && hitDot < 0.1f)
             {
@@ -409,7 +419,7 @@ public class ShipSim : ShipBase {
                 lv.y = 0;
                 lv.z = 0;
                 Vector3 wv = transform.TransformDirection(lv);
-                r.body.velocity = wv;
+                r.body.velocity = Vector3.zero;
 
                 // Reduce engine power and thrust
                 enginePower *= 0.2f;
@@ -418,7 +428,13 @@ public class ShipSim : ShipBase {
                 // Push ship away from wall
                 Vector3 dir = other.contacts[0].normal;
                 dir.y = 0;
-                r.body.AddForce(dir * Mathf.Abs(impact), ForceMode.Impulse);
+
+                Vector3 pushForce = dir * Mathf.Abs(impact);
+                pushForce = Vector3.ClampMagnitude(pushForce, 3.0f);
+                r.body.AddForce(pushForce, ForceMode.Impulse);
+
+                wantedCollisionBounce = (-impactDir.x * Mathf.Abs(impact));
+
 
                 // Spawn hit particle
                 GameObject particle = Instantiate(Resources.Load("Particles/CollisionHit") as GameObject) as GameObject;

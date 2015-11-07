@@ -54,6 +54,21 @@ public class ShipRefs : MonoBehaviour
 
         if (shield > settings.DAMAGE_SHIELD)
             shield = settings.DAMAGE_SHIELD;
+
+        if (recharging)
+        {
+            if (!settings.REF_RECHARGEFX.activeSelf)
+            {
+                settings.REF_RECHARGEFX.SetActive(true);
+                settings.REF_RECHARGEFX.transform.rotation = Quaternion.Euler(90.0f, transform.eulerAngles.y, 0.0f);
+            }
+        } else
+        {
+            if (settings.REF_RECHARGEFX.activeSelf)
+            {
+                settings.REF_RECHARGEFX.SetActive(false);
+            }
+        }
     }
     public void PlayOneShot(AudioClip clip)
     {

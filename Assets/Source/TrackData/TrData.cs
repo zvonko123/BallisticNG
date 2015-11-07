@@ -30,6 +30,7 @@ namespace BnG.TrackData
         public bool PAINT_FLAGS;
         public bool EDIT_SECITIONPOSITIONS;
         public int SECTION_CURRENT;
+        public int SECTION_NEXT;
         public float Section_MOVEAMOUNT;
         public bool SECTION_MOVELEFT;
         public bool SECTION_MOVERIGHT;
@@ -46,6 +47,7 @@ namespace BnG.TrackData
         public E_TILETYPE[] CACHE_TILES;
         public E_SECTIONTYPE[] CACHE_SECTIONS;
         public List<Vector3> CACHE_SECTIONPOSITIONS = new List<Vector3>();
+        public List<int> CACHE_SECTIONNEXT= new List<int>();
 
         // original vert lenghts
         private bool hasCachedVerts;
@@ -82,10 +84,14 @@ namespace BnG.TrackData
 
                 // draw sphere and line
                 gizmoColor = Color.white;
-                if ((TR_FLAGPAINTER != null && TRACK_DATA.SECTIONS[i] == highlightedSection && PAINT_MODE == E_PAINTMODE.SECTION) 
-                    || (EDIT_SECITIONPOSITIONS && i == SECTION_CURRENT)) 
+                if (i == SECTION_CURRENT)
                 {
                     gizmoColor = Color.red;
+                }
+
+                if (i == SECTION_NEXT)
+                {
+                    gizmoColor = Color.green;
                 }
                 Gizmos.color = gizmoColor;
                 Gizmos.DrawWireSphere(pos, 0.2f);
@@ -95,7 +101,7 @@ namespace BnG.TrackData
                 // draw line between sections
                 if (i < TRACK_DATA.SECTIONS.Count - 1)
                 {
-                    pos2 = TRACK_DATA.SECTIONS[i + 1].SECTION_POSITION;
+                    pos2 = TRACK_DATA.SECTIONS[i].SECTION_NEXT.SECTION_POSITION;
                     Gizmos.DrawLine(pos, pos2);
                 }
 
@@ -120,9 +126,11 @@ namespace BnG.TrackData
             if (cacheSectionPosition)
             {
                 CACHE_SECTIONPOSITIONS.Clear();
+                CACHE_SECTIONNEXT.Clear();
                 for (int i = 0; i < TRACK_DATA.SECTIONS.Count; i++)
                 {
                     CACHE_SECTIONPOSITIONS.Add(TRACK_DATA.SECTIONS[i].SECTION_POSITION);
+                    CACHE_SECTIONNEXT.Add(TRACK_DATA.SECTIONS[i].SECTION_NEXT.SECTION_INDEX);
                 }
                 cacheSectionPosition = false;
             }
@@ -206,6 +214,7 @@ namespace BnG.TrackData
                     for (int i = 0; i < CACHE_SECTIONPOSITIONS.Count; i++)
                     {
                         TRACK_DATA.SECTIONS[i].SECTION_POSITION = CACHE_SECTIONPOSITIONS[i];
+                        TRACK_DATA.SECTIONS[i].SECTION_NEXT = TrackDataHelper.SectionFromIndex(CACHE_SECTIONNEXT[i], TRACK_DATA);
                     }
                 }
 

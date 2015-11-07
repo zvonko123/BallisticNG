@@ -71,8 +71,8 @@ public class ShipEffects : ShipBase {
     {
         // engine sfx
         float wantedPitch = ((r.transform.InverseTransformDirection(r.body.velocity).z * 12) * Time.deltaTime);
-        wantedPitch = Mathf.Clamp(wantedPitch, 0.5f, 1.3f);
-        enginePitch = Mathf.Lerp(enginePitch, wantedPitch, Time.deltaTime * 5);
+        wantedPitch = Mathf.Clamp(wantedPitch, 0.5f, 0.95f);
+        enginePitch = Mathf.Lerp(enginePitch, wantedPitch, Time.deltaTime * 1.5f);
         engineSFX.pitch = enginePitch;
         engineSFX.volume = AudioSettings.VOLUME_MAIN;
 
