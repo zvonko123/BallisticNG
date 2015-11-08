@@ -135,13 +135,13 @@ public class VertexLightMapper : MonoBehaviour {
                     // check that there isn't anything obscuring the vertex from the light direction
                     vPos = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j]]);
                     int ignoreTrack = ~(1 << LayerMask.NameToLayer("TrackFloor") | 1 << LayerMask.NameToLayer("TrackWall"));
-                    if (!Physics.Raycast(vPos, -directionalLight.transform.forward, Mathf.Infinity, ignoreTrack) 
+                    if (!Physics.Raycast(vPos, -directionalLight.transform.forward, Mathf.Infinity) 
                         || directionalLight.GetComponent<Light>().shadows == LightShadows.None)
                     {
                         float dot = Vector3.Dot(m.normals[m.triangles[j]], directionalLight.transform.up);
                         dotColor = new Color(dot, dot, dot, 1.0f);
 
-                        newColor += dotColor * directionalLight.GetComponent<Light>().color;
+                        newColor += dotColor * directionalLight.GetComponent<Light>().color * directionalLight.GetComponent<Light>().intensity;
                     }
 
                 }
@@ -156,7 +156,7 @@ public class VertexLightMapper : MonoBehaviour {
 
                         // linecast to light (shadows)
                         int ignoreTrack = ~(1 << LayerMask.NameToLayer("TrackFloor") | 1 << LayerMask.NameToLayer("TrackWall"));
-                        if (!Physics.Linecast(vPos, toLight, ignoreTrack) || lights[k].shadows == LightShadows.None)
+                        if (!Physics.Linecast(vPos, toLight) || lights[k].shadows == LightShadows.None)
                         {
                             float dist = Vector3.Distance(toLight, vPos) / lights[k].range;
                             dist *= dist;

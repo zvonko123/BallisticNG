@@ -273,13 +273,14 @@ namespace BnG.TrackData
             else
                 setTileColors = false;
 
+            ANIM_RECHARGE.Clear();
+
             Color32[] cols = MESH_TRACKFLOOR.sharedMesh.colors32;
             for (int i = 0; i < MESH_TRACKFLOOR.sharedMesh.triangles.Length; i += 3)
             {
                 TrTile tile = TrackDataHelper.TileFromTriangleIndex(i / 3, E_TRACKMESH.FLOOR, TRACK_DATA);
                 if (tile.TILE_TYPE == E_TILETYPE.BOOST)
                 {
-                    Debug.Log("Found boost!");
                     cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 0]] = new Color(0.2f, 0.5f, 1.0f);
                     cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 1]] = new Color(0.2f, 0.5f, 1.0f);
                     cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 2]] = new Color(0.2f, 0.5f, 1.0f);
@@ -287,7 +288,6 @@ namespace BnG.TrackData
 
                 if (tile.TILE_TYPE == E_TILETYPE.RECHARGE)
                 {
-                    Debug.Log("Found Recharge!");
                     cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 0]] = new Color(0.0f, 0.4f, 1.0f);
                     cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 1]] = new Color(0.0f, 0.4f, 1.0f);
                     cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 2]] = new Color(0.0f, 0.4f, 1.0f);
