@@ -321,6 +321,16 @@ public class ShipSim : ShipBase {
         if (transform.position.y < ground - r.settings.AG_HOVER_HEIGHT * 10)
             r.isRespawning = true;
 
+        if (transform.position.y > ground + (r.settings.AG_HOVER_HEIGHT * 8))
+        {
+            r.jumpHeight = true;
+        }
+        else
+        {
+            if (isShipGrounded)
+                r.jumpHeight = false;
+        }
+
         // Rotate Ship
         Quaternion wantedRotation = Quaternion.LookRotation(Vector3.Cross(transform.right, trackNormal), trackNormal);
 

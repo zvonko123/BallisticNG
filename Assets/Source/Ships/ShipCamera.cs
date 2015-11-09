@@ -153,11 +153,11 @@ public class ShipCamera : ShipBase {
         // increase/decrease distance to ship on slopes
         float upDir = Vector3.Dot(Vector3.up, r.transform.forward);
         tcPitchOffset = Mathf.Lerp(tcPitchOffset, upDir * 0.2f, Time.deltaTime * tcSpeed);
-        tcPitchHeight = Mathf.Lerp(tcPitchHeight, upDir * 0.2f, Time.deltaTime * (tcSpeed * 0.3f));
+        tcPitchHeight = Mathf.Lerp(tcPitchHeight, upDir * 0.15f, Time.deltaTime * (tcSpeed * 0.3f));
 
 
         // fall Offsets
-        if (r.sim.isShipGrounded)
+        if (r.sim.isShipGrounded || !r.jumpHeight)
         {
             tcFallTimer = 0;
             tcFallTimerGain = 0;
@@ -167,7 +167,7 @@ public class ShipCamera : ShipBase {
             tcFallTimer += Time.deltaTime;
         }
 
-        if (tcFallTimer > 0.2f)
+        if (tcFallTimer > 0.0f)
         {
             tcFallTimerGain = Mathf.Lerp(tcFallTimerGain, 0.8f, Time.deltaTime);
             tcFallLagY = Mathf.Lerp(tcFallLagY, 0.4f, Time.deltaTime * tcFallTimerGain);
@@ -180,8 +180,16 @@ public class ShipCamera : ShipBase {
             tcFallLagZ = Mathf.Lerp(tcFallLagZ, 0.0f, Time.deltaTime * 4);
         }
 
+        if (r.transform.InverseTransformDirection(r.body.velocity).y > 0)
+        {
+            tcFallOffset = Mathf.Lerp(tcFallOffset, r.transform.InverseTransformDirection(r.body.velocity).y * 0.008f, Time.deltaTime * (tcSpeed * 0.7f));
+        } else
+        {
+            tcFallOffset = Mathf.Lerp(tcFallOffset, 0.0f, Time.deltaTime * (tcSpeed * 0.3f));
+        }
+
         // apply camera offset
-        transform.localPosition = new Vector3(r.settings.CAMERA_OFFSET_TRACK.x + tcX, r.settings.CAMERA_OFFSET_TRACK.y + tcY + tcFallLagY + tcPitchHeight, r.settings.CAMERA_OFFSET_TRACK.z + tcZ + tcPitchOffset + tcFallLagZ);
+        transform.localPosition = new Vector3(r.settings.CAMERA_OFFSET_TRACK.x + tcX, r.settings.CAMERA_OFFSET_TRACK.y + tcY + tcFallLagY + tcPitchHeight + tcFallOffset, r.settings.CAMERA_OFFSET_TRACK.z + tcZ + tcPitchOffset + tcFallLagZ);
 
         // update Rotation
         transform.rotation = r.transform.rotation;

@@ -44,6 +44,7 @@ public class ShipRefs : MonoBehaviour
     public bool isRespawning;
     public bool facingFoward;
     public bool recharging;
+    public bool jumpHeight;
     #endregion
 
     #region METHODS
