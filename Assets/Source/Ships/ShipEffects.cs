@@ -15,6 +15,7 @@ public class ShipEffects : ShipBase {
     private AudioSource droidSFX;
     private AudioSource scrapeSFX;
     private AudioSource rechargeSFX;
+    private AudioSource spraySFX;
 
     // audio modifiers
     private float enginePitch = 0.5f;
@@ -22,6 +23,8 @@ public class ShipEffects : ShipBase {
 
     // vape trails
     private float vapeTrailOpacity;
+    private bool overWetSurface;
+    private Vector3 sprayPosition;
 
     // engine effects
     private Material engineFlare;
@@ -60,6 +63,7 @@ public class ShipEffects : ShipBase {
         to.y -= 5;
 
         r.recharging = false;
+        overWetSurface = false;
         if (Physics.Linecast(transform.position, to, out hit, 1 << LayerMask.NameToLayer("TrackFloor")))
         {
             int tri = hit.triangleIndex;
@@ -72,6 +76,14 @@ public class ShipEffects : ShipBase {
             shipColor = m.colors32[m.triangles[hit.triangleIndex * 3]];
             if (tile.TILE_TYPE == E_TILETYPE.RECHARGE)
                 r.recharging = true;
+
+            if (tile.TILE_ISWET && r.sim.isShipGrounded)
+            {
+                overWetSurface = true;
+                sprayPosition = hit.point;
+                sprayPosition.x = transform.position.x;
+                sprayPosition.z = transform.position.z;
+            }
         }
         r.mesh.GetComponent<Renderer>().material.SetColor("_Color", shipColor);
 
@@ -117,6 +129,19 @@ public class ShipEffects : ShipBase {
             scrapeSFX.volume = Mathf.Lerp(scrapeSFX.volume, 0.0f, Time.deltaTime * 3);
             if (scrapeSFX.volume < 0.1f & scrapeSFX.isPlaying)
                 scrapeSFX.Stop();
+        }
+
+        // spray sfx
+        if (overWetSurface)
+        {
+            spraySFX.volume = Mathf.Lerp(spraySFX.volume, 1.0f, Time.deltaTime * 3);
+            r.settings.REF_SPRAYFX.enableEmission = true;
+            r.settings.REF_SPRAYFX.transform.position = sprayPosition;
+        }
+        else
+        {
+            spraySFX.volume = Mathf.Lerp(spraySFX.volume, 0.0f, Time.deltaTime * 3);
+            r.settings.REF_SPRAYFX.enableEmission = false;
         }
     }
 
@@ -183,6 +208,8 @@ public class ShipEffects : ShipBase {
         scrapeSFX.volume = 0.0f;
         rechargeSFX = AttachNewSound(r.settings.SFX_RECHARGE, r.isAI, aiMinDistance, aiMaxDistance, true, true);
         rechargeSFX.volume = 0.0f;
+        spraySFX = AttachNewSound(r.settings.SFX_SPRAY, r.isAI, aiMinDistance, aiMaxDistance, true, true);
+        spraySFX.volume = 0.0f;
         
     }
 

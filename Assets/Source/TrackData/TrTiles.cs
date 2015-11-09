@@ -28,6 +28,9 @@ namespace BnG.TrackData
 
         // the section this tile belongs to
         public TrSection TILE_SECTION;
+
+        // if the tile is wet or not
+        public bool TILE_ISWET;
     }
 
     /// <summary>

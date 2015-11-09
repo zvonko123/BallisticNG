@@ -45,6 +45,7 @@ namespace BnG.TrackData
 
         // cached data
         public E_TILETYPE[] CACHE_TILES;
+        public bool[] CACHE_TILESWET;
         public E_SECTIONTYPE[] CACHE_SECTIONS;
         public List<Vector3> CACHE_SECTIONPOSITIONS = new List<Vector3>();
         public List<int> CACHE_SECTIONNEXT= new List<int>();
@@ -199,6 +200,14 @@ namespace BnG.TrackData
                     }
                 }
 
+                if (CACHE_TILESWET.Length > 0)
+                {
+                    for (int i = 0; i < CACHE_TILESWET.Length; i++)
+                    {
+                        TRACK_DATA.TILES_FLOOR[i].TILE_ISWET = CACHE_TILESWET[i];
+                    }
+                }
+
                 if (CACHE_SECTIONS.Length > 0)
                 {
                     for (int i = 0; i < CACHE_SECTIONS.Length; i++)
@@ -212,6 +221,9 @@ namespace BnG.TrackData
                     CACHE_TILES = new E_TILETYPE[TRACK_DATA.TILES_FLOOR.Count];
                 if (CACHE_SECTIONS.Length != TRACK_DATA.SECTIONS.Count)
                     CACHE_SECTIONS = new E_SECTIONTYPE[TRACK_DATA.SECTIONS.Count];
+
+                if (CACHE_TILESWET.Length != TRACK_DATA.TILES_FLOOR.Count)
+                    CACHE_TILESWET = new bool[TRACK_DATA.TILES_FLOOR.Count];
 
                 // load cached section positions
                 if (CACHE_SECTIONPOSITIONS.Count > 0)
@@ -259,6 +271,9 @@ namespace BnG.TrackData
 
             for (int i = 0; i < TRACK_DATA.TILES_FLOOR.Count; i++)
                 TRACK_DATA.TILES_FLOOR[i].TILE_TYPE = E_TILETYPE.FLOOR;
+
+            for (int i = 0; i < TRACK_DATA.TILES_FLOOR.Count; i++)
+                TRACK_DATA.TILES_FLOOR[i].TILE_ISWET = false;
 
             for (int i = 0; i < TRACK_DATA.SECTIONS.Count; i++)
                 TRACK_DATA.SECTIONS[i].SECTION_TYPE = E_SECTIONTYPE.NORMAL;
