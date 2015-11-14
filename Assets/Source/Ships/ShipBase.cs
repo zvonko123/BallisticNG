@@ -56,6 +56,9 @@ public class ShipRefs : MonoBehaviour
         if (shield > settings.DAMAGE_SHIELD)
             shield = settings.DAMAGE_SHIELD;
 
+        if (shield < 0)
+            shield = 0;
+
         if (recharging)
         {
             if (!settings.REF_RECHARGEFX.activeSelf)

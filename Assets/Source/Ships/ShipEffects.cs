@@ -193,6 +193,8 @@ public class ShipEffects : ShipBase {
         engineColor.a = engineNorm * r.settings.REF_ENGINECOL.a;
         engineTrail.SetColor("_TintColor", engineColor);
 
+        r.settings.REF_ENGINE_FLARE.transform.rotation = Quaternion.Euler(transform.eulerAngles.x - 90.0f, transform.eulerAngles.y, 0.0f);
+
     }
 
     private void CreateAudioEffects()

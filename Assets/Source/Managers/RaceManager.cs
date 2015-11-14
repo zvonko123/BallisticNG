@@ -16,6 +16,8 @@ public class RaceManager : MonoBehaviour {
     public E_SPEEDCLASS speedClass;
     public E_SHIPS playerShip;
 
+    public HUDManager RaceUI;
+
     #endregion
 
     void Start ()
@@ -43,6 +45,12 @@ public class RaceManager : MonoBehaviour {
 
         // spawn the ships
         SpawnShips();
+
+        // create new HUD
+        GameObject newUI = Instantiate(Resources.Load("RaceUI") as GameObject) as GameObject;
+        RaceUI = newUI.GetComponent<HUDManager>();
+        RaceUI.r = RaceSettings.SHIPS[0];
+        RaceUI.accentColor = RaceSettings.SHIPS[0].settings.REF_HUDCOL;
 	}
 
     private void SpawnShips()

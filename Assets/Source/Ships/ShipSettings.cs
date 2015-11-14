@@ -50,6 +50,8 @@ public class ShipSettings : MonoBehaviour {
     public float GRAVITY_WEIGHT;
     [Range(0, 1)]
     public float GRAVITY_RESISTANCE;
+    public float RESISTANCE_GAIN;
+    public float RESISTANCE_FALLOFF;
 
     [Header("[ ANTI-GRAVITY ]")]
     public float AG_HOVER_HEIGHT;
@@ -93,6 +95,7 @@ public class ShipSettings : MonoBehaviour {
     [Header("[ REFERENCES ]")]
     public Color REF_ENGINECOL_BRIGHT;
     public Color REF_ENGINECOL;
+    public Color REF_HUDCOL;
     public GameObject REF_MESH;
     public GameObject REF_RECHARGEFX;
     public ParticleSystem REF_SPRAYFX;

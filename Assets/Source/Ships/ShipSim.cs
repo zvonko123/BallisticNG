@@ -7,6 +7,7 @@ public class ShipSim : ShipBase {
     // engine
     public float enginePower;
     public float engineThrust;
+    public float engineAccel;
 
     // turning
     public float turnAmount;
@@ -140,10 +141,11 @@ public class ShipSim : ShipBase {
             else
                 enginePower = Mathf.MoveTowards(enginePower, 0.0f, Time.deltaTime * powerFalloff);
         }
+        engineAccel = Mathf.MoveTowards(engineAccel, enginePower, Time.deltaTime * acceleration);
 
         // interpolate thrust to maxspeed and use enginepower as a multiplier
         if (!RaceSettings.shipsRestrained && !r.shipRestrained)
-            engineThrust = Mathf.Lerp(engineThrust, maxSpeed * enginePower, Time.deltaTime * acceleration);
+            engineThrust = Mathf.Lerp(engineThrust, maxSpeed * engineAccel, Time.deltaTime * acceleration);
 
         // apply Force
         r.body.AddRelativeForce(Vector3.forward * engineThrust);
@@ -370,9 +372,16 @@ public class ShipSim : ShipBase {
         }
 
         if (isShipGrounded)
-            airResistance = Mathf.Lerp(airResistance, 0.0f, Time.deltaTime * 4.5f);
+        {
+            airResistance = Mathf.Lerp(airResistance, 0.0f, Time.deltaTime * r.settings.RESISTANCE_FALLOFF);
+        }
         else
-            airResistance = Mathf.Lerp(airResistance, r.settings.GRAVITY_RESISTANCE, Time.deltaTime * 0.01f);
+        {
+            if (r.jumpHeight)
+                airResistance = Mathf.Lerp(airResistance, r.settings.GRAVITY_RESISTANCE * 0.1f, Time.deltaTime * r.settings.RESISTANCE_GAIN);
+            else
+                airResistance = Mathf.Lerp(airResistance, r.settings.GRAVITY_RESISTANCE, Time.deltaTime * r.settings.RESISTANCE_GAIN);
+        }
 
         // brakes drag
         if (isShipBraking)
@@ -432,7 +441,7 @@ public class ShipSim : ShipBase {
                 r.body.velocity = Vector3.zero;
 
                 // Reduce engine power and thrust
-                enginePower *= 0.2f;
+                engineAccel *= 0.1f;
                 engineThrust *= 0.2f;
 
                 // Push ship away from wall
@@ -452,7 +461,7 @@ public class ShipSim : ShipBase {
                 particle.transform.forward = -transform.forward;
 
                 // Ship take damage
-                r.shield -= Mathf.Abs(impact * 2);
+                r.shield -= Mathf.Abs(impact * 1.5f);
 
             }
         }

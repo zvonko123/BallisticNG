@@ -9,7 +9,7 @@ public class RaceSettings
     // race references
     public static TrData trackData;
     public static Camera currentCamera;
-    public static List<ShipBase> SHIPS = new List<ShipBase>();
+    public static List<ShipRefs> SHIPS = new List<ShipRefs>();
 
     // race settings
     public static int racers = 1;
