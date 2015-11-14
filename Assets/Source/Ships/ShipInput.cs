@@ -10,6 +10,7 @@ public class ShipInput : ShipBase {
     public float AXIS_RIGHTAIRBRAKE;
     public float AXIS_BOTHAIRBRAKES;
     public bool ACTION_THRUST;
+    public bool ACTION_SPECIAL;
 
     void Update()
     {
@@ -25,6 +26,7 @@ public class ShipInput : ShipBase {
                 AXIS_PITCH = Input.GetAxis("Pitch");
                 AXIS_LEFTAIRBRAKE = Input.GetAxis("Left Airbrake");
                 AXIS_RIGHTAIRBRAKE = Input.GetAxis("Right Airbrake");
+                ACTION_SPECIAL = Input.GetButton("Special");
             } else
             {
                 AXIS_STEER = 0.0f;

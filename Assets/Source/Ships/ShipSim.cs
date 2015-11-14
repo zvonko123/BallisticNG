@@ -8,6 +8,7 @@ public class ShipSim : ShipBase {
     public float enginePower;
     public float engineThrust;
     public float engineAccel;
+    public float engineHyper;
 
     // turning
     public float turnAmount;
@@ -143,9 +144,20 @@ public class ShipSim : ShipBase {
         }
         engineAccel = Mathf.MoveTowards(engineAccel, enginePower, Time.deltaTime * acceleration);
 
+        // hyper thrust
+        if (r.input.ACTION_SPECIAL && r.shield > 25)
+        {
+            engineHyper = 1.5f;
+            r.shield -= Time.deltaTime * 20;
+        }
+        else
+        {
+            engineHyper = 1.0f;
+        }
+
         // interpolate thrust to maxspeed and use enginepower as a multiplier
         if (!RaceSettings.shipsRestrained && !r.shipRestrained)
-            engineThrust = Mathf.Lerp(engineThrust, maxSpeed * engineAccel, Time.deltaTime * acceleration);
+            engineThrust = Mathf.Lerp(engineThrust, (maxSpeed * engineAccel) * engineHyper, Time.deltaTime * (acceleration * engineHyper));
 
         // apply Force
         r.body.AddRelativeForce(Vector3.forward * engineThrust);
@@ -523,5 +535,14 @@ public class ShipSim : ShipBase {
     {
         // ship is no longer scraping
         isShipScraping = false;
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "TurbZone")
+        {
+            TrTurbZone tz = other.GetComponent<TrTurbZone>();
+            r.body.AddForce(tz.windDirection * tz.windSpeed);
+        }
     }
 }
