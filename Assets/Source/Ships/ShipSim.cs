@@ -147,7 +147,7 @@ public class ShipSim : ShipBase {
         // hyper thrust
         if (r.input.ACTION_SPECIAL && r.shield > 25)
         {
-            engineHyper = 1.5f;
+            engineHyper = 2f;
             r.shield -= Time.deltaTime * 20;
         }
         else

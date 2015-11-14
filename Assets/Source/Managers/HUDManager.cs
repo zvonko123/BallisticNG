@@ -51,13 +51,13 @@ public class HUDManager : ShipBase {
         txtShield.text = (displayShield * 100).ToString() + "%";
 
         // shield color
-        imgShield.color = new Color(accentColor.b * 0.4f, accentColor.g * 0.4f, accentColor.r * 0.4f, 1.0f);
+        imgShield.color = new Color((1.0f - accentColor.r) * 0.4f, (1.0f - accentColor.g) * 0.4f, (1.0f - accentColor.b) * 0.4f, 1.0f);
 
         // power bar
         tPwr.localScale = new Vector3(r.sim.enginePower, 1.0f, 1.0f);
 
         // powercolor
-        imgSpeed.color = new Color(accentColor.b * 0.6f, accentColor.g * 0.6f, accentColor.r * 0.6f, 1.0f);
+        imgSpeed.color = new Color((1.0f - accentColor.r) * 0.6f, (1.0f - accentColor.g) * 0.6f, accentColor.r * 0.6f, 1.0f);
 
         // speed bar
         float speed = r.transform.InverseTransformDirection(r.body.velocity).z / r.settings.ENGINE_MAXSPEED_SPECTRE;
@@ -68,6 +68,6 @@ public class HUDManager : ShipBase {
         txtSpeed.text = Mathf.RoundToInt((r.transform.InverseTransformDirection(r.body.velocity).z * 20)).ToString();
 
         // speed color
-        imgPwr.color = new Color(accentColor.b * 0.8f, accentColor.g * 0.8f, accentColor.r * 0.8f, 1.0f);
+        imgPwr.color = new Color((1.0f - accentColor.r) * 0.8f, (1.0f - accentColor.g) * 0.8f, (1.0f - accentColor.b) * 0.8f, 1.0f);
     }
 }
