@@ -17,14 +17,17 @@ namespace BnG.Files
 
             string path = Application.dataPath + "/Resources/BakedLighting/" + trackName + ".vcm";
 
+            int i = 0;
+            int j = 0;
+            uint c;
             using (StreamWriter sr = new StreamWriter(path))
             {
-                for (int i = 0; i < toSave.Length; i++)
+                for (i = 0; i < toSave.Length; i++)
                 {
                     sr.WriteLine("ID " + toSave[i].ID);
-                    for (int j = 0; j < toSave[i].colors.Count; j++)
+                    for (j = 0; j < toSave[i].colors.Count; j++)
                     {
-                        uint c = Color2uInt(toSave[i].colors[j]);
+                        c = Color2uInt(toSave[i].colors[j]);
                         sr.WriteLine("C " + c);
                     }
                 }
@@ -51,6 +54,8 @@ namespace BnG.Files
                 char[] split = { ' ' };
                 string[] lineArray;
 
+                uint c;
+                Color final;
                 while (line != null)
                 {
                     line.Trim();
@@ -66,8 +71,8 @@ namespace BnG.Files
                     if (line.StartsWith("C "))
                     {
                         lineArray = line.Split(split, 50);
-                        uint c = System.Convert.ToUInt32(lineArray[1]);
-                        Color final = uInt2Color(c);
+                        c = System.Convert.ToUInt32(lineArray[1]);
+                        final = uInt2Color(c);
                         data[index].colors.Add(final);
                     }
                     line = sr.ReadLine();
@@ -76,17 +81,22 @@ namespace BnG.Files
 
             GameObject[] objects = GameObject.FindObjectsOfType(typeof(GameObject)) as GameObject[];
 
-            for (int i = 0; i < data.Count; i++)
+            int i = 0;
+            int j = 0;
+            int a = 0;
+            Mesh m;
+            Color32[] cols;
+            for (i = 0; i < data.Count; i++)
             {
-                for (int j = 0; j < objects.Length; j++)
+                for (j = 0; j < objects.Length; j++)
                 {
                     if (objects[j].GetComponent<VCMID>())
                     {
                         if (objects[j].GetComponent<VCMID>().ID == data[i].ID)
                         {
-                            Mesh m = objects[j].GetComponent<MeshFilter>().sharedMesh;
-                            Color32[] cols = new Color32[m.vertices.Length];
-                            for (int a = 0; a < m.vertices.Length; a++)
+                            m = objects[j].GetComponent<MeshFilter>().sharedMesh;
+                            cols = new Color32[m.vertices.Length];
+                            for (a = 0; a < m.vertices.Length; a++)
                             {
                                 cols[a] = data[i].colors[a];
                             }

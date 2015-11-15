@@ -76,10 +76,14 @@ public class VertexLightMapper : MonoBehaviour {
                 // add object to array
                 if (go.GetComponent<MeshFilter>())
                 {
-                    foundObjects.Add(go.gameObject);
+                    trackObjects.Add(go.gameObject);
 
                     // attach mesh collider (for raycasting)
-                    go.gameObject.AddComponent<MeshCollider>();
+                    if (!go.gameObject.GetComponent<MeshCollider>())
+                    {
+                        go.gameObject.AddComponent<MeshCollider>();
+                        foundObjects.Add(go.gameObject);
+                    }
 
                     foundMeshes++;
                 }
@@ -103,71 +107,84 @@ public class VertexLightMapper : MonoBehaviour {
         // find all lights
         Light[] lights = FindObjectsOfType(typeof(Light)) as Light[];
 
+        #region TEMP VARS
+
         Color32 newColor;
         Color32 dotColor;
         Color32 attenColor;
         Vector3 vPos;
         Vector3 toLight;
+        float distToL;
         List<VCMData> data = new List<VCMData>();
-        for (int i = 0; i < foundObjects.Count; i++)
+        int i = 0;
+        int j = 0;
+        int k = 0;
+        Mesh m;
+        Color32[] newColors;
+        float dot;
+        int ignoreTrack = ~(1 << LayerMask.NameToLayer("TrackFloor") | 1 << LayerMask.NameToLayer("TrackWall"));
+        #endregion
+
+        // go through each objects
+        for (i = 0; i < trackObjects.Count; i++)
         {
-            Mesh m = foundObjects[i].GetComponent<MeshFilter>().sharedMesh;
+            m = trackObjects[i].GetComponent<MeshFilter>().sharedMesh;
+            newColors = new Color32[m.vertices.Length];
 
-            Color32[] newColors = new Color32[m.vertices.Length];
-
-            for (int j = 0; j < m.vertices.Length; j++)
-            {
-                newColors[j] = ambientLight;
-            }
-            m.colors32 = newColors;
-        }
-
-        for (int i = 0; i < trackObjects.Count; i++)
-        {
-            Mesh m = trackObjects[i].GetComponent<MeshFilter>().sharedMesh;
-
-            Color32[] newColors = new Color32[m.vertices.Length];
-            for (int j = 0; j < m.triangles.Length; j += 3)
+            // go through each triangle
+            for (j = 0; j < m.triangles.Length; j += 3)
             {
                 newColor = ambientLight;
                 if (directionalLight != null)
                 {
                     // check that there isn't anything obscuring the vertex from the light direction
                     vPos = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j]]);
-                    int ignoreTrack = ~(1 << LayerMask.NameToLayer("TrackFloor") | 1 << LayerMask.NameToLayer("TrackWall"));
-                    if (!Physics.Raycast(vPos, -directionalLight.transform.forward, Mathf.Infinity) 
-                        || directionalLight.GetComponent<Light>().shadows == LightShadows.None)
+                    if (directionalLight.shadows == LightShadows.None)
                     {
-                        float dot = Vector3.Dot(m.normals[m.triangles[j]], directionalLight.transform.up);
+                        dot = Vector3.Dot(m.normals[m.triangles[j]], directionalLight.transform.up);
                         dotColor = new Color(dot, dot, dot, 1.0f);
 
-                        newColor += dotColor * directionalLight.GetComponent<Light>().color * directionalLight.GetComponent<Light>().intensity;
-                    }
+                        newColor += dotColor * directionalLight.color * directionalLight.intensity;
+                    } else if (directionalLight.shadows != LightShadows.None)
+                    {
+                        if(!Physics.Raycast(vPos, -directionalLight.transform.forward, Mathf.Infinity))
+                        {
+                            dot = Vector3.Dot(m.normals[m.triangles[j]], directionalLight.transform.up);
+                            dotColor = new Color(dot, dot, dot, 1.0f);
 
+                            newColor += dotColor * directionalLight.color * directionalLight.intensity;
+                        }
+                    }
                 }
 
                 // calculate attenuation for each point light in the scene
-                for (int k = 0; k < lights.Length; k++)
+                for (k = 0; k < lights.Length; k++)
                 {
                     if (lights[k].type == LightType.Point)
                     {
                         vPos = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j]]);
                         toLight = lights[k].transform.position;
 
-                        // linecast to light (shadows)
-                        int ignoreTrack = ~(1 << LayerMask.NameToLayer("TrackFloor") | 1 << LayerMask.NameToLayer("TrackWall"));
-                        if (!Physics.Linecast(vPos, toLight) || lights[k].shadows == LightShadows.None)
+                        distToL = Vector3.Distance(vPos, toLight);
+
+                        if (distToL < lights[k].range * 2)
                         {
-                            float dist = Vector3.Distance(toLight, vPos) / lights[k].range;
-                            dist *= dist;
-
-                            float atten = 1.0f / (1.0f + 25.0f * dist);
-                            attenColor = new Color(atten, atten, atten, 1.0f);
-
-                            newColor += attenColor * lights[k].color * (lights[k].intensity);
+                            if (lights[k].shadows == LightShadows.None)
+                            {
+                                newColor += CalculateAtten(toLight, vPos, lights[k].range) * lights[k].color * (lights[k].intensity);
+                            }
+                            else if (lights[k].shadows != LightShadows.None)
+                            {
+                                if (!Physics.Linecast(vPos, toLight))
+                                {
+                                    newColor += CalculateAtten(toLight, vPos, lights[k].range) * lights[k].color * (lights[k].intensity);
+                                }
+                            }
                         }
                     }
                 }
+
+                // set vert colors
                 newColors[m.triangles[j]] = newColor;
                 newColors[m.triangles[j + 1]] = newColor;
                 newColors[m.triangles[j + 2]] = newColor;
@@ -181,7 +198,7 @@ public class VertexLightMapper : MonoBehaviour {
             trackObjects[i].AddComponent<VCMID>();
             trackObjects[i].GetComponent<VCMID>().ID = i;
             data[i].ID = i;
-            for (int j = 0; j < newColors.Length; j++)
+            for (j = 0; j < newColors.Length; j++)
             {
                 data[i].colors.Add(newColors[j]);
             }
@@ -193,6 +210,15 @@ public class VertexLightMapper : MonoBehaviour {
     private void SaveVCM()
     {
 
+    }
+
+    private Color CalculateAtten(Vector3 to, Vector3 from, float range)
+    {
+        float dist = Vector3.Distance(to, from) / range;
+        dist *= dist;
+
+        float atten = 1.0f / (1.0f + 25.0f * dist);
+        return new Color(atten, atten, atten, 1.0f);
     }
 
     private void RemoveMeshColliders()
