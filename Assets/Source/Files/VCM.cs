@@ -25,7 +25,7 @@ namespace BnG.Files
                 for (i = 0; i < toSave.Length; i++)
                 {
                     sr.WriteLine("ID " + toSave[i].ID);
-                    for (j = 0; j < toSave[i].colors.Count; j++)
+                    for (j = 0; j < toSave[i].colors.Count; ++j)
                     {
                         c = Color2uInt(toSave[i].colors[j]);
                         sr.WriteLine("C " + c);
@@ -49,31 +49,31 @@ namespace BnG.Files
 
             using (StreamReader sr = new StreamReader(path))
             {
-                // read new line
                 string line = sr.ReadLine();
                 char[] split = { ' ' };
                 string[] lineArray;
 
                 uint c;
                 Color final;
+                char ID = 'I';
+                char Co = 'C';
+
                 while (line != null)
                 {
                     line.Trim();
-                    if (line.StartsWith("ID "))
+                    if (line[0] == Co)
+                    {
+                        lineArray = line.Split(split, 50);
+                        c = System.Convert.ToUInt32(lineArray[1]);
+                        final = uInt2Color(c);
+                        data[index].colors.Add(final);
+                    } else if (line[0] == ID)
                     {
                         data.Add(new VCMData());
                         index++;
 
                         lineArray = line.Split(split, 50);
                         data[index].ID = System.Convert.ToInt32(lineArray[1]);
-                    }
-
-                    if (line.StartsWith("C "))
-                    {
-                        lineArray = line.Split(split, 50);
-                        c = System.Convert.ToUInt32(lineArray[1]);
-                        final = uInt2Color(c);
-                        data[index].colors.Add(final);
                     }
                     line = sr.ReadLine();
                 }
@@ -86,9 +86,9 @@ namespace BnG.Files
             int a = 0;
             Mesh m;
             Color32[] cols;
-            for (i = 0; i < data.Count; i++)
+            for (i = 0; i < data.Count; ++i)
             {
-                for (j = 0; j < objects.Length; j++)
+                for (j = 0; j < objects.Length; ++j)
                 {
                     if (objects[j].GetComponent<VCMID>())
                     {

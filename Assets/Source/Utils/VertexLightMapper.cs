@@ -18,6 +18,8 @@ public class VertexLightMapper : MonoBehaviour {
     [Header("[ LIGHT SETTINGS ] ")]
     public Color ambientLight;
     public Light directionalLight;
+    public float shadowDistance;
+    public bool reconstructMeshes;
 
     public bool bakeMap;
     public string lightmapName;
@@ -85,6 +87,29 @@ public class VertexLightMapper : MonoBehaviour {
                         foundObjects.Add(go.gameObject);
                     }
 
+                    if (reconstructMeshes)
+                    {
+                        Mesh m = go.GetComponent<MeshFilter>().sharedMesh;
+                        // re-build mesh so all tris have unique verts
+                        Vector3[] newVertices = new Vector3[m.triangles.Length];
+                        Vector2[] newUV = new Vector2[m.triangles.Length];
+                        Vector3[] newNormals = new Vector3[m.triangles.Length];
+                        int[] newTriangles = new int[m.triangles.Length];
+
+                        int triCount = m.triangles.Length;
+                        for (int i = 0; i < triCount; ++i)
+                        {
+                            newVertices[i] = m.vertices[m.triangles[i]];
+                            newUV[i] = m.uv[m.triangles[i]];
+                            newNormals[i] = m.normals[m.triangles[i]];
+                            newTriangles[i] = i;
+                        }
+                        m.vertices = newVertices;
+                        m.uv = newUV;
+                        m.normals = newNormals;
+                        m.triangles = newTriangles;
+                    }
+
                     foundMeshes++;
                 }
 
@@ -106,12 +131,12 @@ public class VertexLightMapper : MonoBehaviour {
 
         // find all lights
         Light[] lights = FindObjectsOfType(typeof(Light)) as Light[];
+        AntiLight[] nLights = FindObjectsOfType(typeof(AntiLight)) as AntiLight[];
 
         #region TEMP VARS
 
         Color32 newColor;
         Color32 dotColor;
-        Color32 attenColor;
         Vector3 vPos;
         Vector3 toLight;
         float distToL;
@@ -119,35 +144,52 @@ public class VertexLightMapper : MonoBehaviour {
         int i = 0;
         int j = 0;
         int k = 0;
+        int al = 0;
+        int e = 0;
+        bool excluded = false;
         Mesh m;
         Color32[] newColors;
         float dot;
-        int ignoreTrack = ~(1 << LayerMask.NameToLayer("TrackFloor") | 1 << LayerMask.NameToLayer("TrackWall"));
+        Vector3 p1;
+        Vector3 p2;
+        Vector3 p3;
+        int triCount;
+        int lightCount = lights.Length;
+        int objectCount = trackObjects.Count;
+
+        bool hasDirectionLight = directionalLight != null;
+        bool dirNoShadows = directionalLight.shadows == LightShadows.None;
+
         #endregion
 
+
         // go through each objects
-        for (i = 0; i < trackObjects.Count; i++)
+        for (i = 0; i < objectCount; ++i)
         {
             m = trackObjects[i].GetComponent<MeshFilter>().sharedMesh;
             newColors = new Color32[m.vertices.Length];
+            triCount = m.triangles.Length;
 
             // go through each triangle
-            for (j = 0; j < m.triangles.Length; j += 3)
+            for (j = 0; j < triCount; j += 3)
             {
                 newColor = ambientLight;
-                if (directionalLight != null)
+                if (hasDirectionLight)
                 {
-                    // check that there isn't anything obscuring the vertex from the light direction
-                    vPos = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j]]);
-                    if (directionalLight.shadows == LightShadows.None)
+                    if (dirNoShadows)
                     {
                         dot = Vector3.Dot(m.normals[m.triangles[j]], directionalLight.transform.up);
                         dotColor = new Color(dot, dot, dot, 1.0f);
 
                         newColor += dotColor * directionalLight.color * directionalLight.intensity;
-                    } else if (directionalLight.shadows != LightShadows.None)
+                    } else
                     {
-                        if(!Physics.Raycast(vPos, -directionalLight.transform.forward, Mathf.Infinity))
+                        p1 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j]]);
+                        p2 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j + 1]]);
+                        p3 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j + 2]]);
+                        vPos = (p1 + p2 + p3) / 3;
+
+                        if (!Physics.Raycast(vPos, -directionalLight.transform.forward, shadowDistance))
                         {
                             dot = Vector3.Dot(m.normals[m.triangles[j]], directionalLight.transform.up);
                             dotColor = new Color(dot, dot, dot, 1.0f);
@@ -158,26 +200,79 @@ public class VertexLightMapper : MonoBehaviour {
                 }
 
                 // calculate attenuation for each point light in the scene
-                for (k = 0; k < lights.Length; k++)
+                for (k = 0; k < lightCount; ++k)
                 {
                     if (lights[k].type == LightType.Point)
                     {
-                        vPos = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j]]);
+                        p1 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j]]);
+                        p2 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j + 1]]);
+                        p3 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j + 2]]);
+                        vPos = (p1 + p2 + p3) / 3;
                         toLight = lights[k].transform.position;
 
-                        distToL = Vector3.Distance(vPos, toLight);
+                        distToL = Vector3.Distance(p1, toLight);
 
-                        if (distToL < lights[k].range * 2)
+                        if (distToL < lights[k].range * 1.2f)
                         {
                             if (lights[k].shadows == LightShadows.None)
                             {
                                 newColor += CalculateAtten(toLight, vPos, lights[k].range) * lights[k].color * (lights[k].intensity);
-                            }
-                            else if (lights[k].shadows != LightShadows.None)
+                            } else if (lights[k].shadows != LightShadows.None)
                             {
                                 if (!Physics.Linecast(vPos, toLight))
-                                {
                                     newColor += CalculateAtten(toLight, vPos, lights[k].range) * lights[k].color * (lights[k].intensity);
+                            }
+                        }
+                    }
+                }
+
+                // anti-lights
+                for (al = 0; al < nLights.Length; ++al)
+                {
+                    excluded = false;
+                    for (e = 0; e < nLights[al].exclusions.Length; e++)
+                    {
+                        if (trackObjects[i] == nLights[al].exclusions[e])
+                            excluded = true;
+                    }
+
+                    if (!excluded)
+                    {
+                        p1 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j]]);
+                        p2 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j + 1]]);
+                        p3 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j + 2]]);
+                        vPos = (p1 + p2 + p3) / 3;
+                        toLight = nLights[al].transform.position;
+
+                        distToL = Vector3.Distance(vPos, toLight);
+
+                        if (nLights[al].isArea)
+                        {
+                            if (Mathf.Abs(vPos.x - nLights[al].transform.position.x) < nLights[al].area.x &&
+                                Mathf.Abs(vPos.y - nLights[al].transform.position.y) < nLights[al].area.y &&
+                                Mathf.Abs(vPos.z - nLights[al].transform.position.z) < nLights[al].area.z)
+                            {
+                                if (nLights[al].allowAmbient)
+                                {
+                                    newColor = ambientLight;
+                                }
+                                else
+                                {
+                                    newColor = Color.black;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (distToL < nLights[al].range)
+                            {
+                                if (nLights[al].allowAmbient)
+                                {
+                                    newColor = ambientLight;
+                                }
+                                else
+                                {
+                                    newColor = Color.black;
                                 }
                             }
                         }

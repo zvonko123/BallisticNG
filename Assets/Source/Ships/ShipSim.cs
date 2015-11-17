@@ -168,7 +168,7 @@ public class ShipSim : ShipBase {
         // calculate turn force
         float turnForce = r.settings.TURN_SPEED * Time.deltaTime * Mathf.Rad2Deg;
         float turnNormal = (Mathf.Abs(turnVelocity) / turnForce);
-        turnNormal = Mathf.Clamp(turnNormal, 0.5f, 1.0f);
+        turnNormal = Mathf.Clamp(turnNormal, r.settings.TURN_NORMAL_MIN, r.settings.TURN_NORMAL_MAX);
 
         // tilting gain reset
         if ((r.input.AXIS_STEER > 0 && tiltVelocity < 0) || (r.input.AXIS_STEER < 0 && tiltVelocity > 0))
@@ -215,7 +215,7 @@ public class ShipSim : ShipBase {
         float airbrakeSpeed = ((transform.InverseTransformDirection(r.body.velocity).z * 10) * Time.deltaTime) * airbrakeForce;
 
         float airbrakeNormal = (Mathf.Abs(airbrakeVelocity) / airbrakeForce);
-        airbrakeNormal = Mathf.Clamp(airbrakeNormal, 0.5f, 1.0f);
+        airbrakeNormal = Mathf.Clamp(airbrakeNormal, r.settings.AIRBRAKE_NORMAL_MIN, r.settings.AIRBRAKE_NORMAL_MAX);
 
         if (Mathf.Abs(r.input.AXIS_BOTHAIRBRAKES) >= Mathf.Abs(prevAirbrakeInput) && r.input.AXIS_BOTHAIRBRAKES != 0)
         {

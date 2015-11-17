@@ -51,6 +51,13 @@ namespace BnG.TrackData
         public List<int> CACHE_SECTIONNEXT= new List<int>();
 
         public List<int> ANIM_RECHARGE = new List<int>();
+        public List<int> ANIM_WEAPONS = new List<int>();
+        public Color32 WeaponCol1;
+        public Color32 WeaponCol2;
+        private Color32 weaponCol;
+        private float weaponLerp;
+        private float weaponTimer;
+
         private Color32 rechargeColor;
         private float rechargeTimer;
 
@@ -289,6 +296,7 @@ namespace BnG.TrackData
                 setTileColors = false;
 
             ANIM_RECHARGE.Clear();
+            ANIM_WEAPONS.Clear();
 
             Color32[] cols = MESH_TRACKFLOOR.sharedMesh.colors32;
             for (int i = 0; i < MESH_TRACKFLOOR.sharedMesh.triangles.Length; i += 3)
@@ -310,6 +318,17 @@ namespace BnG.TrackData
                     ANIM_RECHARGE.Add(MESH_TRACKFLOOR.sharedMesh.triangles[i + 0]);
                     ANIM_RECHARGE.Add(MESH_TRACKFLOOR.sharedMesh.triangles[i + 1]);
                     ANIM_RECHARGE.Add(MESH_TRACKFLOOR.sharedMesh.triangles[i + 2]);
+                }
+
+                if (tile.TILE_TYPE == E_TILETYPE.WEAPON)
+                {
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 0]] = WeaponCol1;
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 1]] = WeaponCol1;
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 2]] = WeaponCol1;
+
+                    ANIM_WEAPONS.Add(MESH_TRACKFLOOR.sharedMesh.triangles[i + 0]);
+                    ANIM_WEAPONS.Add(MESH_TRACKFLOOR.sharedMesh.triangles[i + 1]);
+                    ANIM_WEAPONS.Add(MESH_TRACKFLOOR.sharedMesh.triangles[i + 2]);
                 }
             }
             MESH_TRACKFLOOR.sharedMesh.colors32 = cols;
@@ -352,15 +371,27 @@ namespace BnG.TrackData
             // recharge color
             rechargeTimer += Time.deltaTime * 2;
             float rechargeSin = Mathf.Abs(Mathf.Sin(rechargeTimer));
-
             rechargeColor = Color.Lerp(new Color(0.0f, 0.2f, 0.6f), new Color(0.0f, 0.5f, 1.0f), rechargeSin);
 
             Color32[] cols = MESH_TRACKFLOOR.sharedMesh.colors32;
-            for (int i = 0; i < ANIM_RECHARGE.Count; i++)
+            int i = 0;
+            for (i = 0; i < ANIM_RECHARGE.Count; i++)
             {
                 cols[ANIM_RECHARGE[i]] = rechargeColor; 
             }
+
+            // weapon color
+            weaponTimer += Time.deltaTime * 2;
+            float weaponSin = Mathf.Abs(Mathf.Sin(weaponTimer));
+            weaponCol = Color.Lerp(WeaponCol1, WeaponCol2, weaponSin);
+
+            for (i = 0; i < ANIM_WEAPONS.Count; i++)
+            {
+                cols[ANIM_WEAPONS[i]]= weaponCol;
+            }
+
             MESH_TRACKFLOOR.sharedMesh.colors32 = cols;
+
         }
 
 #endregion

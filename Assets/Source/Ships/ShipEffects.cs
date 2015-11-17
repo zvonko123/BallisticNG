@@ -84,6 +84,16 @@ public class ShipEffects : ShipBase {
                 sprayPosition.x = transform.position.x;
                 sprayPosition.z = transform.position.z;
             }
+
+            // boost pad management
+            if (tile.TILE_TYPE == E_TILETYPE.BOOST)
+            {
+                TrSection section = TrackDataHelper.TileGetSection(tile);
+                Quaternion padRot = TrackDataHelper.SectionGetRotation(section);
+                Vector3 padDir = padRot * Vector3.forward;
+
+                r.body.AddForce(padDir * 35, ForceMode.Acceleration);
+            }
         }
         r.mesh.GetComponent<Renderer>().material.SetColor("_Color", shipColor);
 

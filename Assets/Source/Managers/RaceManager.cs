@@ -51,6 +51,9 @@ public class RaceManager : MonoBehaviour {
         RaceUI = newUI.GetComponent<HUDManager>();
         RaceUI.r = RaceSettings.SHIPS[0];
         RaceUI.accentColor = RaceSettings.SHIPS[0].settings.REF_HUDCOL;
+
+        // cap framerate
+        GameSettings.CapFPS(60);
 	}
 
     private void SpawnShips()

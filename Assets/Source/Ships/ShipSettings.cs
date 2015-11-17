@@ -33,6 +33,10 @@ public class ShipSettings : MonoBehaviour {
     public float TURN_SPEED;
     public float TURN_GAIN;
     public float TURN_FALLOFF;
+    [Range(0, 1)]
+    public float TURN_NORMAL_MIN;
+    [Range(0, 1)]
+    public float TURN_NORMAL_MAX;
     public float TILT_GAIN;
     public float TILT_FALLOFF;
 
@@ -40,6 +44,10 @@ public class ShipSettings : MonoBehaviour {
     public float AIRBRAKE_SPEED;
     public float AIRBRAKE_GAIN;
     public float AIRBRAKE_FALLOFF;
+    [Range(0, 1)]
+    public float AIRBRAKE_NORMAL_MIN;
+    [Range(0, 1)]
+    public float AIRBRAKE_NORMAL_MAX;
     [Space(5)]
     public float AIRBRAKE_DRAG_GAIN;
     public float AIRBRAKE_DRAG_FALLOFF;
