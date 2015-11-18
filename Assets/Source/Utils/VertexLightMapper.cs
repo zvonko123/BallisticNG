@@ -15,11 +15,13 @@ public class VertexLightMapper : MonoBehaviour {
     public GameObject sceneParent;
     private List<GameObject> foundObjects = new List<GameObject>();
     private List<GameObject> trackObjects = new List<GameObject>();
+    private List<GameObject> sceneObjects = new List<GameObject>();
     [Header("[ LIGHT SETTINGS ] ")]
     public Color ambientLight;
     public Light directionalLight;
     public float shadowDistance;
     public bool reconstructMeshes;
+    public bool resetColors;
 
     public bool bakeMap;
     public string lightmapName;
@@ -68,6 +70,7 @@ public class VertexLightMapper : MonoBehaviour {
         // clear previous lists
         foundObjects.Clear();
         trackObjects.Clear();
+        sceneObjects.Clear();
 
         int foundMeshes = 0;
         foreach(Transform go in sceneParent.transform)
@@ -78,13 +81,12 @@ public class VertexLightMapper : MonoBehaviour {
                 // add object to array
                 if (go.GetComponent<MeshFilter>())
                 {
-                    trackObjects.Add(go.gameObject);
-
+                    sceneObjects.Add(go.gameObject);
                     // attach mesh collider (for raycasting)
                     if (!go.gameObject.GetComponent<MeshCollider>())
                     {
-                        go.gameObject.AddComponent<MeshCollider>();
-                        foundObjects.Add(go.gameObject);
+                        //go.gameObject.AddComponent<MeshCollider>();
+                        //foundObjects.Add(go.gameObject);
                     }
 
                     if (reconstructMeshes)
@@ -162,128 +164,145 @@ public class VertexLightMapper : MonoBehaviour {
 
         #endregion
 
-
+        #region TRACK OBJECTS
+        int totalIndex = 0;
         // go through each objects
         for (i = 0; i < objectCount; ++i)
         {
+            totalIndex++;
             m = trackObjects[i].GetComponent<MeshFilter>().sharedMesh;
             newColors = new Color32[m.vertices.Length];
             triCount = m.triangles.Length;
 
             // go through each triangle
-            for (j = 0; j < triCount; j += 3)
+            if (resetColors)
             {
-                newColor = ambientLight;
-                if (hasDirectionLight)
+                for (j = 0; j < triCount; j += 3)
                 {
-                    if (dirNoShadows)
+                    newColors[m.triangles[j]] = Color.white;
+                    newColors[m.triangles[j + 1]] = Color.white;
+                    newColors[m.triangles[j + 2]] = Color.white;
+                }
+            }
+            else
+            {
+                for (j = 0; j < triCount; j += 3)
+                {
+                    newColor = ambientLight;
+                    if (hasDirectionLight)
                     {
-                        dot = Vector3.Dot(m.normals[m.triangles[j]], directionalLight.transform.up);
-                        dotColor = new Color(dot, dot, dot, 1.0f);
-
-                        newColor += dotColor * directionalLight.color * directionalLight.intensity;
-                    } else
-                    {
-                        p1 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j]]);
-                        p2 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j + 1]]);
-                        p3 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j + 2]]);
-                        vPos = (p1 + p2 + p3) / 3;
-
-                        if (!Physics.Raycast(vPos, -directionalLight.transform.forward, shadowDistance))
+                        if (dirNoShadows)
                         {
                             dot = Vector3.Dot(m.normals[m.triangles[j]], directionalLight.transform.up);
                             dotColor = new Color(dot, dot, dot, 1.0f);
 
                             newColor += dotColor * directionalLight.color * directionalLight.intensity;
                         }
-                    }
-                }
-
-                // calculate attenuation for each point light in the scene
-                for (k = 0; k < lightCount; ++k)
-                {
-                    if (lights[k].type == LightType.Point)
-                    {
-                        p1 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j]]);
-                        p2 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j + 1]]);
-                        p3 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j + 2]]);
-                        vPos = (p1 + p2 + p3) / 3;
-                        toLight = lights[k].transform.position;
-
-                        distToL = Vector3.Distance(p1, toLight);
-
-                        if (distToL < lights[k].range * 1.2f)
-                        {
-                            if (lights[k].shadows == LightShadows.None)
-                            {
-                                newColor += CalculateAtten(toLight, vPos, lights[k].range) * lights[k].color * (lights[k].intensity);
-                            } else if (lights[k].shadows != LightShadows.None)
-                            {
-                                if (!Physics.Linecast(vPos, toLight))
-                                    newColor += CalculateAtten(toLight, vPos, lights[k].range) * lights[k].color * (lights[k].intensity);
-                            }
-                        }
-                    }
-                }
-
-                // anti-lights
-                for (al = 0; al < nLights.Length; ++al)
-                {
-                    excluded = false;
-                    for (e = 0; e < nLights[al].exclusions.Length; e++)
-                    {
-                        if (trackObjects[i] == nLights[al].exclusions[e])
-                            excluded = true;
-                    }
-
-                    if (!excluded)
-                    {
-                        p1 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j]]);
-                        p2 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j + 1]]);
-                        p3 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j + 2]]);
-                        vPos = (p1 + p2 + p3) / 3;
-                        toLight = nLights[al].transform.position;
-
-                        distToL = Vector3.Distance(vPos, toLight);
-
-                        if (nLights[al].isArea)
-                        {
-                            if (Mathf.Abs(vPos.x - nLights[al].transform.position.x) < nLights[al].area.x &&
-                                Mathf.Abs(vPos.y - nLights[al].transform.position.y) < nLights[al].area.y &&
-                                Mathf.Abs(vPos.z - nLights[al].transform.position.z) < nLights[al].area.z)
-                            {
-                                if (nLights[al].allowAmbient)
-                                {
-                                    newColor = ambientLight;
-                                }
-                                else
-                                {
-                                    newColor = Color.black;
-                                }
-                            }
-                        }
                         else
                         {
-                            if (distToL < nLights[al].range)
+                            p1 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j]]);
+                            p2 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j + 1]]);
+                            p3 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j + 2]]);
+                            vPos = (p1 + p2 + p3) / 3;
+
+                            if (!Physics.Raycast(vPos, Vector3.up, shadowDistance))
                             {
-                                if (nLights[al].allowAmbient)
+                                dot = Vector3.Dot(m.normals[m.triangles[j]], directionalLight.transform.up);
+                                dotColor = new Color(dot, dot, dot, 1.0f);
+
+                                newColor += dotColor * directionalLight.color * directionalLight.intensity;
+                            }
+                        }
+                    }
+
+                    // calculate attenuation for each point light in the scene
+                    for (k = 0; k < lightCount; ++k)
+                    {
+                        if (lights[k].type == LightType.Point)
+                        {
+                            p1 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j]]);
+                            p2 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j + 1]]);
+                            p3 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j + 2]]);
+                            vPos = (p1 + p2 + p3) / 3;
+                            toLight = lights[k].transform.position;
+
+                            distToL = Vector3.Distance(vPos, toLight);
+
+                            if (distToL < lights[k].range * 1.2f)
+                            {
+                                if (lights[k].shadows == LightShadows.None)
                                 {
-                                    newColor = ambientLight;
+                                    newColor += CalculateAtten(toLight, vPos, lights[k].range) * lights[k].color * (lights[k].intensity);
                                 }
-                                else
+                                else if (lights[k].shadows != LightShadows.None)
                                 {
-                                    newColor = Color.black;
+                                    if (!Physics.Linecast(vPos, toLight))
+                                        newColor += CalculateAtten(toLight, vPos, lights[k].range) * lights[k].color * (lights[k].intensity);
                                 }
                             }
                         }
                     }
-                }
 
-                // set vert colors
-                newColors[m.triangles[j]] = newColor;
-                newColors[m.triangles[j + 1]] = newColor;
-                newColors[m.triangles[j + 2]] = newColor;
+                    // anti-lights
+                    for (al = 0; al < nLights.Length; ++al)
+                    {
+                        excluded = false;
+                        for (e = 0; e < nLights[al].exclusions.Length; e++)
+                        {
+                            if (trackObjects[i] == nLights[al].exclusions[e])
+                                excluded = true;
+                        }
+
+                        if (!excluded)
+                        {
+                            p1 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j]]);
+                            p2 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j + 1]]);
+                            p3 = trackObjects[i].transform.TransformPoint(m.vertices[m.triangles[j + 2]]);
+                            vPos = (p1 + p2 + p3) / 3;
+                            toLight = nLights[al].transform.position;
+
+                            distToL = Vector3.Distance(vPos, toLight);
+
+                            if (nLights[al].isArea)
+                            {
+                                if (Mathf.Abs(vPos.x - nLights[al].transform.position.x) < nLights[al].area.x &&
+                                    Mathf.Abs(vPos.y - nLights[al].transform.position.y) < nLights[al].area.y &&
+                                    Mathf.Abs(vPos.z - nLights[al].transform.position.z) < nLights[al].area.z)
+                                {
+                                    if (nLights[al].allowAmbient)
+                                    {
+                                        newColor = ambientLight;
+                                    }
+                                    else
+                                    {
+                                        newColor = Color.black;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (distToL < nLights[al].range)
+                                {
+                                    if (nLights[al].allowAmbient)
+                                    {
+                                        newColor = ambientLight;
+                                    }
+                                    else
+                                    {
+                                        newColor = Color.black;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // set vert colors
+                    newColors[m.triangles[j]] = newColor;
+                    newColors[m.triangles[j + 1]] = newColor;
+                    newColors[m.triangles[j + 2]] = newColor;
+                }
             }
+
             m.colors32 = newColors;
 
             data.Add(new VCMData());
@@ -299,6 +318,150 @@ public class VertexLightMapper : MonoBehaviour {
             }
 
         }
+        #endregion
+
+        #region TRACK OBJECTS
+        objectCount = sceneObjects.Count;
+        int vertCount = 0;
+        // go through each objects
+        for (i = 0; i < objectCount; ++i)
+        {
+            m = sceneObjects[i].GetComponent<MeshFilter>().sharedMesh;
+            newColors = new Color32[m.vertices.Length];
+            vertCount = m.vertices.Length;
+
+            // go through each triangle
+            if (resetColors)
+            {
+                for (j = 0; j < vertCount; ++j)
+                {
+                    newColors[j] = Color.white;
+                }
+            }
+            else
+            {
+                for (j = 0; j < vertCount; ++j)
+                {
+                    newColor = ambientLight;
+                    if (hasDirectionLight)
+                    {
+                        if (dirNoShadows)
+                        {
+                            dot = Vector3.Dot(m.normals[j], directionalLight.transform.up);
+                            dotColor = new Color(dot, dot, dot, 1.0f);
+
+                            newColor += dotColor * directionalLight.color * directionalLight.intensity;
+                        }
+                        else
+                        {
+                            vPos = sceneObjects[i].transform.TransformPoint(m.vertices[j]);
+
+                            if (!Physics.Raycast(vPos, Vector3.up, shadowDistance))
+                            {
+                                dot = Vector3.Dot(m.normals[j], directionalLight.transform.up);
+                                dotColor = new Color(dot, dot, dot, 1.0f);
+
+                                newColor += dotColor * directionalLight.color * directionalLight.intensity;
+                            }
+                        }
+                    }
+
+                    // calculate attenuation for each point light in the scene
+                    for (k = 0; k < lightCount; ++k)
+                    {
+                        if (lights[k].type == LightType.Point)
+                        {
+                            vPos = sceneObjects[i].transform.TransformPoint(m.vertices[j]);
+                            toLight = lights[k].transform.position;
+
+                            distToL = Vector3.Distance(vPos, toLight);
+
+                            if (distToL < lights[k].range * 1.2f)
+                            {
+                                if (lights[k].shadows == LightShadows.None)
+                                {
+                                    newColor += CalculateAtten(toLight, vPos, lights[k].range) * lights[k].color * (lights[k].intensity);
+                                }
+                                else if (lights[k].shadows != LightShadows.None)
+                                {
+                                    if (!Physics.Linecast(vPos, toLight))
+                                        newColor += CalculateAtten(toLight, vPos, lights[k].range) * lights[k].color * (lights[k].intensity);
+                                }
+                            }
+                        }
+                    }
+
+                    // anti-lights
+                    for (al = 0; al < nLights.Length; ++al)
+                    {
+                        excluded = false;
+                        for (e = 0; e < nLights[al].exclusions.Length; e++)
+                        {
+                            if (sceneObjects[i] == nLights[al].exclusions[e])
+                                excluded = true;
+                        }
+
+                        if (!excluded)
+                        {
+                            vPos = sceneObjects[i].transform.TransformPoint(m.vertices[j]);
+                            toLight = nLights[al].transform.position;
+
+                            distToL = Vector3.Distance(vPos, toLight);
+
+                            if (nLights[al].isArea)
+                            {
+                                if (Mathf.Abs(vPos.x - nLights[al].transform.position.x) < nLights[al].area.x &&
+                                    Mathf.Abs(vPos.y - nLights[al].transform.position.y) < nLights[al].area.y &&
+                                    Mathf.Abs(vPos.z - nLights[al].transform.position.z) < nLights[al].area.z)
+                                {
+                                    if (nLights[al].allowAmbient)
+                                    {
+                                        newColor = ambientLight;
+                                    }
+                                    else
+                                    {
+                                        newColor = Color.black;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (distToL < nLights[al].range)
+                                {
+                                    if (nLights[al].allowAmbient)
+                                    {
+                                        newColor = ambientLight;
+                                    }
+                                    else
+                                    {
+                                        newColor = Color.black;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // set vert colors
+                    newColors[j] = newColor;
+                }
+            }
+
+            m.colors32 = newColors;
+
+            data.Add(new VCMData());
+            if (sceneObjects[i].GetComponent<VCMID>())
+                DestroyImmediate(sceneObjects[i].GetComponent<VCMID>());
+
+            sceneObjects[i].AddComponent<VCMID>();
+            sceneObjects[i].GetComponent<VCMID>().ID = totalIndex + i;
+            data[totalIndex + i].ID = totalIndex + i;
+            for (j = 0; j < newColors.Length; j++)
+            {
+                data[totalIndex + i].colors.Add(newColors[j]);
+            }
+
+        }
+        #endregion
         VCM.Save(lightmapName, data.ToArray());
     }
 

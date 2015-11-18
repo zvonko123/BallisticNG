@@ -91,7 +91,8 @@ public enum E_SHIPS
     MTECHP1,
     // secret ships
     GODTAMPON,
-    BARRACUDA
+    BARRACUDA,
+    CALIBURN
 
 }
 
