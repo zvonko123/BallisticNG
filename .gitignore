@@ -1,6 +1,5 @@
 Library/
 Temp/
-*.meta
 *.csproj
 *.sln
 External Assets/BnG_MAX/autoback/AutoBackup01.max
