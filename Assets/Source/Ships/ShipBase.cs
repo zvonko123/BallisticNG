@@ -50,6 +50,11 @@ public class ShipRefs : MonoBehaviour
     public float shieldTimer;
     public Color shieldColor;
 
+    public int boostState;
+    public float boostAccel;
+    public float boostTimer;
+    public TrTile lastBoost;
+
     // race times
     public float[] laps;
     public bool[] perfects;
@@ -135,6 +140,17 @@ public class ShipRefs : MonoBehaviour
 
         // lerp shield color back to engine color
         shieldColor = Color.Lerp(shieldColor, settings.REF_ENGINECOL, Time.deltaTime * 2);
+
+        // boost timer
+        if (boostTimer > 0)
+        {
+            boostTimer -= Time.deltaTime;
+        }
+        else
+        {
+            boostState = 0;
+            boostAccel = 0;
+        }
     }
 
     public void ActivateShield(float time)
@@ -148,6 +164,19 @@ public class ShipRefs : MonoBehaviour
         {
             PlayOneShot(settings.SFX_SHIELDHIT);
             shieldColor = new Color(1.0f - settings.REF_ENGINECOL.r, 1.0f - settings.REF_ENGINECOL.g, 1.0f - settings.REF_ENGINECOL.b, 0.5f);
+        }
+    }
+
+    public void HitSpeedPad()
+    {
+        if (boostState < 3)
+        {
+            boostTimer += 1.5f;
+            boostAccel += sim.engineThrust * 0.1f;
+            boostState++;
+        } else
+        {
+            boostTimer += 0.5f;
         }
     }
 

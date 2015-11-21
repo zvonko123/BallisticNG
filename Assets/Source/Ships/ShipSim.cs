@@ -157,7 +157,7 @@ public class ShipSim : ShipBase {
 
         // interpolate thrust to maxspeed and use enginepower as a multiplier
         if (!RaceSettings.shipsRestrained && !r.shipRestrained)
-            engineThrust = Mathf.Lerp(engineThrust, (maxSpeed * engineAccel) * engineHyper, Time.deltaTime * (acceleration * engineHyper));
+            engineThrust = Mathf.Lerp(engineThrust, ((maxSpeed * engineAccel) * engineHyper) + r.boostAccel, Time.deltaTime * (acceleration * engineHyper));
 
         // apply Force
         r.body.AddRelativeForce(Vector3.forward * engineThrust);

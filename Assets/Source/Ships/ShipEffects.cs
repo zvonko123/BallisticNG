@@ -111,6 +111,15 @@ public class ShipEffects : ShipBase {
                 Vector3 padDir = padRot * Vector3.forward;
 
                 r.body.AddForce(padDir * 35, ForceMode.Acceleration);
+
+                if (tile != r.lastBoost)
+                {
+                    r.HitSpeedPad();
+                    r.lastBoost = tile;
+                }
+            } else
+            {
+                r.lastBoost = null;
             }
         }
         r.mesh.GetComponent<Renderer>().material.SetColor("_Color", shipColor);
