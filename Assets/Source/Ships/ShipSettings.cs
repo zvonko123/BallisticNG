@@ -99,6 +99,7 @@ public class ShipSettings : MonoBehaviour {
     public AudioClip SFX_STARTBOOST;
     public AudioClip SFX_RECHARGE;
     public AudioClip SFX_SPRAY;
+    public AudioClip SFX_SHIELDHIT;
 
     [Header("[ REFERENCES ]")]
     public Color REF_ENGINECOL_BRIGHT;
@@ -113,5 +114,7 @@ public class ShipSettings : MonoBehaviour {
     public GameObject REF_ENGINE_TRAIL_PLAYER;
     public TrailRenderer REF_ENGINE_TRAIL_AI;
     public GameObject REF_DROID;
+    public GameObject REF_SHIELD;
+    public Material REF_SHIELDMAT;
 
 }

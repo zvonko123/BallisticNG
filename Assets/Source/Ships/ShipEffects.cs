@@ -39,10 +39,19 @@ public class ShipEffects : ShipBase {
     public float droidBaseHeight;
     private float droidHeight;
 
+    // shield
+    public float shieldOsc;
+    public float shieldTime;
+    public float shieldAlpha;
+    public Material shieldMat;
+
     void Start()
     {
         // get droid base height
         droidBaseHeight = r.settings.REF_DROID.transform.localPosition.y;
+
+        // set shield material
+        shieldMat = r.settings.REF_SHIELD.GetComponent<MeshRenderer>().material;
 
         CreateAudioEffects();
         SetupEngineEffects();
@@ -54,6 +63,7 @@ public class ShipEffects : ShipBase {
         UpdateSounds();
         UpdateEngine();
         DroidManager();
+        ShieldManager();
     }
 
     private void SetupEngineEffects()
@@ -135,7 +145,7 @@ public class ShipEffects : ShipBase {
         turbulanceSFX.volume = turbulanceVolume;
 
         // scrape SFX
-        if (r.sim.isShipScraping)
+        if (r.sim.isShipScraping && !r.shieldActivate)
         {
             if (!scrapeSFX.isPlaying)
                 scrapeSFX.Play();
@@ -231,6 +241,23 @@ public class ShipEffects : ShipBase {
             r.settings.REF_DROID.SetActive(true);
 
         r.settings.REF_DROID.transform.localPosition = new Vector3(0.0f, droidHeight, 0.0f);
+    }
+
+    private void ShieldManager()
+    {
+        shieldTime += Time.deltaTime * 5;
+        shieldOsc = Mathf.Sin(shieldTime) * 0.4f;
+        shieldMat.SetTextureOffset("_MainTex", new Vector2(0.0f, shieldOsc));
+
+        Color tint = r.shieldColor;
+
+        if (r.shieldActivate)
+            shieldAlpha = 0.5f;
+        else
+            shieldAlpha = Mathf.Lerp(shieldAlpha, 0.0f, Time.deltaTime * 5);
+
+        tint.a = shieldAlpha;
+        shieldMat.SetColor("_TintColor", tint);
     }
 
     private void CreateAudioEffects()

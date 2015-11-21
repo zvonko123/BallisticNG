@@ -30,6 +30,8 @@ public class ShipConstructor : MonoBehaviour {
         prefab.transform.localPosition = Vector3.zero;
         prefab.transform.localRotation = Quaternion.identity;
         settings.REF_RECHARGEFX.transform.parent = transform;
+        settings.REF_SHIELD.transform.parent = anim.transform;
+        settings.REF_DROID.transform.parent = transform;
 
         // create rigibody
         Rigidbody body = gameObject.AddComponent<Rigidbody>();

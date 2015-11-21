@@ -46,6 +46,10 @@ public class ShipRefs : MonoBehaviour
     public bool recharging;
     public bool jumpHeight;
 
+    public bool shieldActivate;
+    public float shieldTimer;
+    public Color shieldColor;
+
     // race times
     public float[] laps;
     public bool[] perfects;
@@ -119,7 +123,34 @@ public class ShipRefs : MonoBehaviour
 
         if (finalLapPopup > -1)
             finalLapPopup -= Time.deltaTime;
+
+        if (shieldTimer > 0)
+            shieldTimer -= Time.deltaTime;
+
+        shieldActivate = shieldTimer > 0;
+
+        // TEMP: Remove when pickups added
+        if (Input.GetKeyDown(KeyCode.Space))
+            ActivateShield(5);
+
+        // lerp shield color back to engine color
+        shieldColor = Color.Lerp(shieldColor, settings.REF_ENGINECOL, Time.deltaTime * 2);
     }
+
+    public void ActivateShield(float time)
+    {
+        shieldTimer = time;
+    }
+
+    public void ShieldDamage()
+    {
+        if (shieldActivate)
+        {
+            PlayOneShot(settings.SFX_SHIELDHIT);
+            shieldColor = new Color(1.0f - settings.REF_ENGINECOL.r, 1.0f - settings.REF_ENGINECOL.g, 1.0f - settings.REF_ENGINECOL.b, 0.5f);
+        }
+    }
+
     public void PlayOneShot(AudioClip clip)
     {
         if (isAI)

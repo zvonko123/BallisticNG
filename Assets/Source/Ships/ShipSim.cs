@@ -445,7 +445,9 @@ public class ShipSim : ShipBase {
             if (Mathf.Abs(impact) > 1 && hitDot < 0.1f)
             {
                 // Zero out relative Z velocity
-                r.PlayOneShot(r.settings.SFX_WALLHIT);
+                if (!r.shieldActivate)
+                    r.PlayOneShot(r.settings.SFX_WALLHIT);
+
                 Vector3 lv = transform.InverseTransformDirection(r.body.velocity);
                 lv.y = 0;
                 lv.z = 0;
@@ -468,12 +470,19 @@ public class ShipSim : ShipBase {
 
 
                 // Spawn hit particle
-                GameObject particle = Instantiate(Resources.Load("Particles/CollisionHit") as GameObject) as GameObject;
-                particle.transform.position = other.contacts[0].point;
-                particle.transform.forward = -transform.forward;
+                if (!r.shieldActivate)
+                {
+                    GameObject particle = Instantiate(Resources.Load("Particles/CollisionHit") as GameObject) as GameObject;
+                    particle.transform.position = other.contacts[0].point;
+                    particle.transform.forward = -transform.forward;
+                }
 
                 // Ship take damage
-                r.shield -= Mathf.Abs(impact * 1.5f);
+                if (!r.shieldActivate)
+                    r.shield -= Mathf.Abs(impact * 1.5f);
+
+                // change shield color
+                r.ShieldDamage();
 
                 r.perfectLap = false;
 
