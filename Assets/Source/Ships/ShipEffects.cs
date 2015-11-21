@@ -35,8 +35,15 @@ public class ShipEffects : ShipBase {
     private float engineColorTimer2;
     private Vector3 engineFlareSize;
 
+    // droid settings
+    public float droidBaseHeight;
+    private float droidHeight;
+
     void Start()
     {
+        // get droid base height
+        droidBaseHeight = r.settings.REF_DROID.transform.localPosition.y;
+
         CreateAudioEffects();
         SetupEngineEffects();
     }
@@ -46,6 +53,7 @@ public class ShipEffects : ShipBase {
         UpdateShipLighting();
         UpdateSounds();
         UpdateEngine();
+        DroidManager();
     }
 
     private void SetupEngineEffects()
@@ -205,6 +213,24 @@ public class ShipEffects : ShipBase {
 
         r.settings.REF_ENGINE_FLARE.transform.rotation = Quaternion.Euler(transform.eulerAngles.x - 90.0f, transform.eulerAngles.y, 0.0f);
 
+    }
+
+    private void DroidManager()
+    {
+        if (r.isRespawning)
+        {
+            droidHeight = Mathf.Lerp(droidHeight, droidBaseHeight, Time.deltaTime * 15);
+        } else
+        {
+            droidHeight = Mathf.Lerp(droidHeight, droidBaseHeight * 15, Time.deltaTime * 0.8f);
+        }
+
+        if (droidHeight > droidBaseHeight * 13 && r.settings.REF_DROID.activeSelf)
+            r.settings.REF_DROID.SetActive(false);
+        else if (droidHeight < droidBaseHeight * 13 && !r.settings.REF_DROID.activeSelf)
+            r.settings.REF_DROID.SetActive(true);
+
+        r.settings.REF_DROID.transform.localPosition = new Vector3(0.0f, droidHeight, 0.0f);
     }
 
     private void CreateAudioEffects()

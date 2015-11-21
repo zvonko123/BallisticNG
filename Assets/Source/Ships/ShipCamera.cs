@@ -182,7 +182,7 @@ public class ShipCamera : ShipBase {
 
         if (r.transform.InverseTransformDirection(r.body.velocity).y > 0)
         {
-            tcFallOffset = Mathf.Lerp(tcFallOffset, r.transform.InverseTransformDirection(r.body.velocity).y * 0.008f, Time.deltaTime * (tcSpeed * 0.7f));
+            tcFallOffset = Mathf.Lerp(tcFallOffset, r.transform.InverseTransformDirection(r.body.velocity).y * 0.008f, Time.deltaTime * (tcSpeed * 0.4f));
         } else
         {
             tcFallOffset = Mathf.Lerp(tcFallOffset, 0.0f, Time.deltaTime * (tcSpeed * 0.3f));

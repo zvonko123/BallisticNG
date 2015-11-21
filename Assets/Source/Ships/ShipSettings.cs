@@ -112,5 +112,6 @@ public class ShipSettings : MonoBehaviour {
     public GameObject REF_ENGINE_FLARE;
     public GameObject REF_ENGINE_TRAIL_PLAYER;
     public TrailRenderer REF_ENGINE_TRAIL_AI;
+    public GameObject REF_DROID;
 
 }

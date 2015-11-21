@@ -3,6 +3,7 @@
     Properties
     {
         _MainTex("Base", 2D) = "white" {}
+		_Illum("Illumination", 2D) = "black" {}
         _Color("Color", Color) = (0.5, 0.5, 0.5, 1)
         _GeoRes("Geometric Resolution", Float) = 40
     }
@@ -26,6 +27,7 @@
 					};
 
 					sampler2D _MainTex;
+					sampler2D _Illum;
 					float4 _MainTex_ST;
 					float4 _Color;
 					float _GeoRes;
@@ -47,7 +49,7 @@
 					fixed4 frag(v2f i) : SV_Target
 					{
 						//float2 uv = i.texcoord;
-						return tex2D(_MainTex, i.texcoord) * i.color;
+						return (tex2D(_MainTex, i.texcoord) * i.color) + tex2D(_Illum, i.texcoord);
 					}
 
 					ENDCG
