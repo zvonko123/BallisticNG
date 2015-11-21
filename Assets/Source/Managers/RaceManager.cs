@@ -59,6 +59,7 @@ public class RaceManager : MonoBehaviour {
         {
             GameObject newObj = new GameObject("Music Manager");
             musicManager = newObj.AddComponent<MusicManager>();
+            musicManager.r = RaceSettings.SHIPS[0];
         }
 
         // cap framerate

@@ -475,6 +475,8 @@ public class ShipSim : ShipBase {
                 // Ship take damage
                 r.shield -= Mathf.Abs(impact * 1.5f);
 
+                r.perfectLap = false;
+
             }
         }
 

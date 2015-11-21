@@ -45,9 +45,46 @@ public class ShipRefs : MonoBehaviour
     public bool facingFoward;
     public bool recharging;
     public bool jumpHeight;
+
+    // race times
+    public float[] laps;
+    public bool[] perfects;
+    public float bestLap;
+    public int currentLap;
+
+    public bool passedMid;
+    public bool perfectLap;
+    public float currentTime;
+    public float totalTime;
+    public float checkpoint;
+
+    public bool hasBestTime;
+
+    // UI timers
+    public float perfectLapPopup;
+    public float finalLapPopup;
+
     #endregion
 
     #region METHODS
+    void Start()
+    {
+        // set lap count
+        laps = new float[RaceSettings.laps];
+        perfects = new bool[RaceSettings.laps];
+
+        // TEMP: remove once countdown has been added
+        RaceSettings.countdownFinished = true;
+    }
+
+    private void RaceTimers()
+    {
+        totalTime += Time.deltaTime;
+        currentTime += Time.deltaTime;
+
+        checkpoint -= Time.deltaTime;
+    }
+
     private void FixedUpdate()
     {
         if (recharging)
@@ -73,6 +110,15 @@ public class ShipRefs : MonoBehaviour
                 settings.REF_RECHARGEFX.SetActive(false);
             }
         }
+
+        if (currentLap > 0)
+            RaceTimers();
+
+        if (perfectLapPopup > -1)
+            perfectLapPopup -= Time.deltaTime;
+
+        if (finalLapPopup > -1)
+            finalLapPopup -= Time.deltaTime;
     }
     public void PlayOneShot(AudioClip clip)
     {
@@ -84,6 +130,64 @@ public class ShipRefs : MonoBehaviour
         {
             OneShot.CreateOneShot(clip, AudioSettings.VOLUME_MAIN, 1.0f);
         }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        // respawn
+        if (other.tag == "Respawn")
+            isRespawning = true;
+
+        if (other.tag == "SLine")
+        {
+            if (passedMid || currentLap == 0)
+            {
+                UpdateLap();
+                passedMid = false;
+            }
+        }
+
+        if (other.tag == "MLine")
+            passedMid = true;
+
+        if (other.tag == "MReset")
+            passedMid = false;
+    }
+
+    private void UpdateLap()
+    {
+        if (currentLap > 0 && currentLap < RaceSettings.laps)
+        {
+            // set lap time
+            laps[currentLap - 1] = currentTime;
+
+            // set perfect laps
+            perfects[currentLap - 1] = perfectLap;
+
+            // compare best time
+            if (currentTime < bestLap || !hasBestTime)
+            {
+                bestLap = currentTime;
+                hasBestTime = true;
+            }
+
+            // notify of perfect lap
+            if (perfectLap)
+                perfectLapPopup = 1.0f;
+        }
+
+        // reset current time
+        currentTime = 0;
+
+        // reset perfect lap
+        perfectLap = true;
+
+        // increment lap
+        currentLap++;
+
+        // notify of perfect lap
+        if (currentLap == RaceSettings.laps)
+            finalLapPopup = 1.0f;
     }
     #endregion
 }

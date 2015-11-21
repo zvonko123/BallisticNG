@@ -23,7 +23,26 @@ public class HUDManager : ShipBase {
     public Text txtSpeed;
     public RectTransform tSpeed;
 
+    [Header("[ TIME PANELS ]")]
+    public Text[] txtLaps;
+    public Image[] imgLaps;
+    public GameObject[] gmLapPanels;
+    public GameObject[] gmPerfectText;
+    public Text txtTotalTime;
+    public Text txtCurrentTime;
+    public Text txtBestTime;
+    public Text txtChkPoint;
+    public Text txtCurrenLap;
+    public Text txtMaxLap;
+
     public Image[] lapCounters;
+    
+    void Start()
+    {
+        // disable un-used lap counters
+        for (int i = RaceSettings.laps; i < gmLapPanels.Length; i++)
+            gmLapPanels[i].SetActive(false);
+    }
 
     void Update()
     {
@@ -69,5 +88,49 @@ public class HUDManager : ShipBase {
 
         // speed color
         imgPwr.color = new Color((1.0f - accentColor.r) * 0.8f, (1.0f - accentColor.g) * 0.8f, (1.0f - accentColor.b) * 0.8f, 1.0f);
+
+        // update total time
+        txtTotalTime.text = FloatToTime.Convert(r.totalTime, "0:00.00");
+
+        // update best time
+        if (r.hasBestTime)
+            txtBestTime.text = FloatToTime.Convert(r.bestLap, "0:00.00");
+        else
+            txtBestTime.text = "-:--.--";
+
+        // update current time
+        for (i = 0; i < txtLaps.Length; i++)
+        {
+            if (i < r.currentLap)
+                txtLaps[i].text = FloatToTime.Convert(r.laps[i], "0:00.00");
+
+            if (r.perfects[i])
+                gmPerfectText[i].SetActive(true);
+            else
+                gmPerfectText[i].SetActive(false);
+
+            if (i == r.currentLap - 1)
+                txtLaps[i].text = FloatToTime.Convert(r.currentTime, "0:00.00");
+
+            if (i == r.currentLap - 1)
+                imgLaps[i].color = accentColor;
+            else
+                imgLaps[i].color = new Color(1.0f, 1.0f, 1.0f, accentColor.a);
+        }
+
+        // update lap text
+        txtCurrenLap.text = r.currentLap.ToString();
+        txtMaxLap.text = RaceSettings.laps.ToString();
+
+        // notifications
+        if (r.finalLapPopup > 0)
+            msgFinalLap.gameObject.SetActive(true);
+        else
+            msgFinalLap.gameObject.SetActive(false);
+
+        if (r.perfectLapPopup > 0)
+            msgPerfectLap.gameObject.SetActive(true);
+        else
+            msgPerfectLap.gameObject.SetActive(false);
     }
 }

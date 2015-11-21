@@ -219,7 +219,7 @@ public class ShipEffects : ShipBase {
     {
         if (r.isRespawning)
         {
-            droidHeight = Mathf.Lerp(droidHeight, droidBaseHeight, Time.deltaTime * 15);
+            droidHeight = droidBaseHeight;
         } else
         {
             droidHeight = Mathf.Lerp(droidHeight, droidBaseHeight * 15, Time.deltaTime * 0.8f);
