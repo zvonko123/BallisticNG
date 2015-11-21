@@ -3,6 +3,7 @@ using BnG.TrackData;
 using BnG.TrackTools;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 
 public class RaceSettings
 {
@@ -45,9 +46,10 @@ public class AudioSettings
 {
     // audio settings
     public static float VOLUME_MAIN = 1.0f;
-    public static float VOLUME_MUSIC;
+    public static float VOLUME_MUSIC = 0.7f;
     public static float VOLUME_SFX;
     public static float VOLUME_VOICES;
+    public static string[] musicLocations;
 
     // audio management
     public static AudioManager manager;
@@ -61,6 +63,25 @@ public class AudioSettings
         }
 
         manager.RegisterOneShot(source);
+    }
+
+    public static void LoadMusic()
+    {
+        // read music list file from resources folder
+        TextAsset musicList = Resources.Load("musiclist") as TextAsset;
+        List<string> musicLocs = new List<string>();
+        using (StringReader sr = new StringReader(musicList.ToString()))
+        {
+            string newLine = sr.ReadLine();
+
+            while (newLine != null)
+            {
+                musicLocs.Add(newLine);
+                newLine = sr.ReadLine();
+            }
+        }
+
+        musicLocations = musicLocs.ToArray();
     }
 }
 

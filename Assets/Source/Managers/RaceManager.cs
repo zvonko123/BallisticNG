@@ -12,11 +12,13 @@ public class RaceManager : MonoBehaviour {
     public bool useSceneSettings = true;
     public int racerCount = 1;
     public int lapCount = 1;
+    public bool musicManagerEnabled;
 
     public E_SPEEDCLASS speedClass;
     public E_SHIPS playerShip;
 
     public HUDManager RaceUI;
+    public MusicManager musicManager;
 
     #endregion
 
@@ -51,6 +53,13 @@ public class RaceManager : MonoBehaviour {
         RaceUI = newUI.GetComponent<HUDManager>();
         RaceUI.r = RaceSettings.SHIPS[0];
         RaceUI.accentColor = RaceSettings.SHIPS[0].settings.REF_HUDCOL;
+
+        // create music manager
+        if (musicManagerEnabled)
+        {
+            GameObject newObj = new GameObject("Music Manager");
+            musicManager = newObj.AddComponent<MusicManager>();
+        }
 
         // cap framerate
         GameSettings.CapFPS(60);
