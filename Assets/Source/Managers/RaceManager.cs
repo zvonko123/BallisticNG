@@ -27,6 +27,7 @@ public class RaceManager : MonoBehaviour {
         // if using the scene settings then override racesettings
         if (useSceneSettings)
         {
+            RaceSettings.speedclass = speedClass;
             RaceSettings.racers = racerCount;
             RaceSettings.laps = lapCount;
             RaceSettings.playerShip = playerShip;
