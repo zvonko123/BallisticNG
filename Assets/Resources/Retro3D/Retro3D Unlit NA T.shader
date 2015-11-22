@@ -3,6 +3,7 @@
     Properties
     {
         _MainTex("Base", 2D) = "white" {}
+		_Illum("Illumination", 2D) = "black" {}
         _Color("Color", Color) = (0.5, 0.5, 0.5, 1)
         _GeoRes("Geometric Resolution", Float) = 40
     }
@@ -29,6 +30,7 @@
 
 					sampler2D _MainTex;
 					float4 _MainTex_ST;
+					sampler2D _Illum;
 					float4 _Color;
 					float _GeoRes;
 					fixed _Cutoff;
@@ -49,7 +51,7 @@
 
 					fixed4 frag(v2f i) : SV_Target
 					{
-						fixed4 col = tex2D(_MainTex, i.texcoord) * i.color;
+						fixed4 col = (tex2D(_MainTex, i.texcoord) * i.color) + tex2D(_Illum, i.texcoord);
 						col.a = tex2D(_MainTex, i.texcoord).a;
 						return col;
 					}

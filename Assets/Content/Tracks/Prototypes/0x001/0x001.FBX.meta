@@ -15,6 +15,12 @@ ModelImporter:
     100014: Curve004
     100016: PitProfile
     100018: TrackProfile
+    100020: Box001
+    100022: Box002
+    100024: Box003
+    100026: Box004
+    100028: Box005
+    100030: Box006
     400000: //RootNode
     400002: Loft001
     400004: Object001
@@ -25,17 +31,41 @@ ModelImporter:
     400014: Curve004
     400016: PitProfile
     400018: TrackProfile
+    400020: Box001
+    400022: Box002
+    400024: Box003
+    400026: Box004
+    400028: Box005
+    400030: Box006
     2300000: Loft001
     2300002: Object001
     2300004: TrackProfile
     2300006: //RootNode
+    2300008: Box001
+    2300010: Box002
+    2300012: Box003
+    2300014: Box004
+    2300016: Box005
+    2300018: Box006
     3300000: Loft001
     3300002: Object001
     3300004: TrackProfile
     3300006: //RootNode
+    3300008: Box001
+    3300010: Box002
+    3300012: Box003
+    3300014: Box004
+    3300016: Box005
+    3300018: Box006
     4300000: Loft001
     4300002: Object001
     4300004: TrackProfile
+    4300006: Box001
+    4300008: Box002
+    4300010: Box003
+    4300012: Box004
+    4300014: Box005
+    4300016: Box006
     9500000: //RootNode
   materials:
     importMaterials: 1
