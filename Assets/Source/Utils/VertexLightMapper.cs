@@ -26,6 +26,8 @@ public class VertexLightMapper : MonoBehaviour {
     public bool bakeMap;
     public string lightmapName;
     public bool foundMap;
+
+    public string progress;
     
     void Start()
     {
@@ -35,6 +37,7 @@ public class VertexLightMapper : MonoBehaviour {
 
     void Update()
     {
+
         if (!bakeMap)
         {
             return;
@@ -128,9 +131,10 @@ public class VertexLightMapper : MonoBehaviour {
         Debug.Log(string.Format("Found {0} meshes!", foundMeshes.ToString()));
     }
 
-    private void LightmapPass()
+    public void LightmapPass()
     {
 
+        progress = "Working";
         // find all lights
         Light[] lights = FindObjectsOfType(typeof(Light)) as Light[];
         AntiLight[] nLights = FindObjectsOfType(typeof(AntiLight)) as AntiLight[];
@@ -463,6 +467,8 @@ public class VertexLightMapper : MonoBehaviour {
         }
         #endregion
         VCM.Save(lightmapName, data.ToArray());
+
+        progress = "Finished";
     }
 
     private void SaveVCM()
