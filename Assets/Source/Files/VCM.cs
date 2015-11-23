@@ -22,13 +22,13 @@ namespace BnG.Files
             uint c;
             using (StreamWriter sr = new StreamWriter(path))
             {
-                for (i = 0; i < toSave.Length; i++)
+                sr.WriteLine(toSave.Length);
+                for (i = 0; i < toSave.Length; ++i)
                 {
-                    sr.WriteLine("ID " + toSave[i].ID);
                     for (j = 0; j < toSave[i].colors.Count; ++j)
                     {
                         c = Color2uInt(toSave[i].colors[j]);
-                        sr.WriteLine("C " + c);
+                        sr.WriteLine("C " + toSave[i].ID + " " + c);
                     }
                 }
             }
@@ -45,37 +45,49 @@ namespace BnG.Files
                 return null;
             }
             List<VCMData> data = new List<VCMData>();
-            int index = -1;
 
             using (StreamReader sr = new StreamReader(path))
             {
-                string line = sr.ReadLine();
                 char[] split = { ' ' };
                 string[] lineArray;
 
                 uint c;
                 Color final;
-                char ID = 'I';
-                char Co = 'C';
+
+                // read object count from first line
+                string line = sr.ReadLine();
+                int objectCount = System.Convert.ToInt32(line);
+                for (int d = 0; d < objectCount; ++d)
+                {
+                    VCMData nd = new VCMData();
+                    data.Add(nd);
+                }
+
+                int currentID;
+                sr.ReadLine();
+                string line2 ="NA";
 
                 while (line != null)
                 {
-                    line.Trim();
-                    if (line[0] == Co)
+                    if (line[0] == 'C')
                     {
+                        // trim and split line
+                        line.Trim();
                         lineArray = line.Split(split, 50);
-                        c = System.Convert.ToUInt32(lineArray[1]);
-                        final = uInt2Color(c);
-                        data[index].colors.Add(final);
-                    } else if (line[0] == ID)
-                    {
-                        data.Add(new VCMData());
-                        index++;
 
-                        lineArray = line.Split(split, 50);
-                        data[index].ID = System.Convert.ToInt32(lineArray[1]);
+                        // read ID from line
+                        currentID = System.Convert.ToInt32(lineArray[1]);
+
+                        // read uint and convert it to a color
+                        c = System.Convert.ToUInt32(lineArray[2]);
+                        final = uInt2Color(c);
+
+                        // add new data to arrays
+                        data[currentID].colors.Add(final);
+                        data[currentID].ID = currentID;
                     }
                     line = sr.ReadLine();
+
                 }
             }
 
@@ -86,6 +98,7 @@ namespace BnG.Files
             int a = 0;
             Mesh m;
             Color32[] cols;
+
             for (i = 0; i < data.Count; ++i)
             {
                 for (j = 0; j < objects.Length; ++j)
@@ -96,11 +109,19 @@ namespace BnG.Files
                         {
                             m = objects[j].GetComponent<MeshFilter>().sharedMesh;
                             cols = new Color32[m.vertices.Length];
-                            for (a = 0; a < m.vertices.Length; a++)
+                            if (cols.Length == data[i].colors.Count)
                             {
-                                cols[a] = data[i].colors[a];
+                                for (a = 0; a < cols.Length; ++a)
+                                {
+                                    cols[a] = data[i].colors[a];
+                                }
+                                m.colors32 = cols;
                             }
-                            m.colors32 = cols;
+                            else
+                            {
+                                Debug.Log("Array length mismatch on " + i.ToString());
+                            }
+
                         }
                     }
                 }

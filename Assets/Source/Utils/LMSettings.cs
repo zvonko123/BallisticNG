@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using BnG.Files;
+using BnG.TrackData;
 using System.Collections;
 
 public class LMSettings : MonoBehaviour {
@@ -8,6 +9,7 @@ public class LMSettings : MonoBehaviour {
     public Color32 ambientLight;
     public GameObject sceneParent;
     public string lightmapName;
+    public TrData data;
 
     void Start()
     {
@@ -20,6 +22,7 @@ public class LMSettings : MonoBehaviour {
         if (System.IO.File.Exists(path))
         {
             VCM.Load(lightmapName);
+            data.setTileColors = true;
         }
         else
         {

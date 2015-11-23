@@ -15,7 +15,6 @@ public class Lightmapper : EditorWindow {
     private static List<Transform> trackTransforms = new List<Transform>();
     private static List<Mesh> sceneMeshes = new List<Mesh>();
     private static List<Mesh> trackMeshes = new List<Mesh>();
-    private static List<VCMData> vcmData = new List<VCMData>();
     private static List<Light> dLights = new List<Light>();
     private static List<Light> pLights = new List<Light>();
 
@@ -31,6 +30,8 @@ public class Lightmapper : EditorWindow {
         thisWindow.minSize = new Vector2(400, 100);
         thisWindow.maxSize = new Vector2(400, 100);
         thisWindow.titleContent = new GUIContent("Lightmapper");
+
+        CheckForSettings();
     }
 
     void OnGUI()
@@ -46,7 +47,6 @@ public class Lightmapper : EditorWindow {
         CheckForSettings();
         GatherObjects();
         MapLights();
-        SaveMap();
         Cleanup();
 
         // remove progress bar
@@ -154,6 +154,7 @@ public class Lightmapper : EditorWindow {
         Vector3[] normals;
         int[] tris;
         int vcmID = 0;
+        List<VCMData> vcmData = new List<VCMData>();
 
         // scene meshes
         for (i = 0; i < sceneMeshes.Count; ++i)
@@ -232,10 +233,10 @@ public class Lightmapper : EditorWindow {
                 sceneGO[i].AddComponent<VCMID>();
 
             sceneGO[i].GetComponent<VCMID>().ID = vcmID;
-            vcmData[i].ID = vcmID;
-            for (j = 0; j < cols.Length; ++j)
+            vcmData[vcmID].ID = vcmID;
+            for (j = 0; j < cols.Length; j++)
             {
-                vcmData[i].colors.Add(cols[j]);
+                vcmData[vcmID].colors.Add(cols[j]);
             }
 
             vcmID++;
@@ -345,19 +346,19 @@ public class Lightmapper : EditorWindow {
                 trackGO[i].AddComponent<VCMID>();
 
             trackGO[i].GetComponent<VCMID>().ID = vcmID;
-            vcmData[i].ID = vcmID;
-            for (j = 0; j < cols.Length; ++j)
+            vcmData[vcmID].ID = vcmID;
+            for (j = 0; j < cols.Length; j++)
             {
-                vcmData[i].colors.Add(cols[j]);
+                vcmData[vcmID].colors.Add(cols[j]);
             }
 
             vcmID++;
-        }
-    }
 
-    public static void SaveMap()
-    {
+        }
+
+        // save data
         VCM.Save(lms.lightmapName, vcmData.ToArray());
+        lms.data.setTileColors = true;
     }
 
     public static void Cleanup()

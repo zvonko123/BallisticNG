@@ -318,7 +318,7 @@ public class VertexLightMapper : MonoBehaviour {
             data[i].ID = i;
             for (j = 0; j < newColors.Length; j++)
             {
-                data[i].colors.Add(newColors[j]);
+                //data[i].colors.Add(newColors[j]);
             }
 
         }
@@ -461,7 +461,7 @@ public class VertexLightMapper : MonoBehaviour {
             data[totalIndex + i].ID = totalIndex + i;
             for (j = 0; j < newColors.Length; j++)
             {
-                data[totalIndex + i].colors.Add(newColors[j]);
+                //data[totalIndex + i].colors.Add(newColors[j]);
             }
 
         }
