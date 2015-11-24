@@ -99,7 +99,7 @@ public class HUDManager : ShipBase {
             txtBestTime.text = "-:--.--";
 
         // update current time
-        for (i = 0; i < txtLaps.Length; i++)
+        for (i = 0; i < RaceSettings.laps; i++)
         {
             if (i < r.currentLap)
                 txtLaps[i].text = FloatToTime.Convert(r.laps[i], "0:00.00");

@@ -11,6 +11,7 @@ public class RaceSettings
     public static TrData trackData;
     public static Camera currentCamera;
     public static List<ShipRefs> SHIPS = new List<ShipRefs>();
+    public static Transform[] overviewTransforms;
 
     // race settings
     public static int racers = 1;

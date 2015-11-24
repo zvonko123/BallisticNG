@@ -55,6 +55,8 @@ public class ShipRefs : MonoBehaviour
     public float boostTimer;
     public TrTile lastBoost;
 
+    public bool attachedFinalCam;
+
     // race times
     public float[] laps;
     public bool[] perfects;
@@ -68,6 +70,7 @@ public class ShipRefs : MonoBehaviour
     public float checkpoint;
 
     public bool hasBestTime;
+    public bool finished;
 
     // UI timers
     public float perfectLapPopup;
@@ -88,10 +91,13 @@ public class ShipRefs : MonoBehaviour
 
     private void RaceTimers()
     {
-        totalTime += Time.deltaTime;
-        currentTime += Time.deltaTime;
+        if (!finished)
+        {
+            totalTime += Time.deltaTime;
+            currentTime += Time.deltaTime;
 
-        checkpoint -= Time.deltaTime;
+            checkpoint -= Time.deltaTime;
+        }
     }
 
     private void FixedUpdate()
@@ -216,7 +222,7 @@ public class ShipRefs : MonoBehaviour
 
     private void UpdateLap()
     {
-        if (currentLap > 0 && currentLap < RaceSettings.laps)
+        if (currentLap > 0 && currentLap <= RaceSettings.laps)
         {
             // set lap time
             laps[currentLap - 1] = currentTime;
@@ -234,6 +240,22 @@ public class ShipRefs : MonoBehaviour
             // notify of perfect lap
             if (perfectLap)
                 perfectLapPopup = 1.0f;
+        }
+
+        if (currentLap >= RaceSettings.laps)
+        {
+            finished = true;
+            if (!attachedFinalCam)
+            {
+                // destroy camera
+                Destroy(cam.GetComponent<ShipCamera>());
+
+                // add final camera
+                cam.gameObject.AddComponent<ShipFCam>();
+                cam.GetComponent<ShipFCam>().r = this;
+                attachedFinalCam = true;
+                isAI = true;
+            }
         }
 
         // reset current time

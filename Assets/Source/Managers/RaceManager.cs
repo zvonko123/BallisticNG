@@ -17,6 +17,8 @@ public class RaceManager : MonoBehaviour {
     public E_SPEEDCLASS speedClass;
     public E_SHIPS playerShip;
 
+    public Transform[] trackCameraPoints;
+
     public HUDManager RaceUI;
     public MusicManager musicManager;
 
@@ -29,9 +31,32 @@ public class RaceManager : MonoBehaviour {
         {
             RaceSettings.speedclass = speedClass;
             RaceSettings.racers = racerCount;
-            RaceSettings.laps = lapCount;
+            //RaceSettings.laps = lapCount;
             RaceSettings.playerShip = playerShip;
         }
+
+        // set laps based on speed class
+        switch(RaceSettings.speedclass)
+        {
+            case E_SPEEDCLASS.SPARK:
+                RaceSettings.laps = 2;
+                break;
+            case E_SPEEDCLASS.TOXIC:
+                RaceSettings.laps = 2;
+                break;
+            case E_SPEEDCLASS.APEX:
+                RaceSettings.laps = 3;
+                break;
+            case E_SPEEDCLASS.HALBERD:
+                RaceSettings.laps = 4;
+                break;
+            case E_SPEEDCLASS.SPECTRE:
+                RaceSettings.laps = 5;
+                break;
+        }
+
+        // copy camera points to settings
+        RaceSettings.overviewTransforms = trackCameraPoints;
 
         // set global reference to track data
         RaceSettings.trackData = trackData;
