@@ -92,6 +92,17 @@ public class RaceManager : MonoBehaviour {
         GameSettings.CapFPS(60);
 	}
 
+    void Update()
+    {
+        // pause check
+        if (Input.GetButtonDown("Pause"))
+        {
+            GameSettings.PauseToggle();
+            for (int i = 0; i < RaceSettings.SHIPS.Count; ++i)
+                RaceSettings.SHIPS[i].SetAudioEnabled(!GameSettings.isPaused);
+        }
+    }
+
     private void SpawnShips()
     {
         // make sure racers is at least 1

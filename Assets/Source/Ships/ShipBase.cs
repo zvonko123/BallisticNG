@@ -178,6 +178,11 @@ public class ShipRefs : MonoBehaviour
         shield -= amount * settings.DAMAGE_MULT;
     }
 
+    public void SetAudioEnabled(bool enabled)
+    {
+        effects.audioContainer.SetActive(enabled);
+    }
+
     public void HitSpeedPad()
     {
         if (boostState < 3)

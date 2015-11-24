@@ -9,7 +9,7 @@ public class ShipEffects : ShipBase {
     private Color shipColor;
 
     // audio settings
-    private GameObject audioContainer;
+    public GameObject audioContainer;
     private AudioSource engineSFX;
     private AudioSource turbulanceSFX;
     private AudioSource droidSFX;
