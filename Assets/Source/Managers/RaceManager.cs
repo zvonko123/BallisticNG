@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using BnG.TrackData;
 using System.Collections;
+using System.Collections.Generic;
 
 public class RaceManager : MonoBehaviour {
 
@@ -20,12 +21,26 @@ public class RaceManager : MonoBehaviour {
     public Transform[] trackCameraPoints;
 
     public HUDManager RaceUI;
+    public PauseManager PauseUI;
+    public PauseManager DeadUI;
     public MusicManager musicManager;
+
+    public List<GameObject> ambSounds = new List<GameObject>();
+
+    public bool playerDied;
 
     #endregion
 
     void Start ()
     {
+        // gather all the sounds in the scene (for pausing)
+        GameObject[] allObjects = FindObjectsOfType(typeof(GameObject)) as GameObject[];
+        for (int i = 0; i < allObjects.Length; ++i)
+        {
+            if (allObjects[i].GetComponent<AudioSource>())
+                ambSounds.Add(allObjects[i]);
+        }
+
         // if using the scene settings then override racesettings
         if (useSceneSettings)
         {
@@ -34,6 +49,12 @@ public class RaceManager : MonoBehaviour {
             //RaceSettings.laps = lapCount;
             RaceSettings.playerShip = playerShip;
         }
+
+        // set reference to race manager
+        RaceSettings.raceManager = this;
+
+        // clear ships list
+        RaceSettings.SHIPS.Clear();
 
         // set laps based on speed class
         switch(RaceSettings.speedclass)
@@ -70,7 +91,6 @@ public class RaceManager : MonoBehaviour {
         RaceSettings.introCamStart = trackData.spawnCameraLocations[startIndex];
         RaceSettings.introCamEnd = trackData.spawnCameraLocations[0];
 
-
         // spawn the ships
         SpawnShips();
 
@@ -79,6 +99,19 @@ public class RaceManager : MonoBehaviour {
         RaceUI = newUI.GetComponent<HUDManager>();
         RaceUI.r = RaceSettings.SHIPS[0];
         RaceUI.accentColor = RaceSettings.SHIPS[0].settings.REF_HUDCOL;
+
+        // create pause UI
+        GameObject pauseUI = Instantiate(Resources.Load("PauseUI") as GameObject) as GameObject;
+        PauseUI = pauseUI.GetComponent<PauseManager>();
+        pauseUI.SetActive(false);
+
+        // create dead UI
+        GameObject deadUI = Instantiate(Resources.Load("DeadUI") as GameObject) as GameObject;
+        DeadUI = deadUI.GetComponent<PauseManager>();
+        deadUI.SetActive(false);
+
+        // hide mouse cursor
+        Cursor.visible = false;
 
         // create music manager
         if (musicManagerEnabled)
@@ -94,13 +127,71 @@ public class RaceManager : MonoBehaviour {
 
     void Update()
     {
-        // pause check
-        if (Input.GetButtonDown("Pause"))
+        // pause check (pause button, alt-tab and default steam overlay combination)
+        if (Input.GetButtonDown("Pause") || (Input.GetKey(KeyCode.LeftAlt) && Input.GetKeyDown(KeyCode.Tab)) ||
+            (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Tab)))
         {
-            GameSettings.PauseToggle();
-            for (int i = 0; i < RaceSettings.SHIPS.Count; ++i)
-                RaceSettings.SHIPS[i].SetAudioEnabled(!GameSettings.isPaused);
+            if (!RaceSettings.SHIPS[0].isDead)
+                PauseInput();
         }
+
+        // player death check
+        if (!playerDied && RaceSettings.SHIPS[0].isDead)
+        {
+            playerDied = true;
+            DeadUI.gameObject.SetActive(true);
+            RaceUI.gameObject.SetActive(false);
+            DeadUI.MenuEnabled();
+        }
+    }
+
+    public void PauseInput()
+    {
+        // toggle pause
+        GameSettings.PauseToggle();
+        
+        // toggle sounds for ships
+        for (int i = 0; i < RaceSettings.SHIPS.Count; ++i)
+            RaceSettings.SHIPS[i].SetAudioEnabled(!GameSettings.isPaused);
+
+        // show/hide pause UI
+        PauseUI.gameObject.SetActive(GameSettings.isPaused);
+        if (GameSettings.isPaused)
+        {
+            // load and play pause sound
+            AudioClip clip = Resources.Load("Audio/Interface/PAUSE") as AudioClip;
+            if (clip != null)
+            {
+                OneShot.CreateOneShot(clip, 1.0f, 1.0f);
+            }
+            else
+            {
+                Debug.LogError(gameObject.name + " (Manager) couldn't load sound: PAUSE");
+            }
+            PauseUI.MenuEnabled();
+        } else
+        {
+            // load and play pause sound
+            AudioClip clip = Resources.Load("Audio/Interface/UNPAUSE") as AudioClip;
+            if (clip != null)
+            {
+                OneShot.CreateOneShot(clip, 1.0f, 1.0f);
+            }
+            else
+            {
+                Debug.LogError(gameObject.name + " (Manager) couldn't load sound: UNPAUSE");
+            }
+        }
+
+        // show/hide race HUD
+        RaceUI.gameObject.SetActive(!GameSettings.isPaused);
+
+        // toggle ambient sounds
+        for (int i = 0; i < ambSounds.Count; ++i)
+            ambSounds[i].SetActive(!GameSettings.isPaused);
+
+        // toggle mouse cursor visibility
+        Cursor.visible = GameSettings.isPaused;
     }
 
     private void SpawnShips()

@@ -12,6 +12,7 @@ public class RaceSettings
     public static Camera currentCamera;
     public static List<ShipRefs> SHIPS = new List<ShipRefs>();
     public static Transform[] overviewTransforms;
+    public static RaceManager raceManager;
 
     // race settings
     public static int racers = 1;
@@ -29,10 +30,20 @@ public class RaceSettings
 
     // player control
     public static int playerControlIndex;
+
+    public static string customShipName;
+}
+
+public class TournamentSettings
+{
+    public bool isTournament;
+    public List<E_TRACKS> tournamentTracks = new List<E_TRACKS>();
+    public int tournamentIndex;
 }
 
 public class GameSettings
 {
+    // pause
     public static bool isPaused;
 
     public static void PauseToggle()
@@ -56,6 +67,11 @@ public class GameSettings
         else
             Time.timeScale = 1.0f;
     }
+
+    // game settings
+    public Vector2 GS_RESOLUTION;
+    public int GS_REFRESHRATE;
+    public int GS_FRAMECAP;
 
     /// <summary>
     /// Cap the framerate.
@@ -138,8 +154,9 @@ public enum E_SHIPS
     // secret ships
     GODTAMPON,
     BARRACUDA,
-    CALIBURN
-
+    CALIBURN,
+    // others
+    CUSTOM
 }
 
 public enum E_TRACKS

@@ -109,7 +109,18 @@ public class ShipRefs : MonoBehaviour
             shield = settings.DAMAGE_SHIELD;
 
         if (shield < 0)
+        {
             shield = 0;
+
+            // ship is dead
+            if (!isDead)
+            {
+                isDead = true;
+
+                // make ship fall to ground
+                settings.AG_HOVER_HEIGHT *= 0.5f;
+            }
+        }
 
         if (recharging)
         {

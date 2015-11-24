@@ -45,6 +45,8 @@ public class ShipEffects : ShipBase {
     public float shieldAlpha;
     public Material shieldMat;
 
+    public float shipDeadMult = 1.0f;
+
     void Start()
     {
         // get droid base height
@@ -122,6 +124,13 @@ public class ShipEffects : ShipBase {
                 r.lastBoost = null;
             }
         }
+        // dead color
+        if (r.isDead)
+        {
+            shipDeadMult = Mathf.Lerp(shipDeadMult, 0.15f, Time.deltaTime * 3);
+            shipColor *= shipDeadMult;
+        }
+
         r.mesh.GetComponent<Renderer>().material.SetColor("_Color", shipColor);
 
         if (r.recharging)

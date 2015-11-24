@@ -47,28 +47,45 @@ public class ShipInput : ShipBase {
         }
         else
         {
-            // if ship restrained then do not read any input
-            if (!RaceSettings.shipsRestrained && !r.shipRestrained)
+            if (r.isDead)
             {
-                AXIS_STEER = Input.GetAxis("Steer");
-                AXIS_PITCH = Input.GetAxis("Pitch");
-                AXIS_LEFTAIRBRAKE = Input.GetAxis("Left Airbrake");
-                AXIS_RIGHTAIRBRAKE = Input.GetAxis("Right Airbrake");
-                ACTION_SPECIAL = Input.GetButton("Special");
-            }
-            else
+                // no steering/pitch
+                AXIS_STEER = 0;
+                AXIS_PITCH = 0;
+
+                // apply both brakes to slow the ship down
+                AXIS_BOTHAIRBRAKES = 0.0f;
+                AXIS_LEFTAIRBRAKE = 1.0f;
+                AXIS_RIGHTAIRBRAKE = 1.0f;
+
+                // no thrust
+                ACTION_THRUST = false;
+
+            } else
             {
-                AXIS_STEER = 0.0f;
-                AXIS_PITCH = 0.0f;
-                AXIS_RIGHTAIRBRAKE = 0.0f;
-                AXIS_RIGHTAIRBRAKE = 0.0f;
+                // if ship restrained then do not read any input
+                if (!RaceSettings.shipsRestrained && !r.shipRestrained)
+                {
+                    AXIS_STEER = Input.GetAxis("Steer");
+                    AXIS_PITCH = Input.GetAxis("Pitch");
+                    AXIS_LEFTAIRBRAKE = Input.GetAxis("Left Airbrake");
+                    AXIS_RIGHTAIRBRAKE = Input.GetAxis("Right Airbrake");
+                    ACTION_SPECIAL = Input.GetButton("Special");
+                }
+                else
+                {
+                    AXIS_STEER = 0.0f;
+                    AXIS_PITCH = 0.0f;
+                    AXIS_RIGHTAIRBRAKE = 0.0f;
+                    AXIS_RIGHTAIRBRAKE = 0.0f;
+                }
+
+                // combine both airbrakes together
+                AXIS_BOTHAIRBRAKES = AXIS_LEFTAIRBRAKE + AXIS_RIGHTAIRBRAKE;
+
+                // thrust check
+                ACTION_THRUST = Input.GetButton("Thrust");
             }
-
-            // combine both airbrakes together
-            AXIS_BOTHAIRBRAKES = AXIS_LEFTAIRBRAKE + AXIS_RIGHTAIRBRAKE;
-
-            // thrust check
-            ACTION_THRUST = Input.GetButton("Thrust");
         }
     }
 
