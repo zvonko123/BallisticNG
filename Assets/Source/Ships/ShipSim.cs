@@ -479,7 +479,7 @@ public class ShipSim : ShipBase {
 
                 // Ship take damage
                 if (!r.shieldActivate)
-                    r.shield -= Mathf.Abs(impact * 1.5f);
+                    r.TakeDamage(Mathf.Abs(impact * 1.5f));
 
                 // change shield color
                 r.ShieldDamage();

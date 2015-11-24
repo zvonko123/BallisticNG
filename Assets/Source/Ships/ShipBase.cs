@@ -173,6 +173,11 @@ public class ShipRefs : MonoBehaviour
         }
     }
 
+    public void TakeDamage(float amount)
+    {
+        shield -= amount * settings.DAMAGE_MULT;
+    }
+
     public void HitSpeedPad()
     {
         if (boostState < 3)
