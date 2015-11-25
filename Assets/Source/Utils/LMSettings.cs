@@ -2,6 +2,7 @@
 using BnG.Files;
 using BnG.TrackData;
 using System.Collections;
+using System;
 
 public class LMSettings : MonoBehaviour {
 
@@ -18,7 +19,7 @@ public class LMSettings : MonoBehaviour {
 
     private void CheckForExistingMap()
     {
-        string path = Application.dataPath + "/Resources/BakedLighting/" + lightmapName + ".vcm";
+        string path = Environment.CurrentDirectory + "/Lighting/" + lightmapName + ".vcm";
         if (System.IO.File.Exists(path))
         {
             VCM.Load(lightmapName);

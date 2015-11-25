@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System;
 
 namespace BnG.Files
 {
@@ -12,10 +13,10 @@ namespace BnG.Files
     {
         public static void Save(string trackName, VCMData[] toSave)
         {
-            if (!Directory.Exists(Application.dataPath + "/Resources/BakedLighting/"))
-                Directory.CreateDirectory(Application.dataPath + "/Resources/BakedLighting/");
+            string path = Environment.CurrentDirectory + "/Lighting/" + trackName + ".vcm";
 
-            string path = Application.dataPath + "/Resources/BakedLighting/" + trackName + ".vcm";
+            if (!Directory.Exists(path = Environment.CurrentDirectory + "/Lighting/"))
+                Directory.CreateDirectory(path = Environment.CurrentDirectory + "/Lighting/");
 
             int i = 0;
             int j = 0;
@@ -37,7 +38,7 @@ namespace BnG.Files
 
         public static VCMData[] Load(string trackName)
         {
-            string path = Application.dataPath + "/Resources/BakedLighting/" + trackName + ".vcm";
+            string path = Environment.CurrentDirectory + "/Lighting/" + trackName + ".vcm";
 
             if (!File.Exists(path))
             {
@@ -65,7 +66,7 @@ namespace BnG.Files
 
                 int currentID;
                 sr.ReadLine();
-                string line2 ="NA";
+                string line2 = "NA";
 
                 while (line != null)
                 {

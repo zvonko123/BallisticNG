@@ -147,7 +147,10 @@ public class ShipEffects : ShipBase {
         wantedPitch = Mathf.Clamp(wantedPitch, 0.5f, 2.0f);
         enginePitch = Mathf.Lerp(enginePitch, wantedPitch, Time.deltaTime * 1.5f);
         engineSFX.pitch = enginePitch;
-        engineSFX.volume = AudioSettings.VOLUME_MAIN;
+        if (!r.isDead)
+            engineSFX.volume = AudioSettings.VOLUME_MAIN;
+        else
+            engineSFX.volume = Mathf.Lerp(engineSFX.volume, 0.0f, Time.deltaTime * 5);
 
         // turbulance SFX
         if (r.input.AXIS_BOTHAIRBRAKES != 0)
@@ -163,7 +166,7 @@ public class ShipEffects : ShipBase {
         turbulanceSFX.volume = turbulanceVolume;
 
         // scrape SFX
-        if (r.sim.isShipScraping && !r.shieldActivate)
+        if (r.sim.isShipScraping && !r.shieldActivate && !r.isDead)
         {
             if (!scrapeSFX.isPlaying)
                 scrapeSFX.Play();
@@ -240,6 +243,9 @@ public class ShipEffects : ShipBase {
         engineTrail.SetColor("_TintColor", engineColor);
 
         r.settings.REF_ENGINE_FLARE.transform.rotation = Quaternion.Euler(transform.eulerAngles.x - 90.0f, transform.eulerAngles.y, 0.0f);
+
+        // toggle flare
+        r.settings.REF_ENGINE_FLARE.SetActive(!r.isAI);
 
     }
 
