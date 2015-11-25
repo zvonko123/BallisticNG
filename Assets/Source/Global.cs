@@ -4,6 +4,7 @@ using BnG.TrackTools;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System;
 
 public class RaceSettings
 {
@@ -19,6 +20,7 @@ public class RaceSettings
     public static int laps = 1;
     public static E_SPEEDCLASS speedclass = E_SPEEDCLASS.SPECTRE;
     public static E_SHIPS playerShip = E_SHIPS.MTECHP1;
+    public static E_GAMEMODES gamemode = E_GAMEMODES.TimeTrial;
     public static bool shipsRestrained = false;
 
     // countdown
@@ -81,6 +83,22 @@ public class GameSettings
     {
         Application.targetFrameRate = cap;
     }
+
+    /// <summary>
+    /// Get the save directory of the game.
+    /// </summary>
+    /// <returns></returns>
+    public static string GetDirectory()
+    {
+        // get path
+        string path = Environment.CurrentDirectory + "/UserData/";
+
+        // create directory if it doesn't exist
+        if (!Directory.Exists(path))
+            Directory.CreateDirectory(path);
+
+        return path;
+    }
 }
 
 public class AudioSettings
@@ -134,6 +152,22 @@ public enum E_SPEEDCLASS
     APEX = 2,
     HALBERD = 3,
     SPECTRE = 4
+}
+
+public enum E_GAMEMODES
+{
+    Arcade,
+    TimeTrial,
+    Survival,
+    Tournament
+}
+
+public enum E_SAVELOCATIONS
+{
+    GHOSTS,
+    TIMES,
+    SHIPS,
+    TRACKS
 }
 
 public enum E_SHIPS

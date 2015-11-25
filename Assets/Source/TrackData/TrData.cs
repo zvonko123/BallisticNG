@@ -381,17 +381,28 @@ namespace BnG.TrackData
             }
 
             // weapon color
-            weaponTimer += Time.deltaTime * 2;
-            float weaponSin = Mathf.Abs(Mathf.Sin(weaponTimer));
-            weaponCol = Color.Lerp(WeaponCol1, WeaponCol2, weaponSin);
-
-            for (i = 0; i < ANIM_WEAPONS.Count; i++)
+            if (RaceSettings.gamemode == E_GAMEMODES.TimeTrial || RaceSettings.gamemode == E_GAMEMODES.Survival)
             {
-                cols[ANIM_WEAPONS[i]]= weaponCol;
+                for (i = 0; i < ANIM_WEAPONS.Count; i++)
+                {
+                    cols[ANIM_WEAPONS[i]] = Color.gray;
+                }
+
+                MESH_TRACKFLOOR.sharedMesh.colors32 = cols;
             }
+            else
+            {
+                weaponTimer += Time.deltaTime * 2;
+                float weaponSin = Mathf.Abs(Mathf.Sin(weaponTimer));
+                weaponCol = Color.Lerp(WeaponCol1, WeaponCol2, weaponSin);
 
-            MESH_TRACKFLOOR.sharedMesh.colors32 = cols;
+                for (i = 0; i < ANIM_WEAPONS.Count; i++)
+                {
+                    cols[ANIM_WEAPONS[i]] = weaponCol;
+                }
 
+                MESH_TRACKFLOOR.sharedMesh.colors32 = cols;
+            }
         }
 
 #endregion

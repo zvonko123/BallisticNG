@@ -70,6 +70,7 @@ public class ShipRefs : MonoBehaviour
     public float checkpoint;
 
     public bool hasBestTime;
+    public bool loadedBestTime;
     public bool finished;
 
     // UI timers
@@ -87,6 +88,21 @@ public class ShipRefs : MonoBehaviour
 
         // TEMP: remove once countdown has been added
         RaceSettings.countdownFinished = true;
+
+        // try to fetch best time
+        if (!isAI)
+        {
+            TimeData td = SaveData.ReadTime(Application.loadedLevelName, RaceSettings.speedclass);
+            if (td.dataFound)
+            {
+                loadedBestTime = true;
+                bestLap = td.time;
+            } else
+            {
+                Debug.Log("No time data found!");
+            }
+        }
+
     }
 
     private void RaceTimers()
@@ -257,7 +273,7 @@ public class ShipRefs : MonoBehaviour
             perfects[currentLap - 1] = perfectLap;
 
             // compare best time
-            if (currentTime < bestLap || !hasBestTime)
+            if ((currentTime < bestLap || !hasBestTime) && !loadedBestTime)
             {
                 bestLap = currentTime;
                 hasBestTime = true;
@@ -282,6 +298,20 @@ public class ShipRefs : MonoBehaviour
 
                     // disable race UI
                     RaceSettings.raceManager.RaceUI.gameObject.SetActive(false);
+
+                    // save time
+                    bool canWrite = false;
+                    if (loadedBestTime)
+                    {
+                        if (totalTime < bestLap)
+                            canWrite = true;
+                    } else
+                    {
+                        canWrite = true;
+                    }
+
+                    if (canWrite)
+                     SaveData.WriteTime(Application.loadedLevelName, RaceSettings.speedclass, totalTime);
                 }
             }
 

@@ -93,7 +93,7 @@ public class HUDManager : ShipBase {
         txtTotalTime.text = FloatToTime.Convert(r.totalTime, "0:00.00");
 
         // update best time
-        if (r.hasBestTime)
+        if (r.hasBestTime || r.loadedBestTime)
             txtBestTime.text = FloatToTime.Convert(r.bestLap, "0:00.00");
         else
             txtBestTime.text = "-:--.--";

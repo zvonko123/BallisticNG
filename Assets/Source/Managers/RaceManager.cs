@@ -17,6 +17,7 @@ public class RaceManager : MonoBehaviour {
 
     public E_SPEEDCLASS speedClass;
     public E_SHIPS playerShip;
+    public E_GAMEMODES gamemode;
 
     public Transform[] trackCameraPoints;
 
@@ -25,6 +26,7 @@ public class RaceManager : MonoBehaviour {
     public PauseManager DeadUI;
     public PauseManager FinishedUI;
     public MusicManager musicManager;
+    public GhostManager ghostManager;
 
     public List<GameObject> ambSounds = new List<GameObject>();
 
@@ -47,7 +49,7 @@ public class RaceManager : MonoBehaviour {
         {
             RaceSettings.speedclass = speedClass;
             RaceSettings.racers = racerCount;
-            //RaceSettings.laps = lapCount;
+            RaceSettings.gamemode = gamemode;
             RaceSettings.playerShip = playerShip;
         }
 
@@ -120,6 +122,13 @@ public class RaceManager : MonoBehaviour {
         FinishedUI.r = RaceSettings.SHIPS[0];
         finishedUI.SetActive(false);
 
+        // create ghost manager
+        if (RaceSettings.gamemode == E_GAMEMODES.TimeTrial)
+        {
+            ghostManager = gameObject.AddComponent<GhostManager>();
+            ghostManager.r = RaceSettings.SHIPS[0];
+        }
+
         // hide mouse cursor
         Cursor.visible = false;
 
@@ -141,7 +150,7 @@ public class RaceManager : MonoBehaviour {
         if (Input.GetButtonDown("Pause") || (Input.GetKey(KeyCode.LeftAlt) && Input.GetKeyDown(KeyCode.Tab)) ||
             (Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.Tab)))
         {
-            if (!RaceSettings.SHIPS[0].isDead)
+            if (!RaceSettings.SHIPS[0].isDead && !RaceSettings.SHIPS[0].finished)
                 PauseInput();
         }
 
