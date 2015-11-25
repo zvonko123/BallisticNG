@@ -23,6 +23,7 @@ public class RaceManager : MonoBehaviour {
     public HUDManager RaceUI;
     public PauseManager PauseUI;
     public PauseManager DeadUI;
+    public PauseManager FinishedUI;
     public MusicManager musicManager;
 
     public List<GameObject> ambSounds = new List<GameObject>();
@@ -91,6 +92,9 @@ public class RaceManager : MonoBehaviour {
         RaceSettings.introCamStart = trackData.spawnCameraLocations[startIndex];
         RaceSettings.introCamEnd = trackData.spawnCameraLocations[0];
 
+        // ships start restrained
+        RaceSettings.shipsRestrained = true;
+
         // spawn the ships
         SpawnShips();
 
@@ -109,6 +113,12 @@ public class RaceManager : MonoBehaviour {
         GameObject deadUI = Instantiate(Resources.Load("DeadUI") as GameObject) as GameObject;
         DeadUI = deadUI.GetComponent<PauseManager>();
         deadUI.SetActive(false);
+
+        // create finished UI
+        GameObject finishedUI = Instantiate(Resources.Load("ResultsUI") as GameObject) as GameObject;
+        FinishedUI = finishedUI.GetComponent<PauseManager>();
+        FinishedUI.r = RaceSettings.SHIPS[0];
+        finishedUI.SetActive(false);
 
         // hide mouse cursor
         Cursor.visible = false;
@@ -139,9 +149,14 @@ public class RaceManager : MonoBehaviour {
         if (!playerDied && RaceSettings.SHIPS[0].isDead)
         {
             playerDied = true;
+
+            // update UI's
             DeadUI.gameObject.SetActive(true);
             RaceUI.gameObject.SetActive(false);
             DeadUI.MenuEnabled();
+
+            // show cursor
+            Cursor.visible = true;
         }
     }
 

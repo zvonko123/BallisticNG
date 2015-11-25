@@ -119,6 +119,11 @@ public class ShipRefs : MonoBehaviour
 
                 // make ship fall to ground
                 settings.AG_HOVER_HEIGHT *= 0.5f;
+
+                // play explosion particle
+                GameObject particle = Instantiate(Resources.Load("Particles/EXPLOSION") as GameObject) as GameObject;
+                particle.transform.parent = transform;
+                particle.transform.localPosition = Vector3.zero;
             }
         }
 
@@ -265,7 +270,21 @@ public class ShipRefs : MonoBehaviour
 
         if (currentLap >= RaceSettings.laps)
         {
-            finished = true;
+            if (!finished)
+            {
+                finished = true;
+                if (!isAI)
+                {
+                    // enable and setup results UI
+                    RaceSettings.raceManager.FinishedUI.gameObject.SetActive(true);
+                    RaceSettings.raceManager.FinishedUI.MenuEnabled();
+                    RaceSettings.raceManager.FinishedUI.LoadResults();
+
+                    // disable race UI
+                    RaceSettings.raceManager.RaceUI.gameObject.SetActive(false);
+                }
+            }
+
             if (!attachedFinalCam)
             {
                 // destroy camera
