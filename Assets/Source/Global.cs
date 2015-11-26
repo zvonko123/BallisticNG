@@ -34,6 +34,8 @@ public class RaceSettings
     public static int playerControlIndex;
 
     public static string customShipName;
+
+    public static string trackToLoad;
 }
 
 public class TournamentSettings
