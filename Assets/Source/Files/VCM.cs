@@ -15,8 +15,8 @@ namespace BnG.Files
         {
             string path = Environment.CurrentDirectory + "/Lighting/" + trackName + ".vcm";
 
-            if (!Directory.Exists(path = Environment.CurrentDirectory + "/Lighting/"))
-                Directory.CreateDirectory(path = Environment.CurrentDirectory + "/Lighting/");
+            if (!Directory.Exists(Environment.CurrentDirectory + "/Lighting/"))
+                Directory.CreateDirectory(Environment.CurrentDirectory + "/Lighting/");
 
             int i = 0;
             int j = 0;
@@ -65,7 +65,6 @@ namespace BnG.Files
                 }
 
                 int currentID;
-                sr.ReadLine();
                 string line2 = "NA";
 
                 while (line != null)

@@ -20,12 +20,14 @@ public class GhostManager : ShipBase
     {
         // load ghost ship
         ghostGM = Instantiate(Resources.Load("Ships/" + RaceSettings.playerShip + "GHOST") as GameObject) as GameObject;
-        ghostMat = ghostGM.GetComponent<GhostRef>().mesh.gameObject.GetComponent<MeshRenderer>().material;
+        if (ghostGM != null)
+            ghostMat = ghostGM.GetComponent<GhostRef>().mesh.gameObject.GetComponent<MeshRenderer>().material;
     }
 
     void Update()
     {
         // color ghost ship blue
-        ghostMat.SetColor("_Color", new Color(0.0f, 0.5f, 1.0f));
+        if (ghostGM != null)
+            ghostMat.SetColor("_Color", new Color(0.0f, 0.5f, 1.0f));
     }
 }
