@@ -308,6 +308,9 @@ public class ShipRefs : MonoBehaviour
                     // disable race UI
                     RaceSettings.raceManager.RaceUI.gameObject.SetActive(false);
 
+                    // show cursor
+                    Cursor.visible = true;
+
                     // save time
                     bool canWrite = false;
                     if (loadedBestTime)

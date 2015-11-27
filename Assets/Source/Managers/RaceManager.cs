@@ -277,4 +277,11 @@ public class RaceManager : MonoBehaviour {
             c.SpawnShip(isAI);
         }
     }
+
+    void OnApplicationFocus(bool focusState)
+    {
+        // pause when game looses focus
+        if (!focusState)
+            PauseInput();
+    }
 }
