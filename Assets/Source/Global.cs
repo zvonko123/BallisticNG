@@ -21,6 +21,7 @@ public class RaceSettings
     public static E_SPEEDCLASS speedclass = E_SPEEDCLASS.SPECTRE;
     public static E_SHIPS playerShip = E_SHIPS.MTECHP1;
     public static E_GAMEMODES gamemode = E_GAMEMODES.TimeTrial;
+    public static E_WEAPONCLASSES playerWClass = E_WEAPONCLASSES.MIXED;
     public static bool shipsRestrained = false;
 
     // countdown

@@ -56,6 +56,8 @@ public class ShipRefs : MonoBehaviour
     public TrTile lastBoost;
 
     public bool attachedFinalCam;
+    public PickupBase pickup;
+    public E_WEAPONS weaponClass;
 
     // race times
     public float[] laps;
@@ -103,6 +105,13 @@ public class ShipRefs : MonoBehaviour
             }
         }
 
+    }
+
+    void Update()
+    {
+        // weapon update
+        if (pickup != null)
+            pickup.OnUpdate();
     }
 
     private void RaceTimers()
