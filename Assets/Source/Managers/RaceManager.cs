@@ -167,6 +167,33 @@ public class RaceManager : MonoBehaviour {
             // show cursor
             Cursor.visible = true;
         }
+
+        UpdateTrackCameras();
+    }
+
+    private void UpdateTrackCameras()
+    {
+        int i = 0;
+        for (i = 0; i < trackCameraPoints.Length; ++i)
+        {
+            // get closest ship
+            float distance = 10000.0f;
+            float tempDistance = 0.0f;
+            int j = 0;
+            int index = 0;
+            for (j = 0; j < RaceSettings.SHIPS.Count; ++j)
+            {
+                tempDistance = Vector3.Distance(trackCameraPoints[i].position, RaceSettings.SHIPS[j].transform.position);
+                if (tempDistance < distance)
+                {
+                    distance = tempDistance;
+                    index = j;
+                }
+            }
+
+            // lookat closest ship
+            trackCameraPoints[i].LookAt(RaceSettings.SHIPS[index].transform.position);
+        }
     }
 
     public void PauseInput()
