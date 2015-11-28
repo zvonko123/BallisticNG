@@ -36,6 +36,25 @@ public class HUDManager : ShipBase {
     public Text txtMaxLap;
 
     public Image[] lapCounters;
+
+    [Header(" [ WEAPONS ] ")]
+    public Image weaponImage;
+    public Sprite sprRockets;
+    public Sprite sprMissiles;
+    public Sprite sprMines;
+    public Sprite sprTLaser;
+    public Sprite sprPlasma;
+    public Sprite sprEWall;
+    public Sprite sprBomb;
+    public Sprite sprImpulse;
+    public Sprite sprCannons;
+    public Sprite sprShield;
+    public Sprite sprAutopilot;
+    public Sprite sprEPack;
+    public Sprite sprFrictionShield;
+    public Sprite sprReflector;
+    public Sprite sprCloak;
+
     
     void Start()
     {
@@ -132,5 +151,61 @@ public class HUDManager : ShipBase {
             msgPerfectLap.gameObject.SetActive(true);
         else
             msgPerfectLap.gameObject.SetActive(false);
+
+        UpdateWeaponSprite();
+    }
+
+    private void UpdateWeaponSprite()
+    {
+        weaponImage.gameObject.SetActive(r.weaponClass != E_WEAPONS.NONE);
+
+        switch(r.weaponClass)
+        {
+            case E_WEAPONS.AUTOPILOT:
+                weaponImage.sprite = sprAutopilot;
+                break;
+            case E_WEAPONS.BOMB:
+                weaponImage.sprite = sprBomb;
+                break;
+            case E_WEAPONS.CANNONS:
+                weaponImage.sprite = sprCannons;
+                break;
+            case E_WEAPONS.CLOAK:
+                weaponImage.sprite = sprCloak;
+                break;
+            case E_WEAPONS.ENERGYWALL:
+                weaponImage.sprite = sprEWall;
+                break;
+            case E_WEAPONS.EPACK:
+                weaponImage.sprite = sprEPack;
+                break;
+            case E_WEAPONS.FSHIELD:
+                weaponImage.sprite = sprFrictionShield;
+                break;
+            case E_WEAPONS.IMPULSE:
+                weaponImage.sprite = sprImpulse;
+                break;
+            case E_WEAPONS.MINES:
+                weaponImage.sprite = sprMines;
+                break;
+            case E_WEAPONS.MISSILES:
+                weaponImage.sprite = sprMissiles;
+                break;
+            case E_WEAPONS.PLASMABOLT:
+                weaponImage.sprite = sprPlasma;
+                break;
+            case E_WEAPONS.REFLECTOR:
+                weaponImage.sprite = sprReflector;
+                break;
+            case E_WEAPONS.ROCKETS:
+                weaponImage.sprite = sprRockets;
+                break;
+            case E_WEAPONS.SHIELD:
+                weaponImage.sprite = sprShield;
+                break;
+            case E_WEAPONS.TRIPLASER:
+                weaponImage.sprite = sprTLaser;
+                break;
+        }
     }
 }

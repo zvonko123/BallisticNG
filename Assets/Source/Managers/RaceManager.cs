@@ -281,7 +281,7 @@ public class RaceManager : MonoBehaviour {
     void OnApplicationFocus(bool focusState)
     {
         // pause when game looses focus
-        if (!focusState)
+        if (!focusState && !GameSettings.isPaused && !RaceSettings.SHIPS[0].isDead && !RaceSettings.SHIPS[0].finished)
             PauseInput();
     }
 }

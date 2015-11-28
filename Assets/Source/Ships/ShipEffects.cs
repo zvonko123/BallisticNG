@@ -105,6 +105,9 @@ public class ShipEffects : ShipBase {
                 sprayPosition.z = transform.position.z;
             }
 
+            if (tile.TILE_TYPE == E_TILETYPE.WEAPON)
+                r.PickupItem();
+
             // boost pad management
             if (tile.TILE_TYPE == E_TILETYPE.BOOST)
             {

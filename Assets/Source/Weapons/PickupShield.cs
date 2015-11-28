@@ -6,16 +6,31 @@ using System.Collections;
 /// </summary>
 public class PickupShield : PickupBase {
 
-    public override void OnInit(float dmg, ShipRefs r)
-    {
-        base.OnInit(dmg, r);
-    }
+    private bool timerStarted = false;
 
     public override void OnUse()
     {
         // activate shield for 5 seconds
-        PU_SHIP.ActivateShield(5.0f);
+        if (!timerStarted)
+        {
+            PU_SHIP.ActivateShield(5.0f);
+            timerStarted = true;
+        }
+    }
 
-        base.OnUse();
+    public override void OnDrop()
+    {
+        if (PU_SHIP.shieldTimer > 0)
+            PU_SHIP.shieldTimer = 0;
+
+        base.OnDrop();
+    }
+
+    public override void OnUpdate()
+    {
+        if (!PU_SHIP.shieldActivate && timerStarted)
+            OnDrop();
+
+        base.OnUpdate();
     }
 }

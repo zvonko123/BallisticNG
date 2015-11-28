@@ -57,7 +57,7 @@ public class ShipRefs : MonoBehaviour
 
     public bool attachedFinalCam;
     public PickupBase pickup;
-    public E_WEAPONS weaponClass;
+    public E_WEAPONS weaponClass = E_WEAPONS.NONE;
 
     // race times
     public float[] laps;
@@ -181,10 +181,6 @@ public class ShipRefs : MonoBehaviour
 
         shieldActivate = shieldTimer > 0;
 
-        // TEMP: Remove when pickups added
-        if (Input.GetKeyDown(KeyCode.Space))
-            ActivateShield(5);
-
         // lerp shield color back to engine color
         shieldColor = Color.Lerp(shieldColor, settings.REF_ENGINECOL, Time.deltaTime * 2);
 
@@ -197,6 +193,96 @@ public class ShipRefs : MonoBehaviour
         {
             boostState = 0;
             boostAccel = 0;
+        }
+    }
+
+    public void PickupItem()
+    {
+        // if the ship already has a pickup then return
+        if (weaponClass != E_WEAPONS.NONE)
+            return;
+
+        // get length of weapons enum (minus none at the end)
+        int max = System.Enum.GetNames(typeof(E_WEAPONS)).Length - 1;
+        int rand = Random.Range(0, max);
+        E_WEAPONS weap = (E_WEAPONS)rand;
+        switch (weap)
+        {
+            case E_WEAPONS.AUTOPILOT:
+                PickupAutopilot ap = new PickupAutopilot();
+                ap.OnInit(0.0f, this, weap);
+                pickup = ap;
+                break;
+            case E_WEAPONS.BOMB:
+                PickupBomb bo = new PickupBomb();
+                bo.OnInit(0.0f, this, weap);
+                pickup = bo;
+                break;
+            case E_WEAPONS.CANNONS:
+                PickupCannons ca = new PickupCannons();
+                ca.OnInit(0.0f, this, weap);
+                pickup = ca;
+                break;
+            case E_WEAPONS.CLOAK:
+                PickupCloak cl = new PickupCloak();
+                cl.OnInit(0.0f, this, weap);
+                pickup = cl;
+                break;
+            case E_WEAPONS.ENERGYWALL:
+                PickupEnergyWall ew = new PickupEnergyWall();
+                ew.OnInit(0.0f, this, weap);
+                pickup = ew;
+                break;
+            case E_WEAPONS.EPACK:
+                PickupEPack ep = new PickupEPack();
+                ep.OnInit(0.0f, this, weap);
+                pickup = ep;
+                break;
+            case E_WEAPONS.FSHIELD:
+                PickupFShield fs = new PickupFShield();
+                fs.OnInit(0.0f, this, weap);
+                pickup = fs;
+                break;
+            case E_WEAPONS.IMPULSE:
+                PickupImpulse im = new PickupImpulse();
+                im.OnInit(0.0f, this, weap);
+                pickup = im;
+                break;
+            case E_WEAPONS.MINES:
+                PickupMines mi = new PickupMines();
+                mi.OnInit(0.0f, this, weap);
+                pickup = mi;
+                break;
+            case E_WEAPONS.MISSILES:
+                PickupMissiles mis = new PickupMissiles();
+                mis.OnInit(0.0f, this, weap);
+                pickup = mis;
+                break;
+            case E_WEAPONS.PLASMABOLT:
+                PickupPlasmaBolt pl = new PickupPlasmaBolt();
+                pl.OnInit(0.0f, this, weap);
+                pickup = pl;
+                break;
+            case E_WEAPONS.REFLECTOR:
+                PickupReflector re = new PickupReflector();
+                re.OnInit(0.0f, this, weap);
+                pickup = re;
+                break;
+            case E_WEAPONS.ROCKETS:
+                PickupRockets ro = new PickupRockets();
+                ro.OnInit(0.0f, this, weap);
+                pickup = ro;
+                break;
+            case E_WEAPONS.SHIELD:
+                PickupShield sh = new PickupShield();
+                sh.OnInit(0.0f, this, weap);
+                pickup = sh;
+                break;
+            case E_WEAPONS.TRIPLASER:
+                PickupTripLaser tl = new PickupTripLaser();
+                tl.OnInit(0.0f, this, weap);
+                pickup = tl;
+                break;
         }
     }
 

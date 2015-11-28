@@ -12,10 +12,19 @@ public class PickupBase {
     /// </summary>
     /// <param name="dmg"></param>
     /// <param name="r"></param>
-    public virtual void OnInit(float dmg, ShipRefs r)
+    public virtual void OnInit(float dmg, ShipRefs r, E_WEAPONS wClass)
     {
         PU_DMG = dmg;
         PU_SHIP = r;
+        PU_SHIP.weaponClass = wClass;
+
+        // play pickup sound
+        if (!PU_SHIP.isAI)
+        {
+            AudioClip clip = Resources.Load("Audio/Ships/WEAPON") as AudioClip;
+            OneShot.CreateOneShot(clip, 1.0f,  Random.Range(0.9f, 1.1f));
+        }
+
     }
 
     /// <summary>
@@ -23,6 +32,7 @@ public class PickupBase {
     /// </summary>
     public virtual void OnUse()
     {
+        PU_SHIP.weaponClass = E_WEAPONS.NONE;
         PU_SHIP.pickup = null;
     }
 
@@ -31,6 +41,7 @@ public class PickupBase {
     /// </summary>
     public virtual void OnDrop()
     {
+        PU_SHIP.weaponClass = E_WEAPONS.NONE;
         PU_SHIP.pickup = null;
     }
 
@@ -43,7 +54,16 @@ public class PickupBase {
             OnUse();
 
         if (Input.GetButtonDown("Drop Pickup"))
+        {
+            // play drop sound
+            if (!PU_SHIP.isAI)
+            {
+                AudioClip clip = Resources.Load("Audio/Ships/WEAPONDROP") as AudioClip;
+                OneShot.CreateOneShot(clip, 1.0f, 1.0f);
+            }
+
             OnDrop();
+        }
     }
 
 }
@@ -64,7 +84,8 @@ public enum E_WEAPONS
     EPACK,
     FSHIELD,
     REFLECTOR,
-    CLOAK
+    CLOAK,
+    NONE
 }
 
 public enum E_WEAPONCLASSES
