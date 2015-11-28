@@ -50,17 +50,13 @@ public class PickupBase {
     /// </summary>
     public virtual void OnUpdate()
     {
-        if (Input.GetButtonDown("Use Pickup"))
+        if (Input.GetButtonDown("Use Pickup") && !PU_SHIP.isAI)
             OnUse();
 
-        if (Input.GetButtonDown("Drop Pickup"))
+        if (Input.GetButtonDown("Drop Pickup") && !PU_SHIP.isAI)
         {
-            // play drop sound
-            if (!PU_SHIP.isAI)
-            {
-                AudioClip clip = Resources.Load("Audio/Ships/WEAPONDROP") as AudioClip;
-                OneShot.CreateOneShot(clip, 1.0f, 1.0f);
-            }
+            AudioClip clip = Resources.Load("Audio/Ships/WEAPONDROP") as AudioClip;
+            OneShot.CreateOneShot(clip, 1.0f, 1.0f);
 
             OnDrop();
         }
