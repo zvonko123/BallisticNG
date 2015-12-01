@@ -7,6 +7,7 @@
 		_Illum("Illumination", 2D) = "black" {}
         _Color("Color", Color) = (0.5, 0.5, 0.5, 1)
         _GeoRes("Geometric Resolution", Float) = 40
+		_Distance("Clipping Distance", Float) = 60
     }
 		Category{
 			Cull Off
@@ -25,6 +26,7 @@
 					{
 						float4 position : SV_POSITION;
 						half2 texcoord : TEXCOORD;
+						half2 distance : TEXCOORD1;
 						fixed4 color : COLOR;
 					};
 
@@ -33,6 +35,7 @@
 					sampler2D _Illum;
 					float4 _Color;
 					float _GeoRes;
+					float _Distance;
 					fixed _Cutoff;
 
 					v2f vert(appdata_full v)
@@ -47,7 +50,8 @@
 						fixed4 newC = v.color;
 						newC.a = 1.0;
 						o.color = newC * _Color;
-
+						o.distance = wp.xy;
+						o.distance.x = distance(floor(_WorldSpaceCameraPos * 0.3) / 0.3, mul(_Object2World, v.vertex));
 						return o;
 					}
 
@@ -55,6 +59,7 @@
 					{
 						fixed4 col = (tex2D(_MainTex, i.texcoord) * i.color) + tex2D(_Illum, i.texcoord);
 						clip(col.a - _Cutoff);
+						clip(i.distance.x < _Distance ? 1 : -1);
 						return col;
 					}
 
