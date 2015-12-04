@@ -23,6 +23,7 @@ public class ShipInput : ShipBase {
     private float aiSteerTilt;
     private float rotDelta;
     private float prevRot;
+    private float aiResistance;
 
     void Start()
     {
@@ -126,8 +127,10 @@ public class ShipInput : ShipBase {
         r.axis.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, aiSteerTilt);
 
         // ai drag
+        aiResistance = Mathf.Lerp(aiResistance, Mathf.Clamp(Mathf.Abs(rotDelta * 0.02f), 0.0f, 1.0f), Time.deltaTime * 5);
+
         Vector3 lv = transform.InverseTransformDirection(r.body.velocity);
-        lv.z *= 1 - Mathf.Clamp(Mathf.Abs(rotDelta * 0.04f), 0.0f, 1.0f);
+        lv.z *= 1 - aiResistance;
         Vector3 wv = transform.TransformDirection(lv);
         r.body.velocity = wv;
 

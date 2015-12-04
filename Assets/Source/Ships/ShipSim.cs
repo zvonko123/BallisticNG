@@ -47,6 +47,7 @@ public class ShipSim : ShipBase {
     // resistance
     private float airbrakeResistance;
     private float airResistance;
+    private float pitchResistance;
 
     // collision
     public bool isShipScraping;
@@ -410,6 +411,17 @@ public class ShipSim : ShipBase {
             brakeDrag = Mathf.Lerp(brakeDrag, 0.0f, Time.deltaTime * brakeFalloff);
         }
 
+        // pitch resistance
+        float dot = Vector3.Dot(transform.forward, BnG.Helpers.TrackDataHelper.SectionGetRotation(r.currentSection) * Vector3.up);
+        float resistmult = (dot > 0) ? 2 : 1;
+        dot = Mathf.Abs(dot);
+        dot = Mathf.Clamp(dot, 0.0f, 0.4f);
+
+        if (dot > 0.15f * resistmult)
+            pitchResistance = Mathf.Lerp(pitchResistance, dot * 0.08f, Time.deltaTime * 0.5f);
+        else
+            pitchResistance = Mathf.Lerp(pitchResistance, 0.0f, Time.deltaTime);
+
         // setup for applying drag
         float localZ = transform.InverseTransformDirection(r.body.velocity).z * 10.0f;
         float xDrag = (grip * Time.deltaTime) - (airbrakeSlip);
@@ -427,7 +439,7 @@ public class ShipSim : ShipBase {
         // air density
         lv.z *= 1 - (0.0015f + (Mathf.Abs(localZ) * Time.deltaTime) * 0.007f);
         // other resistances
-        lv.z *= 1 - (airbrakeResistance + brakeDrag + airResistance);
+        lv.z *= 1 - (airbrakeResistance + brakeDrag + airResistance + pitchResistance);
         Vector3 wv = transform.TransformDirection(lv);
 
         // finally apply drag

@@ -64,6 +64,7 @@ public class ShipConstructor : MonoBehaviour {
         // attach mesh collider to mesh
         MeshCollider mc = r.mesh.AddComponent<MeshCollider>();
         mc.convex = true;
+        gameObject.tag = "Ship";
 
         // add frictionless physics manterial to collider
         PhysicMaterial shipMat = new PhysicMaterial();

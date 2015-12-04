@@ -41,6 +41,8 @@ public class ShipEffects : ShipBase {
     private float engineColorTimer;
     private float engineColorTimer2;
     private Vector3 engineFlareSize;
+    private GameObject aiTrail;
+    private Material aiTrailMat;
 
     // droid settings
     public float droidBaseHeight;
@@ -67,6 +69,12 @@ public class ShipEffects : ShipBase {
 
         // get droid material
         droidMat = r.settings.REF_DROID.GetComponent<MeshRenderer>().material;
+
+        // load ai trail
+        aiTrail = Instantiate(Resources.Load("Prefabs/AITrail") as GameObject) as GameObject;
+        aiTrail.transform.parent = r.settings.REF_ENGINE_TRAIL_PLAYER.transform.parent;
+        aiTrail.transform.localPosition = r.settings.REF_ENGINE_TRAIL_PLAYER.transform.localPosition;
+        aiTrailMat = aiTrail.GetComponent<TrailRenderer>().material;
 
         CreateAudioEffects();
         SetupEngineEffects();
@@ -251,6 +259,8 @@ public class ShipEffects : ShipBase {
         vapeTrailOpacity = engineNorm;
         r.settings.REF_VAPE_LEFT.material.SetColor("_TintColor", new Color(1.0f, 1.0f, 1.0f, vapeTrailOpacity));
         r.settings.REF_VAPE_RIGHT.material.SetColor("_TintColor", new Color(1.0f, 1.0f, 1.0f, vapeTrailOpacity));
+        r.settings.REF_VAPE_LEFT.gameObject.SetActive(!r.isAI);
+        r.settings.REF_VAPE_RIGHT.gameObject.SetActive(!r.isAI);
 
         // engine flare and trail
         engineNorm = (Mathf.Clamp01((r.sim.enginePower * 5)) / 1.0f);
@@ -271,11 +281,14 @@ public class ShipEffects : ShipBase {
         engineNorm = (Mathf.Clamp01((r.sim.enginePower * 2)) / 1.0f);
         engineColor.a = engineNorm * r.settings.REF_ENGINECOL.a;
         engineTrail.SetColor("_TintColor", engineColor);
+        aiTrailMat.SetColor("_TintColor", engineColor);
 
         r.settings.REF_ENGINE_FLARE.transform.rotation = Quaternion.Euler(transform.eulerAngles.x - 90.0f, transform.eulerAngles.y, 0.0f);
 
-        // toggle flare
+        // toggle engine objects
         r.settings.REF_ENGINE_FLARE.SetActive(!r.isAI);
+        r.settings.REF_ENGINE_TRAIL_PLAYER.SetActive(!r.isAI);
+        aiTrail.gameObject.SetActive(r.isAI);
 
     }
 
@@ -322,6 +335,7 @@ public class ShipEffects : ShipBase {
         float aiMaxDistance = 3.0f;
         audioContainer = new GameObject("AudioContainer");
         audioContainer.transform.parent = transform;
+        audioContainer.transform.localPosition = Vector3.zero;
 
         engineSFX = AttachNewSound(r.settings.SFX_ENGINE, r.isAI, aiMinDistance, aiMaxDistance, true, true);
         turbulanceSFX = AttachNewSound(r.settings.SFX_TURBULENCE, r.isAI, aiMinDistance, aiMaxDistance, true, true);
