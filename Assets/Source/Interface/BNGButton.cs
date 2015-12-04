@@ -7,23 +7,21 @@ public class BNGButton : Button {
 
     private Text textComponent;
     private AudioSource audio;
-    void Start()
-    {
-        // get text component
-        textComponent = transform.Find("Text").GetComponent<Text>();
-        if (textComponent == null)
-        {
-            Debug.LogError(gameObject.name + " (button) couldn't find a text component!");
-            Destroy(this.gameObject);
-        }
 
-        // attach audio source for button sounds
-        audio = gameObject.AddComponent<AudioSource>();
-        audio.spatialBlend = 0.0f;
+    public override void Select()
+    {
+        CheckComponents();
+
+        // change color
+        textComponent.color = new Color(1.0f, 0.68f, 0.0f, 1.0f);
+
+        base.Select();
     }
 
     public override void OnSelect(BaseEventData eventData)
     {
+        CheckComponents();
+
         // change color
         textComponent.color = new Color(1.0f, 0.68f, 0.0f, 1.0f);
 
@@ -42,9 +40,32 @@ public class BNGButton : Button {
 
     public override void OnDeselect(BaseEventData eventData)
     {
+        CheckComponents();
+
         // change color
         textComponent.color = new Color(0.58f, 0.58f, 0.58f, 1.0f);
 
         base.OnDeselect(eventData);
+    }
+
+    private void CheckComponents()
+    {
+        if (textComponent == null)
+        {
+            // get text component
+            textComponent = transform.Find("Text").GetComponent<Text>();
+            if (textComponent == null)
+            {
+                Debug.LogError(gameObject.name + " (button) couldn't find a text component!");
+                Destroy(this.gameObject);
+            }
+        }
+
+        if (audio == null)
+        {
+            // attach audio source for button sounds
+            audio = gameObject.AddComponent<AudioSource>();
+            audio.spatialBlend = 0.0f;
+        }
     }
 }

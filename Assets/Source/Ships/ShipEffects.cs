@@ -7,6 +7,13 @@ public class ShipEffects : ShipBase {
 
     // ship color
     private Color shipColor;
+    private Color32[] trackColors;
+    private int[] trackTriangles;
+    private Mesh m;
+    private Mesh prevMesh;
+    private TrTile tile;
+    private Material shipMat;
+    private Material droidMat;
 
     // audio settings
     public GameObject audioContainer;
@@ -55,6 +62,12 @@ public class ShipEffects : ShipBase {
         // set shield material
         shieldMat = r.settings.REF_SHIELD.GetComponent<MeshRenderer>().material;
 
+        // get ship material
+        shipMat = r.settings.REF_MESH.GetComponent<MeshRenderer>().material;
+
+        // get droid material
+        droidMat = r.settings.REF_DROID.GetComponent<MeshRenderer>().material;
+
         CreateAudioEffects();
         SetupEngineEffects();
     }
@@ -86,14 +99,28 @@ public class ShipEffects : ShipBase {
         overWetSurface = false;
         if (Physics.Linecast(transform.position, to, out hit, 1 << LayerMask.NameToLayer("TrackFloor")))
         {
+            // get mesh information
             int tri = hit.triangleIndex;
             MeshCollider mc = hit.collider as MeshCollider;
-            Mesh m = mc.sharedMesh;
+            m = mc.sharedMesh;
+
+            // if mesh changes then cache needed information (optimization - prevents the need for garbage collection)
+            if (prevMesh != m)
+            {
+                trackColors = m.colors32;
+                trackTriangles = m.triangles;
+                prevMesh = m;
+            }
 
             // get tile
-            TrTile tile = TrackDataHelper.TileFromTriangleIndex(tri, E_TRACKMESH.FLOOR, RaceSettings.trackData.TRACK_DATA);
+            tile = TrackDataHelper.TileFromTriangleIndex(tri, E_TRACKMESH.FLOOR, RaceSettings.trackData.TRACK_DATA);
 
-            shipColor = m.colors32[m.triangles[hit.triangleIndex * 3]];
+            // get color from track mesh (AI uses cached colors for performance, player ship grabs current color)
+            if (r.isAI)
+                shipColor = trackColors[trackTriangles[hit.triangleIndex * 3]];
+            else
+                shipColor = m.colors32[trackTriangles[hit.triangleIndex * 3]];
+
             if (tile.TILE_TYPE == E_TILETYPE.RECHARGE)
                 r.recharging = true;
 
@@ -134,7 +161,7 @@ public class ShipEffects : ShipBase {
             shipColor *= shipDeadMult;
         }
 
-        r.mesh.GetComponent<Renderer>().material.SetColor("_Color", shipColor);
+        shipMat.SetColor("_Color", shipColor);
 
         if (r.recharging)
             rechargeSFX.volume = 1.0f;
@@ -268,6 +295,8 @@ public class ShipEffects : ShipBase {
             r.settings.REF_DROID.SetActive(true);
 
         r.settings.REF_DROID.transform.localPosition = new Vector3(0.0f, droidHeight, 0.0f);
+
+        droidMat.SetColor("_Color", shipColor);
     }
 
     private void ShieldManager()

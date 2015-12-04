@@ -35,46 +35,13 @@ public class ShipPosition : ShipBase {
 
     private void UpdateInitialSection()
     {
-        // try to find track section using a raycast
-        /*
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, -transform.up, out hit, 1000.0f, 1 << LayerMask.NameToLayer("TrackFloor")))
-        {
-            int tri = hit.triangleIndex;
-            TrTile tile = TrackDataHelper.TileFromTriangleIndex(hit.triangleIndex, E_TRACKMESH.FLOOR, RaceSettings.trackData.TRACK_DATA);
-            TrSection section = tile.TILE_SECTION;
-
-            bool canUpdate = true;
-            if (section.SECTION_TYPE == E_SECTIONTYPE.JUMP_START)
-            {
-                onJump = true;
-                expectedLandSection = section.SECTION_NEXT;
-            }
-
-            if (section.SECTION_TYPE == E_SECTIONTYPE.JUMP_END)
-            {
-                onJump = false;
-                if (section != expectedLandSection)
-                    canUpdate = false;
-            }
-
-            if (canUpdate)
-            {
-                r.initialSection = section;
-                iSectionIndex = section.SECTION_INDEX;
-                r.currentSection = r.initialSection;
-                cSectionIndex = section.SECTION_INDEX;
-            }
-            iSectionFound = true;
-        } else
-        {
-            iSectionFound = false;
-        }
-        */
         float distance = Mathf.Infinity;
-        for (int i = 0; i < RaceSettings.trackData.TRACK_DATA.SECTIONS.Count; i++)
+        float newDistance = distance;
+        int i = 0;
+        int length = RaceSettings.trackData.TRACK_DATA.SECTIONS.Count;
+        for (i = 0; i < length; ++i)
         {
-            float newDistance = Vector3.Distance(transform.position, RaceSettings.trackData.TRACK_DATA.SECTIONS[i].SECTION_POSITION);
+            newDistance = Vector3.Distance(transform.position, RaceSettings.trackData.TRACK_DATA.SECTIONS[i].SECTION_POSITION);
             if (newDistance < distance)
             {
                 distance = newDistance;
@@ -93,8 +60,6 @@ public class ShipPosition : ShipBase {
         respawnPosition = r.currentSection.SECTION_NEXT.SECTION_POSITION;
         respawnPosition.y += r.settings.AG_HOVER_HEIGHT;
         respawnRotation = TrackDataHelper.SectionGetRotation(r.currentSection.SECTION_NEXT);
-
-
     }
 
     private void UpdateDirection()
