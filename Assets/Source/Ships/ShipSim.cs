@@ -413,11 +413,11 @@ public class ShipSim : ShipBase {
 
         // pitch resistance
         float dot = Vector3.Dot(transform.forward, BnG.Helpers.TrackDataHelper.SectionGetRotation(r.currentSection) * Vector3.up);
-        float resistmult = (dot > 0) ? 2 : 1;
+        float resistmult = (dot > 0) ? 1.8f : 1;
         dot = Mathf.Abs(dot);
         dot = Mathf.Clamp(dot, 0.0f, 0.4f);
 
-        if (dot > 0.15f * resistmult)
+        if (dot > 0.2f * resistmult)
             pitchResistance = Mathf.Lerp(pitchResistance, dot * 0.08f, Time.deltaTime * 0.5f);
         else
             pitchResistance = Mathf.Lerp(pitchResistance, 0.0f, Time.deltaTime);

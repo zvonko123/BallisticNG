@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: f71d584794590f94b8a16dc70db717c7
-timeCreated: 1447179682
+timeCreated: 1449241856
 licenseType: Pro
 ModelImporter:
   serializedVersion: 18
@@ -10,6 +10,7 @@ ModelImporter:
     2300000: //RootNode
     3300000: //RootNode
     4300000: pCube1
+    4300002: nexus
     9500000: //RootNode
   materials:
     importMaterials: 1

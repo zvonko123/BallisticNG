@@ -30,4 +30,9 @@ public class TrackEditorBase : MonoBehaviour {
     {
 
     }
+
+    private void HoverSelection()
+    {
+
+    }
 }
