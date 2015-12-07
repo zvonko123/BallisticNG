@@ -77,6 +77,10 @@ public class GameSettings
     public Vector2 GS_RESOLUTION;
     public int GS_REFRESHRATE;
     public int GS_FRAMECAP;
+    public bool GS_BLOOM;
+    public bool GS_FXAA;
+    public bool GS_CRT;
+    public bool GS_VAPORWAVE;
 
     /// <summary>
     /// Cap the framerate.
