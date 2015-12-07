@@ -7,6 +7,10 @@ public class PauseManager : MonoBehaviour {
     [Header("[ REFERENCES ]")]
     public Button toSelect;
 
+    // for pause screen
+    public GameObject container;
+    public BNGButton optionsButton;
+
     // for results screen
     public ShipRefs r;
     public Text results;
@@ -14,6 +18,13 @@ public class PauseManager : MonoBehaviour {
     public void UnpauseGame()
     {
         RaceSettings.raceManager.PauseInput();
+    }
+
+    public void OpenOptions()
+    {
+        RaceSettings.raceManager.optionsManager.SetActive(true);
+        RaceSettings.raceManager.optionsManager.GetComponent<OptionsManager>().OpenOptions();
+        container.SetActive(false);
     }
 
     public void LoadResults()
@@ -49,6 +60,18 @@ public class PauseManager : MonoBehaviour {
     public void Quit()
     {
         // back to menu here
+    }
+
+    void Update()
+    {
+        if (GameSettings.optionsClose)
+        {
+            RaceSettings.raceManager.optionsManager.SetActive(false);
+            container.SetActive(true);
+            optionsButton.Select();
+
+            GameSettings.optionsClose = false;
+        }
     }
 
 }

@@ -9,6 +9,7 @@ public class MusicManager : ShipBase {
 
     public float highpass;
     private AudioHighPassFilter HPFilter;
+    private AudioReverbFilter reverbFilter;
 
     void Start()
     {
@@ -20,13 +21,22 @@ public class MusicManager : ShipBase {
         HPFilter = gameObject.AddComponent<AudioHighPassFilter>();
         HPFilter.highpassResonanceQ = 3;
 
+        reverbFilter = gameObject.AddComponent<AudioReverbFilter>();
+        reverbFilter.reverbPreset = AudioReverbPreset.Dizzy;
+        reverbFilter.enabled = false;
+
         // load music
         AudioSettings.LoadMusic();
     }
 
     void Update()
     {
-        if (!source.isPlaying || Input.GetKeyDown(KeyCode.Period))
+        if (GameSettings.isPaused && source.isPlaying)
+            source.Pause();
+        else if (!GameSettings.isPaused && !source.isPlaying)
+            source.UnPause();
+
+        if ((!source.isPlaying && !GameSettings.isPaused) || Input.GetKeyDown(KeyCode.Period))
         {
             // get random number for track to load
             int rand = Random.Range(0, AudioSettings.musicLocations.Length);
@@ -41,6 +51,14 @@ public class MusicManager : ShipBase {
 
         // update volume
         source.volume = AudioSettings.VOLUME_MUSIC;
+
+        // vape mode
+        if (GameSettings.GS_VAPORWAVE)
+            source.pitch = 0.35f;
+        else
+            source.pitch = 1.0f;
+
+        reverbFilter.enabled = GameSettings.GS_VAPORWAVE;
 
         // highpass
         if (r.jumpHeight)

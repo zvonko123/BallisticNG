@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using BnG.TrackData;
+using UnityStandardAssets.ImageEffects;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -27,10 +28,15 @@ public class RaceManager : MonoBehaviour {
     public PauseManager FinishedUI;
     public MusicManager musicManager;
     public GhostManager ghostManager;
+    public GameObject optionsManager;
 
     public List<GameObject> ambSounds = new List<GameObject>();
 
     public bool playerDied;
+
+    private List<Bloom> ppBlooms = new List<Bloom>();
+    private List<Antialiasing> ppAA = new List<Antialiasing>();
+    private List<ColorCorrectionLookup> ccl = new List<ColorCorrectionLookup>();
 
     #endregion
 
@@ -122,6 +128,11 @@ public class RaceManager : MonoBehaviour {
         FinishedUI.r = RaceSettings.SHIPS[0];
         finishedUI.SetActive(false);
 
+        // create options UI
+        GameObject optionsUI = Instantiate(Resources.Load("OptionsUI") as GameObject) as GameObject;
+        optionsManager = optionsUI;
+        optionsUI.SetActive(false);
+
         // create ghost manager
         if (RaceSettings.gamemode == E_GAMEMODES.TimeTrial)
         {
@@ -140,9 +151,52 @@ public class RaceManager : MonoBehaviour {
             musicManager.r = RaceSettings.SHIPS[0];
         }
 
+        // attach image effects
+        AttachImageEffects();
+
         // cap framerate
         GameSettings.CapFPS(60);
 	}
+
+    private void AttachImageEffects()
+    {
+        for (int i = 0; i < RaceSettings.SHIPS.Count; ++i)
+        {
+            // bloom
+            if (RaceSettings.SHIPS[i].cam != null)
+            {
+
+                // bloom
+                Bloom b = RaceSettings.SHIPS[i].cam.gameObject.AddComponent<Bloom>();
+                b.lensFlareShader = Shader.Find("Hidden/LensFlareCreate");
+                b.screenBlendShader = Shader.Find("Hidden/BlendForBloom");
+                b.blurAndFlaresShader = Shader.Find("Hidden/BlurAndFlares");
+                b.brightPassFilterShader = Shader.Find("Hidden/BrightPassFilter2");
+                b.bloomIntensity = 1;
+                b.bloomThreshold = 0.3f;
+                b.bloomBlurIterations = 4;
+                b.sepBlurSpread = 10;
+                ppBlooms.Add(b);
+
+                // fxaa
+                Antialiasing aa = RaceSettings.SHIPS[i].cam.gameObject.AddComponent<Antialiasing>();
+                aa.ssaaShader = Shader.Find("Hidden/SSAA");
+                aa.dlaaShader = Shader.Find("Hidden/DLAA");
+                aa.nfaaShader = Shader.Find("Hidden/NFAA");
+                aa.shaderFXAAPreset2 = Shader.Find("Hidden/FXAA Preset 2");
+                aa.shaderFXAAPreset3 = Shader.Find("Hidden/FXAA Preset 3");
+                aa.shaderFXAAII = Shader.Find("Hidden/FXAA II");
+                aa.shaderFXAAIII = Shader.Find("Hidden/FXAA III (Console)");
+                ppAA.Add(aa);
+
+                // color correction
+                ColorCorrectionLookup cc = RaceSettings.SHIPS[i].cam.gameObject.AddComponent<ColorCorrectionLookup>();
+                cc.shader = Shader.Find("Hidden/ColorCorrection3DLut");
+                cc.Convert(Resources.Load("VapeLookup") as Texture2D, "Resources/VapeLookup.tga");
+                ccl.Add(cc);
+            }
+        }
+    }
 
     void Update()
     {
@@ -169,6 +223,7 @@ public class RaceManager : MonoBehaviour {
         }
 
         UpdateTrackCameras();
+        UpdateImageEffects();
     }
 
     private void UpdateTrackCameras()
@@ -196,8 +251,22 @@ public class RaceManager : MonoBehaviour {
         }
     }
 
+    private void UpdateImageEffects()
+    {
+        int i = 0;
+        for (i = 0; i < ppBlooms.Count; ++i)
+            ppBlooms[i].enabled = GameSettings.GS_BLOOM;
+        for (i = 0; i < ppAA.Count; ++i)
+            ppAA[i].enabled = GameSettings.GS_FXAA;
+        for (i = 0; i < ccl.Count; ++i)
+            ccl[i].enabled = GameSettings.GS_VAPORWAVE;
+    }
+
     public void PauseInput()
     {
+        if (optionsManager.activeSelf)
+            return;
+
         // toggle pause
         GameSettings.PauseToggle();
         

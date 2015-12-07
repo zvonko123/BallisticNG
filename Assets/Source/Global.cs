@@ -74,13 +74,14 @@ public class GameSettings
     }
 
     // game settings
-    public Vector2 GS_RESOLUTION;
-    public int GS_REFRESHRATE;
-    public int GS_FRAMECAP;
-    public bool GS_BLOOM;
-    public bool GS_FXAA;
-    public bool GS_CRT;
-    public bool GS_VAPORWAVE;
+    public static Vector2 GS_RESOLUTION;
+    public static int GS_FRAMECAP = 60;
+    public static bool GS_BLOOM = false;
+    public static bool GS_FXAA = false;
+    public static bool GS_CRT = false;
+    public static bool GS_VAPORWAVE = false;
+
+    public static bool optionsClose = false;
 
     /// <summary>
     /// Cap the framerate.
@@ -113,8 +114,8 @@ public class AudioSettings
     // audio settings
     public static float VOLUME_MAIN = 1.0f;
     public static float VOLUME_MUSIC = 0.7f;
-    public static float VOLUME_SFX;
-    public static float VOLUME_VOICES;
+    public static float VOLUME_SFX = 1.0f;
+    public static float VOLUME_VOICES = 1.0f;
     public static string[] musicLocations;
 
     // audio management

@@ -7,6 +7,7 @@ public class BNGButton : Button {
 
     private Text textComponent;
     private AudioSource audio;
+    public bool selected;
 
     public override void Select()
     {
@@ -16,6 +17,16 @@ public class BNGButton : Button {
         textComponent.color = new Color(1.0f, 0.68f, 0.0f, 1.0f);
 
         base.Select();
+    }
+
+    protected override void OnEnable()
+    {
+        CheckComponents();
+
+        // change color
+        textComponent.color = new Color(0.58f, 0.58f, 0.58f, 1.0f);
+
+        base.OnEnable();
     }
 
     public override void OnSelect(BaseEventData eventData)
@@ -34,6 +45,7 @@ public class BNGButton : Button {
         {
             Debug.LogError(gameObject.name + " (button) couldn't load sound: UIMOVE");
         }
+        selected = true;
 
         base.OnSelect(eventData);
     }
@@ -44,6 +56,7 @@ public class BNGButton : Button {
 
         // change color
         textComponent.color = new Color(0.58f, 0.58f, 0.58f, 1.0f);
+        selected = false;
 
         base.OnDeselect(eventData);
     }
