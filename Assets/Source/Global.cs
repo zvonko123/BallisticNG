@@ -211,6 +211,13 @@ public enum E_TRACKS
     HARPSTONE,
     OMEGAHARBOUR,
     ISHTARCITADEL,
+    // remakes
+    TERRAMAX,
+    GAREDEUROPA,
+    STANZAINTER,
+    MANDRASHEE,
+    BLUERIDGE,
+    VOSTOKREEF,
     // prototypes
     _0x001,
     _0x002,

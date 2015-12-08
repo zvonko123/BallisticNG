@@ -172,7 +172,7 @@ public class RaceManager : MonoBehaviour {
                 b.screenBlendShader = Shader.Find("Hidden/BlendForBloom");
                 b.blurAndFlaresShader = Shader.Find("Hidden/BlurAndFlares");
                 b.brightPassFilterShader = Shader.Find("Hidden/BrightPassFilter2");
-                b.bloomIntensity = 1;
+                b.bloomIntensity = 0.5f;
                 b.bloomThreshold = 0.3f;
                 b.bloomBlurIterations = 4;
                 b.sepBlurSpread = 10;
