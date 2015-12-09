@@ -10,6 +10,9 @@ public class RainManager : MonoBehaviour {
     private GameObject targetCamera;
     private ParticleSystem rainSystem;
     private bool hasTarget;
+    private AudioSource rain;
+
+    private bool canRain;
 
     void Start()
     {
@@ -17,6 +20,14 @@ public class RainManager : MonoBehaviour {
         rainSystem = GetComponent<ParticleSystem>();
         if (rainSystem == null)
             Destroy(this.gameObject);
+
+        // create rain audiosource
+        rain = gameObject.AddComponent<AudioSource>();
+        rain.loop = true;
+        rain.spatialBlend = 0.0f;
+        rain.clip = Resources.Load("Audio/Env/Rain") as AudioClip;
+        rain.volume = 0.0f;
+        rain.Play();
     }
 
     void Update()
@@ -35,7 +46,13 @@ public class RainManager : MonoBehaviour {
         pos.z = Mathf.RoundToInt(pos.z / gridSnapSize) * gridSnapSize;
         transform.position = pos;
 
-        rainSystem.enableEmission = !Physics.Raycast(targetCamera.transform.position, Vector3.up);
+        canRain = !Physics.Raycast(targetCamera.transform.position, Vector3.up); ;
+        rainSystem.enableEmission = canRain;
+
+        if (canRain)
+            rain.volume = Mathf.Lerp(rain.volume, 1.0f * (AudioSettings.VOLUME_MAIN * AudioSettings.VOLUME_SFX), Time.deltaTime * 3);
+        else
+            rain.volume = Mathf.Lerp(rain.volume, 0.0f, Time.deltaTime * 3);
 
     }
 }

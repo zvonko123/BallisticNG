@@ -10,23 +10,78 @@ ModelImporter:
     100004: TrackWall
     100006: TrackWalls
     100008: Object001
+    100010: Object002
+    100012: Object003
+    100014: Object004
+    100016: Object005
+    100018: SpinningBillboard1
+    100020: SpinningBillboard2
+    100022: StaticBillboard002
+    100024: StaticBillboard1
+    100026: StaticBillboard003
+    100028: StaticBillboard004
+    100030: StaticBillboard005
     400000: //RootNode
     400002: TrackFloor
     400004: TrackWall
     400006: TrackWalls
     400008: Object001
+    400010: Object002
+    400012: Object003
+    400014: Object004
+    400016: Object005
+    400018: SpinningBillboard1
+    400020: SpinningBillboard2
+    400022: StaticBillboard002
+    400024: StaticBillboard1
+    400026: StaticBillboard003
+    400028: StaticBillboard004
+    400030: StaticBillboard005
     2300000: TrackFloor
     2300002: TrackWall
     2300004: TrackWalls
     2300006: Object001
+    2300008: Object002
+    2300010: Object003
+    2300012: Object004
+    2300014: Object005
+    2300016: SpinningBillboard1
+    2300018: SpinningBillboard2
+    2300020: StaticBillboard002
+    2300022: StaticBillboard1
+    2300024: StaticBillboard003
+    2300026: StaticBillboard004
+    2300028: StaticBillboard005
     3300000: TrackFloor
     3300002: TrackWall
     3300004: TrackWalls
     3300006: Object001
+    3300008: Object002
+    3300010: Object003
+    3300012: Object004
+    3300014: Object005
+    3300016: SpinningBillboard1
+    3300018: SpinningBillboard2
+    3300020: StaticBillboard002
+    3300022: StaticBillboard1
+    3300024: StaticBillboard003
+    3300026: StaticBillboard004
+    3300028: StaticBillboard005
     4300000: TrackFloor
     4300002: TrackWall
     4300004: TrackWalls
     4300006: Object001
+    4300008: Object002
+    4300010: Object003
+    4300012: Object004
+    4300014: Object005
+    4300016: SpinningBillboard1
+    4300018: SpinningBillboard2
+    4300020: StaticBillboard1
+    4300022: StaticBillboard002
+    4300024: StaticBillboard003
+    4300026: StaticBillboard004
+    4300028: StaticBillboard005
     9500000: //RootNode
   materials:
     importMaterials: 1
