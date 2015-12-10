@@ -1,13 +1,14 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using BnG.TrackData;
 using System.Collections;
 
-public class ShipBase : MonoBehaviour {
+public class ShipBase : NetworkBehaviour {
 
     public ShipRefs r;
 }
 
-public class ShipRefs : MonoBehaviour
+public class ShipRefs : NetworkBehaviour
 {
     #region VARIABLES
     // ai

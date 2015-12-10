@@ -147,14 +147,14 @@ public class ShipCamera : ShipBase {
 
         // interpolate positions
         tcX = Mathf.Lerp(tcX, -tcTrackOffset.x * r.settings.CAMERA_OFFSET_SENSITIVITY.x, Time.deltaTime * (r.settings.CAMERA_OFFSET_SPEED.x));
-        tcY = Mathf.Lerp(tcY, Mathf.Abs(tcFinalOffset.x) * r.settings.CAMERA_OFFSET_SENSITIVITY.y, Time.deltaTime * (r.settings.CAMERA_OFFSET_SPEED.y * 0.15f));
-        tcZ = Mathf.Lerp(tcZ, (Mathf.Abs(cameraOffset.x) * r.settings.CAMERA_OFFSET_SENSITIVITY.z) * (sideFinal * (1 - Mathf.Abs(tcDirectionLag))), Time.deltaTime * (r.settings.CAMERA_OFFSET_SPEED.z * 0.4f));
+        tcY = Mathf.Lerp(tcY, Mathf.Abs(tcFinalOffset.x) * r.settings.CAMERA_OFFSET_SENSITIVITY.y, Time.deltaTime * (r.settings.CAMERA_OFFSET_SPEED.y));
+        tcZ = Mathf.Lerp(tcZ, (Mathf.Abs(cameraOffset.x) * r.settings.CAMERA_OFFSET_SENSITIVITY.z) * (sideFinal * (1 - Mathf.Abs(tcDirectionLag))), Time.deltaTime * (r.settings.CAMERA_OFFSET_SPEED.z));
 
         // increase/decrease distance to ship on slopes
         float upDir = Vector3.Dot(Vector3.up, r.transform.forward);
-        tcPitchOffset = Mathf.Lerp(tcPitchOffset, upDir * 0.2f, Time.deltaTime * tcSpeed);
-        tcPitchHeight = Mathf.Lerp(tcPitchHeight, upDir * 0.15f, Time.deltaTime * (tcSpeed * 0.3f));
-
+        float trackDir = Vector3.Dot(TrackDataHelper.SectionGetRotation(r.currentSection) * Vector3.up, r.transform.forward);
+        tcPitchOffset = Mathf.Lerp(tcPitchOffset, upDir * 0.3f, Time.deltaTime * tcSpeed);
+        tcPitchHeight = Mathf.Lerp(tcPitchHeight, trackDir * 0.1f, Time.deltaTime * (tcSpeed * 0.3f));
 
         // fall Offsets
         if (r.sim.isShipGrounded || !r.jumpHeight)

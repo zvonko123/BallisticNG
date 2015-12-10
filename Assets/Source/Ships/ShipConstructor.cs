@@ -80,6 +80,9 @@ public class ShipConstructor : MonoBehaviour {
 
         // destroy this class (it's no longer needed)
         RaceSettings.SHIPS.Add(r);
+        if (RaceSettings.isNetworked)
+            RaceSettings.serverReferences.players.Add(r);
+
         Destroy(this);
 
     }

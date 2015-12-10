@@ -62,7 +62,8 @@ public class ShipInput : ShipBase {
                 // no thrust
                 ACTION_THRUST = false;
 
-            } else
+            }
+            else
             {
                 // if ship restrained then do not read any input
                 if (!RaceSettings.shipsRestrained && !r.shipRestrained)

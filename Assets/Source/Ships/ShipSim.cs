@@ -290,6 +290,8 @@ public class ShipSim : ShipBase {
                 if (hitForce >= 1)
                 {
                     r.body.AddForce(transform.up * hitForce, ForceMode.Impulse);
+                    engineAccel *= 0.8f;
+
                     r.PlayOneShot(r.settings.SFX_WALLHIT);
                 }
 

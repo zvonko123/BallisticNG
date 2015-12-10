@@ -14,6 +14,7 @@ public class RaceSettings
     public static List<ShipRefs> SHIPS = new List<ShipRefs>();
     public static Transform[] overviewTransforms;
     public static RaceManager raceManager;
+    public static ServerReferences serverReferences;
 
     // race settings
     public static int racers = 1;
@@ -37,6 +38,7 @@ public class RaceSettings
     public static string customShipName;
 
     public static string trackToLoad;
+    public static bool isNetworked;
 }
 
 public class TournamentSettings

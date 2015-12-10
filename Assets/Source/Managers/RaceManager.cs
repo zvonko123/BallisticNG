@@ -1,16 +1,18 @@
 ﻿using UnityEngine;
+using UnityEngine.Networking;
 using BnG.TrackData;
 using UnityStandardAssets.ImageEffects;
 using System.Collections;
 using System.Collections.Generic;
 
-public class RaceManager : MonoBehaviour {
+public class RaceManager : NetworkBehaviour {
 
     #region VARIABLES
     [Header("[ TRACK DATA ]")]
     public TrData trackData;
 
     [Header("[ RACE SETTINGS ] ")]
+    public bool isNetworked;
     public bool useSceneSettings = true;
     public int racerCount = 1;
     public int lapCount = 1;
@@ -42,6 +44,9 @@ public class RaceManager : MonoBehaviour {
 
     void Start ()
     {
+        // cap framerate
+        GameSettings.CapFPS(60);
+
         // gather all the sounds in the scene (for pausing)
         GameObject[] allObjects = FindObjectsOfType(typeof(GameObject)) as GameObject[];
         for (int i = 0; i < allObjects.Length; ++i)
@@ -57,7 +62,12 @@ public class RaceManager : MonoBehaviour {
             RaceSettings.racers = racerCount;
             RaceSettings.gamemode = gamemode;
             RaceSettings.playerShip = playerShip;
+            RaceSettings.isNetworked = isNetworked;
         }
+
+        // if networked then create the network references
+        if (RaceSettings.isNetworked)
+            RaceSettings.serverReferences = gameObject.AddComponent<ServerReferences>();
 
         // set reference to race manager
         RaceSettings.raceManager = this;
@@ -153,9 +163,6 @@ public class RaceManager : MonoBehaviour {
 
         // attach image effects
         AttachImageEffects();
-
-        // cap framerate
-        GameSettings.CapFPS(60);
 	}
 
     private void AttachImageEffects()
@@ -316,6 +323,9 @@ public class RaceManager : MonoBehaviour {
 
     private void SpawnShips()
     {
+        if (isNetworked)
+            return;
+
         // make sure racers is at least 1
         if (racerCount < 1)
             racerCount = 1;
