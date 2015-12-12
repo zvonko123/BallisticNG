@@ -53,7 +53,7 @@ public class ShipFCam : ShipBase{
             // alter FoV based on distance
             distance = Vector3.Distance(transform.position, r.transform.position) * 3;
             distance = Mathf.Clamp(distance, 0.0f, 85.0f);
-            r.cam.fieldOfView = 100 - distance;
+            r.cam.fieldOfView = Mathf.Lerp(r.cam.fieldOfView, 100 - distance, Time.deltaTime * 5);
 
         } else if (camMode == 1)
         {
