@@ -3,7 +3,7 @@ guid: 2d0d36dec216d1d44b885b8bfdfb756f
 timeCreated: 1448204264
 licenseType: Free
 ModelImporter:
-  serializedVersion: 18
+  serializedVersion: 19
   fileIDToRecycleName:
     100000: //RootNode
     100002: arrows
@@ -46,6 +46,40 @@ ModelImporter:
     100076: world
     100078: world_MeshPart0
     100080: world_MeshPart1
+    100082: animSignHyperion
+    100084: animSignScorpio
+    100086: animSignWaterfalls1
+    100088: animSignWaterfalls2
+    100090: animSignWyvern
+    100092: arrows.002
+    100094: Circle
+    100096: diavoltHolo
+    100098: dynamicSigns
+    100100: gtekHolo
+    100102: signQuad1
+    100104: signQuad2
+    100106: signQuad3
+    100108: signQuad4
+    100110: spinner
+    100112: Tube
+    100114: Tube.001
+    100116: Tube.002
+    100118: Tube.003
+    100120: Tube.004
+    100122: Tube.005
+    100124: canopy1
+    100126: canopy2
+    100128: canopy3
+    100130: canopy4
+    100132: canopy5
+    100134: canopy6
+    100136: halo
+    100138: halo.001
+    100140: halo.002
+    100142: halo.003
+    100144: halo.004
+    100146: halo.005
+    100148: trees
     400000: //RootNode
     400002: arrows
     400004: arrows.001
@@ -87,6 +121,40 @@ ModelImporter:
     400076: world
     400078: world_MeshPart0
     400080: world_MeshPart1
+    400082: animSignHyperion
+    400084: animSignScorpio
+    400086: animSignWaterfalls1
+    400088: animSignWaterfalls2
+    400090: animSignWyvern
+    400092: arrows.002
+    400094: Circle
+    400096: diavoltHolo
+    400098: dynamicSigns
+    400100: gtekHolo
+    400102: signQuad1
+    400104: signQuad2
+    400106: signQuad3
+    400108: signQuad4
+    400110: spinner
+    400112: Tube
+    400114: Tube.001
+    400116: Tube.002
+    400118: Tube.003
+    400120: Tube.004
+    400122: Tube.005
+    400124: canopy1
+    400126: canopy2
+    400128: canopy3
+    400130: canopy4
+    400132: canopy5
+    400134: canopy6
+    400136: halo
+    400138: halo.001
+    400140: halo.002
+    400142: halo.003
+    400144: halo.004
+    400146: halo.005
+    400148: trees
     2300000: arrows
     2300002: arrows.001
     2300004: baseFX1
@@ -125,6 +193,40 @@ ModelImporter:
     2300070: wastewater
     2300072: world_MeshPart0
     2300074: world_MeshPart1
+    2300076: animSignHyperion
+    2300078: animSignScorpio
+    2300080: animSignWaterfalls1
+    2300082: animSignWaterfalls2
+    2300084: animSignWyvern
+    2300086: arrows.002
+    2300088: Circle
+    2300090: diavoltHolo
+    2300092: dynamicSigns
+    2300094: gtekHolo
+    2300096: signQuad1
+    2300098: signQuad2
+    2300100: signQuad3
+    2300102: signQuad4
+    2300104: spinner
+    2300106: Tube
+    2300108: Tube.001
+    2300110: Tube.002
+    2300112: Tube.003
+    2300114: Tube.004
+    2300116: Tube.005
+    2300118: canopy1
+    2300120: canopy2
+    2300122: canopy3
+    2300124: canopy4
+    2300126: canopy5
+    2300128: canopy6
+    2300130: halo
+    2300132: halo.001
+    2300134: halo.002
+    2300136: halo.003
+    2300138: halo.004
+    2300140: halo.005
+    2300142: trees
     3300000: arrows
     3300002: arrows.001
     3300004: baseFX1
@@ -163,6 +265,40 @@ ModelImporter:
     3300070: wastewater
     3300072: world_MeshPart0
     3300074: world_MeshPart1
+    3300076: animSignHyperion
+    3300078: animSignScorpio
+    3300080: animSignWaterfalls1
+    3300082: animSignWaterfalls2
+    3300084: animSignWyvern
+    3300086: arrows.002
+    3300088: Circle
+    3300090: diavoltHolo
+    3300092: dynamicSigns
+    3300094: gtekHolo
+    3300096: signQuad1
+    3300098: signQuad2
+    3300100: signQuad3
+    3300102: signQuad4
+    3300104: spinner
+    3300106: Tube
+    3300108: Tube.001
+    3300110: Tube.002
+    3300112: Tube.003
+    3300114: Tube.004
+    3300116: Tube.005
+    3300118: canopy1
+    3300120: canopy2
+    3300122: canopy3
+    3300124: canopy4
+    3300126: canopy5
+    3300128: canopy6
+    3300130: halo
+    3300132: halo.001
+    3300134: halo.002
+    3300136: halo.003
+    3300138: halo.004
+    3300140: halo.005
+    3300142: trees
     4300000: trackWall.003
     4300002: trackWall.002
     4300004: trackWall.001
@@ -201,6 +337,40 @@ ModelImporter:
     4300070: trackWall
     4300072: world_MeshPart0
     4300074: world_MeshPart1
+    4300076: Tube.005
+    4300078: Tube.004
+    4300080: Tube.003
+    4300082: Tube.002
+    4300084: Tube.001
+    4300086: Tube
+    4300088: spinner
+    4300090: arrows.002
+    4300092: Circle
+    4300094: animSignWyvern
+    4300096: animSignWaterfalls2
+    4300098: animSignWaterfalls1
+    4300100: animSignHyperion
+    4300102: animSignScorpio
+    4300104: dynamicSigns
+    4300106: signQuad2
+    4300108: signQuad1
+    4300110: signQuad3
+    4300112: signQuad4
+    4300114: diavoltHolo
+    4300116: gtekHolo
+    4300118: canopy1
+    4300120: canopy2
+    4300122: canopy4
+    4300124: canopy3
+    4300126: canopy6
+    4300128: canopy5
+    4300130: trees
+    4300132: halo
+    4300134: halo.005
+    4300136: halo.003
+    4300138: halo.001
+    4300140: halo.002
+    4300142: halo.004
   materials:
     importMaterials: 1
     materialName: 1
@@ -208,6 +378,7 @@ ModelImporter:
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
+    resampleRotations: 1
     optimizeGameObjects: 0
     motionNodeName: 
     animationImportErrors: 
@@ -215,9 +386,9 @@ ModelImporter:
     animationRetargetingWarnings: 
     animationDoRetargetingWarnings: 0
     animationCompression: 1
-    animationRotationError: .5
-    animationPositionError: .5
-    animationScaleError: .5
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
     animationWrapMode: 0
     extraExposedTransformPaths: []
     clipAnimations: []
@@ -241,20 +412,19 @@ ModelImporter:
     useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 0
-    splitTangentsAcrossUV: 1
     normalImportMode: 1
-    tangentImportMode: 1
+    tangentImportMode: 4
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
     human: []
     skeleton: []
-    armTwist: .5
-    foreArmTwist: .5
-    upperLegTwist: .5
-    legTwist: .5
-    armStretch: .0500000007
-    legStretch: .0500000007
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
     feetSpacing: 0
     rootMotionBoneName: 
     hasTranslationDoF: 0
