@@ -27,7 +27,6 @@ public class StartCamera : ShipBase {
         gameObject.AddComponent<ShipCamera>();
         GetComponent<ShipCamera>().r = r;
         RaceSettings.countdownReady = true;
-        RaceSettings.shipsRestrained = false;
         Destroy(this);
     }
 }

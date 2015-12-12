@@ -256,7 +256,7 @@ public class ShipEffects : ShipBase {
         }
 
         float engineNorm = ((r.sim.engineThrust * 0.3f) / maxSpeed) * 0.3f;
-        vapeTrailOpacity = engineNorm;
+        vapeTrailOpacity = engineNorm * 0.8f;
         r.settings.REF_VAPE_LEFT.material.SetColor("_TintColor", new Color(1.0f, 1.0f, 1.0f, vapeTrailOpacity));
         r.settings.REF_VAPE_RIGHT.material.SetColor("_TintColor", new Color(1.0f, 1.0f, 1.0f, vapeTrailOpacity));
         r.settings.REF_VAPE_LEFT.gameObject.SetActive(!r.isAI);
@@ -294,7 +294,7 @@ public class ShipEffects : ShipBase {
 
     private void DroidManager()
     {
-        if (r.isRespawning)
+        if (r.isRespawning || RaceSettings.shipsRestrained)
         {
             droidHeight = droidBaseHeight;
         } else

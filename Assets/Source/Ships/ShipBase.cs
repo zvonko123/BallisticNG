@@ -80,6 +80,10 @@ public class ShipRefs : NetworkBehaviour
     public float perfectLapPopup;
     public float finalLapPopup;
 
+    // restrained animation
+    private float restrainedTimer;
+    private float restaimedAmount;
+
     #endregion
 
     #region METHODS
@@ -88,9 +92,6 @@ public class ShipRefs : NetworkBehaviour
         // set lap count
         laps = new float[RaceSettings.laps];
         perfects = new bool[RaceSettings.laps];
-
-        // TEMP: remove once countdown has been added
-        RaceSettings.countdownFinished = true;
 
         // try to fetch best time
         if (!isAI)
@@ -195,6 +196,18 @@ public class ShipRefs : NetworkBehaviour
             boostState = 0;
             boostAccel = 0;
         }
+
+        // restrained animation
+        if (RaceSettings.shipsRestrained)
+        {
+            restrainedTimer += Time.deltaTime * 2;
+            restaimedAmount = Mathf.Sin(restrainedTimer);
+        } else
+        {
+            restrainedTimer = 0.0f;
+            restaimedAmount = Mathf.Lerp(restaimedAmount, 0.0f, Time.deltaTime * 5);
+        }
+        anim.transform.localPosition = new Vector3(0.0f, restaimedAmount * 0.03f, 0.0f);
     }
 
     public void PickupItem()
@@ -439,6 +452,42 @@ public class ShipRefs : NetworkBehaviour
         // notify of perfect lap
         if (currentLap == RaceSettings.laps)
             finalLapPopup = 1.0f;
+    }
+
+    public void CheckStartBoost()
+    {
+        // boost zone
+        if (sim.enginePower > 0.6f && sim.enginePower < 0.8f)
+        {
+            // ship starts with max acceleration
+            sim.enginePower = 1.0f;
+            sim.engineAccel = 1.0f;
+
+            // get half of the top speed for the current speed class
+            float enginePower = 0.0f;
+            switch(RaceSettings.speedclass)
+            {
+                case E_SPEEDCLASS.SPARK:
+                    enginePower = settings.ENGINE_MAXSPEED_SPARK / 2;
+                    break;
+                case E_SPEEDCLASS.TOXIC:
+                    enginePower = settings.ENGINE_MAXSPEED_TOXIC / 2;
+                    break;
+                case E_SPEEDCLASS.APEX:
+                    enginePower = settings.ENGINE_MAXSPEED_APEX / 2;
+                    break;
+                case E_SPEEDCLASS.HALBERD:
+                    enginePower = settings.ENGINE_MAXSPEED_HALBERD / 2;
+                    break;
+                case E_SPEEDCLASS.SPECTRE:
+                    enginePower = settings.ENGINE_MAXSPEED_SPECTRE / 2;
+                    break;
+            }
+            sim.engineThrust = enginePower;
+
+            // play sound
+            PlayOneShot(settings.SFX_STARTBOOST);
+        }
     }
     #endregion
 }
