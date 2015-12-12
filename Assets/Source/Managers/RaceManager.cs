@@ -10,6 +10,7 @@ public class RaceManager : NetworkBehaviour {
     #region VARIABLES
     [Header("[ TRACK DATA ]")]
     public TrData trackData;
+    public CounterboardManager[] cbManagers;
 
     [Header("[ RACE SETTINGS ] ")]
     public bool isNetworked;
@@ -40,10 +41,21 @@ public class RaceManager : NetworkBehaviour {
     private List<Antialiasing> ppAA = new List<Antialiasing>();
     private List<ColorCorrectionLookup> ccl = new List<ColorCorrectionLookup>();
 
+    [Header("[ COUNTDOWN ] ")]
+    public float countdownStartDelay;
+    public float countdownStageDelay;
+    private float countdownTimer;
+    private int countDownStage;
+
     #endregion
 
     void Start ()
     {
+        // reset race values
+        RaceSettings.shipsRestrained = true;
+        RaceSettings.countdownFinished = false;
+        RaceSettings.countdownReady = false;
+
         // cap framerate
         GameSettings.CapFPS(60);
 
@@ -359,8 +371,57 @@ public class RaceManager : NetworkBehaviour {
 
     void OnApplicationFocus(bool focusState)
     {
-        // pause when game looses focus
-        if (!focusState && !GameSettings.isPaused && !RaceSettings.SHIPS[0].isDead && !RaceSettings.SHIPS[0].finished)
-            PauseInput();
+        if (!Application.isEditor)
+        {
+            // pause when game looses focus
+            if (!focusState && !GameSettings.isPaused && !RaceSettings.SHIPS[0].isDead && !RaceSettings.SHIPS[0].finished)
+                PauseInput();
+        }
+    }
+
+    void FixedUpdate()
+    {
+        if (!RaceSettings.countdownFinished)
+        {
+            if (RaceSettings.countdownReady)
+            {
+                if (countDownStage == 0)
+                {
+                    countdownTimer += Time.deltaTime;
+                    if (countdownTimer > countdownStartDelay)
+                    {
+                        countdownTimer = 0.0f;
+                        countDownStage++;
+                        UpdateCounterboards("3");
+                    }
+                }
+                else if (countDownStage < 4)
+                {
+                    countdownTimer += Time.deltaTime;
+                    if (countdownTimer > countdownStageDelay)
+                    {
+                        countdownTimer = 0.0f;
+                        countDownStage++;
+
+                        if (countDownStage == 2)
+                            UpdateCounterboards("2");
+                        if (countDownStage == 3)
+                            UpdateCounterboards("1");
+                    }
+                }
+
+                if (countDownStage == 4)
+                {
+                    RaceSettings.StartRace();
+                    UpdateCounterboards("GO!");
+                }
+            }
+        }
+    }
+
+    private void UpdateCounterboards(string text)
+    {
+        for (int i = 0; i < cbManagers.Length; ++i)
+            cbManagers[i].UpdateCountdown(text);
     }
 }

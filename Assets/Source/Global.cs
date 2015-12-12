@@ -39,6 +39,17 @@ public class RaceSettings
 
     public static string trackToLoad;
     public static bool isNetworked;
+
+    public static void StartRace()
+    {
+        // start race and unrestrain ships
+        countdownFinished = true;
+        shipsRestrained = false;
+
+        // get all ships to check if they can start boost
+        for (int i = 0; i < SHIPS.Count; ++i)
+            SHIPS[i].CheckStartBoost();
+    }
 }
 
 public class TournamentSettings
