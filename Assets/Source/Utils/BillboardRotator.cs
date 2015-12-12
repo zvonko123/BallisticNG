@@ -36,16 +36,16 @@ public class BillboardRotator : MonoBehaviour
                 yRot -= 180.0f;
 
                 if (rotSmooth)
-                    rotAmount = (yRot < -360) ? 0 : rotAmount;
-                yRot = (yRot < -360) ? 0 : yRot;
+                    rotAmount = (yRot < -(rotStart + 360)) ? 0 : rotAmount;
+                yRot = (yRot < -(rotStart + 360)) ? rotStart : yRot;
             }
             else
             {
                 yRot += 180.0f;
 
                 if (rotSmooth)
-                    rotAmount = (yRot > 360) ? 0 : rotAmount;
-                yRot = (yRot > 360) ? 0 : yRot;
+                    rotAmount = (yRot > rotStart + 360) ? 0 : rotAmount;
+                yRot = (yRot > rotStart + 360) ? rotStart : yRot;
             }
 
             // reset timer
