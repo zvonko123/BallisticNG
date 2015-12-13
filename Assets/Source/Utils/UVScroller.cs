@@ -4,6 +4,7 @@ using System.Collections;
 public class UVScroller : MonoBehaviour {
 
     public Vector2 ScrollAmount;
+	public Vector2 startOffset;
     private Vector2 UVs;
     public bool waterSimulation;
 
@@ -31,10 +32,10 @@ public class UVScroller : MonoBehaviour {
             UVs.y += (ScrollAmount.y * Time.deltaTime) * wavesY;
         } else
         {
-            UVs += ScrollAmount * Time.deltaTime;
+			UVs += (ScrollAmount) * Time.deltaTime;
         }
 
-        UVs += ScrollAmount * Time.deltaTime;
-        mat.SetTextureOffset("_MainTex", UVs);
+		UVs += (ScrollAmount) * Time.deltaTime;
+		mat.SetTextureOffset("_MainTex", UVs+startOffset);
     }
 }

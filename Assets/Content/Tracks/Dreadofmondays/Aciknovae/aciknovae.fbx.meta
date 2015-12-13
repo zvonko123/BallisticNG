@@ -80,6 +80,34 @@ ModelImporter:
     100144: halo.004
     100146: halo.005
     100148: trees
+    100150: counterboards
+    100152: globe.018
+    100154: globe.019
+    100156: globe.020
+    100158: globe.021
+    100160: globe.022
+    100162: globe.023
+    100164: globe.024
+    100166: globe.025
+    100168: globe.026
+    100170: globe.027
+    100172: globe.028
+    100174: globe.029
+    100176: globe.030
+    100178: globe.031
+    100180: globe.032
+    100182: globe.033
+    100184: globe.034
+    100186: globe.035
+    100188: globe.036
+    100190: globeCenter
+    100192: halo.006
+    100194: halo.007
+    100196: halo.008
+    100198: halo.009
+    100200: halo.010
+    100202: halo.011
+    100204: HaloCenter
     400000: //RootNode
     400002: arrows
     400004: arrows.001
@@ -155,6 +183,34 @@ ModelImporter:
     400144: halo.004
     400146: halo.005
     400148: trees
+    400150: counterboards
+    400152: globe.018
+    400154: globe.019
+    400156: globe.020
+    400158: globe.021
+    400160: globe.022
+    400162: globe.023
+    400164: globe.024
+    400166: globe.025
+    400168: globe.026
+    400170: globe.027
+    400172: globe.028
+    400174: globe.029
+    400176: globe.030
+    400178: globe.031
+    400180: globe.032
+    400182: globe.033
+    400184: globe.034
+    400186: globe.035
+    400188: globe.036
+    400190: globeCenter
+    400192: halo.006
+    400194: halo.007
+    400196: halo.008
+    400198: halo.009
+    400200: halo.010
+    400202: halo.011
+    400204: HaloCenter
     2300000: arrows
     2300002: arrows.001
     2300004: baseFX1
@@ -227,6 +283,32 @@ ModelImporter:
     2300138: halo.004
     2300140: halo.005
     2300142: trees
+    2300144: counterboards
+    2300146: globe.018
+    2300148: globe.019
+    2300150: globe.020
+    2300152: globe.021
+    2300154: globe.022
+    2300156: globe.023
+    2300158: globe.024
+    2300160: globe.025
+    2300162: globe.026
+    2300164: globe.027
+    2300166: globe.028
+    2300168: globe.029
+    2300170: globe.030
+    2300172: globe.031
+    2300174: globe.032
+    2300176: globe.033
+    2300178: globe.034
+    2300180: globe.035
+    2300182: globe.036
+    2300184: halo.006
+    2300186: halo.007
+    2300188: halo.008
+    2300190: halo.009
+    2300192: halo.010
+    2300194: halo.011
     3300000: arrows
     3300002: arrows.001
     3300004: baseFX1
@@ -299,6 +381,32 @@ ModelImporter:
     3300138: halo.004
     3300140: halo.005
     3300142: trees
+    3300144: counterboards
+    3300146: globe.018
+    3300148: globe.019
+    3300150: globe.020
+    3300152: globe.021
+    3300154: globe.022
+    3300156: globe.023
+    3300158: globe.024
+    3300160: globe.025
+    3300162: globe.026
+    3300164: globe.027
+    3300166: globe.028
+    3300168: globe.029
+    3300170: globe.030
+    3300172: globe.031
+    3300174: globe.032
+    3300176: globe.033
+    3300178: globe.034
+    3300180: globe.035
+    3300182: globe.036
+    3300184: halo.006
+    3300186: halo.007
+    3300188: halo.008
+    3300190: halo.009
+    3300192: halo.010
+    3300194: halo.011
     4300000: trackWall.003
     4300002: trackWall.002
     4300004: trackWall.001
@@ -371,6 +479,32 @@ ModelImporter:
     4300138: halo.001
     4300140: halo.002
     4300142: halo.004
+    4300144: counterboards
+    4300146: globe.036
+    4300148: globe.035
+    4300150: globe.034
+    4300152: globe.033
+    4300154: globe.032
+    4300156: globe.031
+    4300158: globe.030
+    4300160: globe.029
+    4300162: globe.028
+    4300164: globe.027
+    4300166: globe.026
+    4300168: globe.025
+    4300170: globe.024
+    4300172: globe.023
+    4300174: globe.022
+    4300176: globe.021
+    4300178: globe.020
+    4300180: globe.019
+    4300182: globe.018
+    4300184: halo.011
+    4300186: halo.010
+    4300188: halo.009
+    4300190: halo.008
+    4300192: halo.007
+    4300194: halo.006
   materials:
     importMaterials: 1
     materialName: 1
