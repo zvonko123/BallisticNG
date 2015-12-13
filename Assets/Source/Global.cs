@@ -120,6 +120,14 @@ public class GameSettings
 
         return path;
     }
+
+    /// <summary>
+    /// Quits the game.
+    /// </summary>
+    public static void QuitGame()
+    {
+        Application.Quit();
+    }
 }
 
 public class AudioSettings
@@ -224,6 +232,7 @@ public enum E_TRACKS
     HARPSTONE,
     OMEGAHARBOUR,
     ISHTARCITADEL,
+    LUNA,
     // remakes
     TERRAMAX,
     GAREDEUROPA,

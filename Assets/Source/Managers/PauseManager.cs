@@ -60,6 +60,9 @@ public class PauseManager : MonoBehaviour {
     public void Quit()
     {
         // back to menu here
+        Time.timeScale = 1.0f;
+        GameSettings.isPaused = false;
+        Application.LoadLevel("Menu");
     }
 
     void Update()
