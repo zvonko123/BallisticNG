@@ -96,6 +96,8 @@ public class GameSettings
 
     public static bool optionsClose = false;
 
+    public static string profileName = "Developer";
+
     /// <summary>
     /// Cap the framerate.
     /// </summary>
