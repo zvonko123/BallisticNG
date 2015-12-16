@@ -6,58 +6,47 @@ public class BillboardRotator : MonoBehaviour
 
     [Header("[ ROTATION SETTINGS ]")]
     [Range(0.0f, 360.0f)]
-    public float rotStart;
-    public float rotSpeed;
-    public float rotWait;
+	private Vector3 rotStart;
+	public Vector3 axis;
+	public float rotTime = 4;
+    public float waitTime = 4;
+	[Range(2, 36)]
+	public int numberOfStops;
 
-    [Header("[ ROTATION FLAGS ]")]
+	public float offset;
     public bool isReverse;
-    public bool rotSmooth;
 
-    private float yRot;
-    private float rotAmount;
-    private float rotWaitTimer;
+	private float rotation;
+	private float oldrotation;
+	private float timer;
 
     void Start()
     {
         // set start rotations
-        yRot = rotStart;
-        rotAmount = rotSpeed;
+		rotStart = transform.localEulerAngles;
+		timer = -offset;
+		if (rotTime <= 0) {
+			Debug.LogError("BillboardRotator at " + transform + ": rotTime must be greater than zero!");
+		}
+		if (offset > waitTime) {
+			Debug.LogWarning("BillboardRotator at " + transform + ": offset shouldn't exceed waitTime and is currently being clamped.");
+		}
     }
 
-    void FixedUpdate()
+    void LateUpdate()
     {
-        rotWaitTimer += Time.deltaTime;
-        if (rotWaitTimer > rotWait)
-        {
-            // update rotation
-            if (isReverse)
-            {
-                yRot -= 180.0f;
-
-                if (rotSmooth)
-                    rotAmount = (yRot < -(rotStart + 360)) ? 0 : rotAmount;
-                yRot = (yRot < -(rotStart + 360)) ? rotStart : yRot;
-            }
-            else
-            {
-                yRot += 180.0f;
-
-                if (rotSmooth)
-                    rotAmount = (yRot > rotStart + 360) ? 0 : rotAmount;
-                yRot = (yRot > rotStart + 360) ? rotStart : yRot;
-            }
-
-            // reset timer
-            rotWaitTimer = 0.0f;
-        }
-
+		// find rotation
+		timer -= Time.deltaTime;
+		if (timer < -waitTime) { 
+			timer = rotTime;
+			oldrotation -= 360/numberOfStops;
+		}
+			
+		rotation = oldrotation + Mathf.SmoothStep(0,360,Mathf.Clamp01(timer/rotTime))/numberOfStops;
+      
         // apply rotation
-        if (rotSmooth)
-            rotAmount = Mathf.Lerp(rotAmount, yRot, Time.deltaTime * rotSpeed);
-        else
-            rotAmount = Mathf.MoveTowardsAngle(rotAmount, yRot, Time.deltaTime * rotSpeed);
-        transform.rotation = Quaternion.Euler(transform.eulerAngles.x, rotAmount, transform.eulerAngles.z);
+		if (oldrotation > 360) {oldrotation -= 360;}
+		transform.localEulerAngles = isReverse ? rotStart - (axis.normalized * rotation) : rotStart + (axis.normalized * rotation);
         
     }
 }
