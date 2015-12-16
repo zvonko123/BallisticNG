@@ -212,6 +212,10 @@ public class ShipRefs : NetworkBehaviour
 
     public void PickupItem()
     {
+        // if the current gamemode doesn't have weapons then return
+        if (RaceSettings.gamemode == E_GAMEMODES.Survival || RaceSettings.gamemode == E_GAMEMODES.TimeTrial)
+            return;
+
         // if the ship already has a pickup then return
         if (weaponClass != E_WEAPONS.NONE)
             return;

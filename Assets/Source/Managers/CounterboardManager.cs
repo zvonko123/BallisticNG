@@ -30,5 +30,17 @@ public class CounterboardManager : MonoBehaviour {
 
         // update information
         txtInformation.text = RaceSettings.gamemode + " - " + RaceSettings.speedclass;
+
+        // next lap notification
+        if (RaceSettings.SHIPS[0].currentLap > 0 && RaceSettings.SHIPS[0].currentLap < RaceSettings.laps - 1)
+            txtCountDown.text = "LAP " + (RaceSettings.SHIPS[0].currentLap + 1);
+
+        // final lap notifcation
+        if (RaceSettings.SHIPS[0].currentLap == RaceSettings.laps - 1)
+            txtCountDown.text = "FINAL!";
+
+        // finish notification
+        if (RaceSettings.SHIPS[0].currentLap == RaceSettings.laps)
+            txtCountDown.text = "FINISH!";
     }
 }

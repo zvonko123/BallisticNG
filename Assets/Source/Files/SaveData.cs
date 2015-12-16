@@ -13,7 +13,7 @@ public class SaveData {
     public static void WriteSav(SAVDAT sav, string filename)
     {
         // create/get path
-        string path = GameSettings.GetDirectory() + string.Format("/{0}/", sav.saveLocation);
+        string path = ProfileManager.GetProfileDirectory() + string.Format("/{0}/", sav.saveLocation);
         if (!Directory.Exists(path))
             Directory.CreateDirectory(path);
 
@@ -39,7 +39,7 @@ public class SaveData {
     public static SAVDAT ReadSav(E_SAVELOCATIONS dir, string filename)
     {
         // get path
-        string path = GameSettings.GetDirectory() + string.Format("/{0}/", dir) + string.Format("{0}.SAV", filename);
+        string path = ProfileManager.GetProfileDirectory() + string.Format("/{0}/", dir) + string.Format("{0}.SAV", filename);
 
         // if the file doesn't exist then return and throw an error
         if (!File.Exists(path))

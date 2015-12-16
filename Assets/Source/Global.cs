@@ -96,6 +96,8 @@ public class GameSettings
 
     public static bool optionsClose = false;
 
+    public static string profileName = "Developer";
+
     /// <summary>
     /// Cap the framerate.
     /// </summary>
@@ -119,6 +121,14 @@ public class GameSettings
             Directory.CreateDirectory(path);
 
         return path;
+    }
+
+    /// <summary>
+    /// Quits the game.
+    /// </summary>
+    public static void QuitGame()
+    {
+        Application.Quit();
     }
 }
 
@@ -224,6 +234,7 @@ public enum E_TRACKS
     HARPSTONE,
     OMEGAHARBOUR,
     ISHTARCITADEL,
+    LUNA,
     // remakes
     TERRAMAX,
     GAREDEUROPA,

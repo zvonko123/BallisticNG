@@ -104,6 +104,11 @@ public class BNGToggle : Button {
 
         if (audio == null)
         {
+            // destroy any previous audiosources
+            AudioSource[] source = GetComponents<AudioSource>();
+            for (int i = 0; i < source.Length; ++i)
+                DestroyImmediate(source[i]);
+
             // attach audio source for button sounds
             audio = gameObject.AddComponent<AudioSource>();
             audio.spatialBlend = 0.0f;
