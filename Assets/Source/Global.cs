@@ -132,6 +132,52 @@ public class GameSettings
     }
 }
 
+public class UserProgress
+{
+    // ship unlocks
+    public static bool unlockedBarracuda;
+    public static bool unlockedPrototype1;
+    public static bool unlockedPrototype2;
+    public static bool unlockedPrototype3;
+    public static bool unlockedGodTampon;
+
+    // campaign progress
+    public static Medal c1e1;
+    public static Medal c1e2;
+    public static Medal c1e3;
+    public static Medal c1e4;
+    public static Medal c1e5;
+    public static Medal c1e6;
+    public static Medal c1e7;
+    public static Medal c1e8;
+    public static Medal c2e1;
+    public static Medal c2e2;
+    public static Medal c2e3;
+    public static Medal c2e4;
+    public static Medal c2e5;
+    public static Medal c2e6;
+    public static Medal c2e7;
+    public static Medal c2e8;
+    public static Medal c3e1;
+    public static Medal c3e2;
+    public static Medal c3e3;
+    public static Medal c3e4;
+    public static Medal c3e5;
+    public static Medal c3e6;
+    public static Medal c3e7;
+    public static Medal c3e8;
+
+    // track unlocks
+    public static bool proto1;
+    public static bool proto2;
+    public static bool proto3;
+    public static bool proto4;
+    public static bool proto5;
+    public static bool proto6;
+    public static bool proto7;
+    public static bool proto8;
+}
+
 public class AudioSettings
 {
     // audio settings
