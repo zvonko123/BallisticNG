@@ -26,7 +26,7 @@ public class CounterboardManager : MonoBehaviour {
             checkersX = 0;
 
         // apply checkers scroll
-        checkersParent.transform.localPosition = new Vector3(checkersX, checkersParent.transform.localPosition.y, 0.0f);
+        //checkersParent.transform.localPosition = new Vector3(checkersX, checkersParent.transform.localPosition.y, 0.0f);
 
         // update information
         txtInformation.text = RaceSettings.gamemode + " - " + RaceSettings.speedclass;
