@@ -77,10 +77,11 @@ public class CivCarSystem : MonoBehaviour {
 
     void OnDrawGizmos()
     {
-        Gizmos.color = new Color(0.0f, 1.0f, 0.0f, 0.4f);
+        // draw emission point
+        Gizmos.color = Color.green;
 
         Gizmos.matrix = transform.localToWorldMatrix;
-        Gizmos.DrawCube(Vector3.zero, emissionSize);
+        Gizmos.DrawWireCube(Vector3.zero, emissionSize);
     }
 }
 
