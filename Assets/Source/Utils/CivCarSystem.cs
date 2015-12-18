@@ -15,21 +15,8 @@ public class CivCarSystem : MonoBehaviour {
     public float carMinSpeed;
     public float carMaxSpeed;
 
-	[Header("[ ANIMATION SETTINGS]")]
-	public AnimationCurve extraYaw;
-	public AnimationCurve extraPitch;
-	public AnimationCurve extraZ;
-	public AnimationCurve extraSpeed;
-
     private List<CivCar> cars = new List<CivCar>();
     private float spawnTimer;
-
-	/* Rotation is set up such that cars will follow the same paths regardless 
-	 * of the initial speed chosen for them. This is true unless speed is also 
-	 * being changed with the curve. Keep in mind that these variables don't 
-	 * define a path, they just define offsets over time, and there can be  bad 
-	 * combinations. In particular, yawing and pitching at the same time will 
-	 * induce a roll, so try to avoid doing that. */
 
     void Update()
     {
@@ -73,10 +60,8 @@ public class CivCarSystem : MonoBehaviour {
     {
         for (int i = 0; i < cars.Count; ++i)
         {
-            // update position
-			float eval = (cars[i].lifespan / carLifetime);
-			cars[i].car.transform.Translate((transform.forward + new Vector3(0,0,extraZ.Evaluate(eval))) * (cars[i].speed + extraSpeed.Evaluate(eval)) * Time.deltaTime);
-			cars[i].car.transform.Rotate(new Vector3(extraPitch.Evaluate(eval),0,extraYaw.Evaluate(eval)) * (cars[i].speed + extraSpeed.Evaluate(eval)) * Time.deltaTime);
+            // update positon
+            cars[i].car.transform.Translate(transform.forward * cars[i].speed);
 
             // update lifespan
             cars[i].lifespan += Time.deltaTime;
@@ -92,11 +77,11 @@ public class CivCarSystem : MonoBehaviour {
 
     void OnDrawGizmos()
     {
-        Gizmos.color = new Color(0.0f, 1.0f, 0.0f, 0.4f);
+        // draw emission point
+        Gizmos.color = Color.green;
 
         Gizmos.matrix = transform.localToWorldMatrix;
-        Gizmos.DrawCube(Vector3.zero, emissionSize);
-		Gizmos.DrawRay(Vector3.zero, transform.forward * 2);
+        Gizmos.DrawWireCube(Vector3.zero, emissionSize);
     }
 }
 
