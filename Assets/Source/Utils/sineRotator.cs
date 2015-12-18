@@ -14,9 +14,7 @@ public class sineRotator : MonoBehaviour {
 	}
 	void LateUpdate()
 	{
-		offset.x += speed.x * Time.deltaTime;
-		offset.y += speed.y * Time.deltaTime;
-		offset.z += speed.z * Time.deltaTime;
+        offset += speed * Time.deltaTime;
 		transform.localEulerAngles = 
 			new Vector3(start.x + center.x + Mathf.Sin(offset.x) * range.x,
 						start.y + center.y + Mathf.Sin(offset.y) * range.y,
