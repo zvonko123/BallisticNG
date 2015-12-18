@@ -1,7 +1,7 @@
 fileFormatVersion: 2
-guid: a16e6f12108083c4db69ef4ca36460cc
-timeCreated: 1450373778
-licenseType: Pro
+guid: 4665e3fb18c08e84593a12ee67df308c
+timeCreated: 1450407869
+licenseType: Free
 ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
@@ -9,8 +9,7 @@ ModelImporter:
     400000: //RootNode
     2300000: //RootNode
     3300000: //RootNode
-    4300000: SceneCivCar1
-    4300002: SceneyCivCar1
+    4300000: SceneyCivCar2
     9500000: //RootNode
   materials:
     importMaterials: 1

@@ -21,5 +21,6 @@ public class sineRotator : MonoBehaviour {
 			new Vector3(start.x + center.x + Mathf.Sin(offset.x) * range.x,
 						start.y + center.y + Mathf.Sin(offset.y) * range.y,
 						start.z + center.z + Mathf.Sin(offset.z) * range.z);
+		if (offset.magnitude > 10000) { offset = -offset; } //limiter
 	}
 }
