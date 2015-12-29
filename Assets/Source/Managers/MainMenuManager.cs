@@ -9,6 +9,7 @@ public class MainMenuManager : MonoBehaviour {
     public OptionsManager options;
     public GameObject menuRoot;
     public BNGButton menuDefaultSelection;
+    public Toggle menuHyperToggle;
     [Space(10)]
     public BNGButton trackDefaultSelection;
     public GameObject trackRoot;
@@ -286,6 +287,7 @@ public class MainMenuManager : MonoBehaviour {
 
     public void StartGame()
     {
+        RaceSettings.hyperSpeed = menuHyperToggle.isOn;
         SceneManager.LoadScene("LoadingScreen");
     }
 

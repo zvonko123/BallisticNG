@@ -118,8 +118,8 @@ public class OptionsManager : MonoBehaviour {
         // resolution
         if (resolutions.Length > 0)
         {
-            GameSettings.GS_RESOLUTION.x = resolutions[drdwnResolution.value].width;
-            GameSettings.GS_RESOLUTION.y = resolutions[drdwnResolution.value].height;
+            GameSettings.GS_RESOLUTION.x = Mathf.RoundToInt(resolutions[drdwnResolution.value].width);
+            GameSettings.GS_RESOLUTION.y = Mathf.RoundToInt(resolutions[drdwnResolution.value].height);
 
             // frame cap
             GameSettings.GS_FRAMECAP = Mathf.RoundToInt(slidFrameCap.value);
@@ -137,5 +137,11 @@ public class OptionsManager : MonoBehaviour {
         AudioSettings.VOLUME_SFX = slidSFXVolume.value;
         AudioSettings.VOLUME_MUSIC = slidMusicVolume.value;
         AudioSettings.VOLUME_VOICES = slidVoiceVolume.value;
+
+        // apply resolution
+        Screen.SetResolution(Mathf.RoundToInt(GameSettings.GS_RESOLUTION.x), Mathf.RoundToInt(GameSettings.GS_RESOLUTION.y), GameSettings.GS_FULLSCREEN);
+
+        // save setings to disk
+        GameOptions.SaveGameSettings();
     }
 }

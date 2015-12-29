@@ -7,6 +7,7 @@ public class SkipScene : MonoBehaviour {
     public bool capFPS;
     public string nextScene;
     public float waitTime;
+    public bool loadSettings;
 
     private float waitTimer;
 
@@ -15,6 +16,9 @@ public class SkipScene : MonoBehaviour {
         // default fps to 60fps
         if (capFPS)
             GameSettings.CapFPS(60);
+
+        if (loadSettings)
+            GameOptions.LoadGameSettings();
     }
 
     void Update()

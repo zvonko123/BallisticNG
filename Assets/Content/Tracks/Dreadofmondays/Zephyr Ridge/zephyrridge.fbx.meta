@@ -9,19 +9,24 @@ ModelImporter:
     100002: profile
     100004: wall
     100006: //RootNode
+    100008: CurveCircle
     400000: floor
     400002: profile
     400004: wall
     400006: //RootNode
+    400008: CurveCircle
     2300000: floor
     2300002: profile
     2300004: wall
+    2300006: CurveCircle
     3300000: floor
     3300002: profile
     3300004: wall
+    3300006: CurveCircle
     4300000: floor
     4300002: profile
     4300004: wall
+    4300006: CurveCircle
   materials:
     importMaterials: 1
     materialName: 0
@@ -62,8 +67,8 @@ ModelImporter:
     secondaryUVPackMargin: 4
     useFileScale: 1
   tangentSpace:
-    normalSmoothAngle: 60
-    normalImportMode: 0
+    normalSmoothAngle: 0
+    normalImportMode: 1
     tangentImportMode: 3
   importAnimation: 1
   copyAvatar: 0

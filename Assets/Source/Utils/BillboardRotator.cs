@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class BillboardRotator : MonoBehaviour
+public class BillboardRotator : AnimationBase
 {
 
     [Header("[ ROTATION SETTINGS ]")]
@@ -33,7 +33,7 @@ public class BillboardRotator : MonoBehaviour
 		}
     }
 
-    void LateUpdate()
+    public override void OnUpdate()
     {
 		// find rotation
 		timer -= Time.deltaTime;

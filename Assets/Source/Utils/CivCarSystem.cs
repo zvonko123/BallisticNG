@@ -8,6 +8,10 @@ public class CivCarSystem : MonoBehaviour {
     public GameObject[] carObjects;
     public Color[] carColors;
 
+    [Header("[ ROUTE DATA] ")]
+    public Transform[] routePoints;
+    private BSpline spline = new BSpline();
+
     [Header("[ EMISSION SETTINGS]")]
     public Vector3 emissionSize;
     public float carEmissionSpeed;

@@ -56,7 +56,7 @@ public class ShipEffects : ShipBase {
 
     public float shipDeadMult = 1.0f;
 
-    void Start()
+    public override void OnInit()
     {
         // get droid base height
         droidBaseHeight = r.settings.REF_DROID.transform.localPosition.y;
@@ -80,7 +80,7 @@ public class ShipEffects : ShipBase {
         SetupEngineEffects();
     }
 
-    void FixedUpdate()
+    public override void OnUpdate()
     {
         UpdateShipLighting();
         UpdateSounds();

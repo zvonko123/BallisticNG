@@ -42,7 +42,7 @@ public class BNGToggle : Button {
         if (toggled)
             textComponent.text = text + " enabled";
         else
-            textComponent.text = text + " disabed";
+            textComponent.text = text + " disabled";
     }
 
     public void SetState(bool active)
@@ -53,7 +53,7 @@ public class BNGToggle : Button {
         if (toggled)
             textComponent.text = text + " enabled";
         else
-            textComponent.text = text + " disabed";
+            textComponent.text = text + " disabled";
     }
 
     public override void OnSelect(BaseEventData eventData)

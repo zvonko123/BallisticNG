@@ -22,8 +22,8 @@ namespace BnG.TrackData
             Vector2[] newUV = new Vector2[trackFloor.triangles.Length];
             Vector3[] newNormals = new Vector3[trackFloor.triangles.Length];
             int[] newTriangles = new int[trackFloor.triangles.Length];
-
-            for (int i = 0; i < trackFloor.triangles.Length; i++)
+            int triLength = trackFloor.triangles.Length;
+            for (int i = 0; i < triLength; i++)
             {
                 newVertices[i] = trackFloor.vertices[trackFloor.triangles[i]];
                 newUV[i] = trackFloor.uv[trackFloor.triangles[i]];
@@ -42,8 +42,9 @@ namespace BnG.TrackData
             newUV = new Vector2[trackWall.triangles.Length];
             newNormals = new Vector3[trackWall.triangles.Length];
             newTriangles = new int[trackWall.triangles.Length];
+            triLength = trackWall.triangles.Length;
 
-            for (int i = 0; i < trackWall.triangles.Length; i++)
+            for (int i = 0; i < triLength; i++)
             {
                 newVertices[i] = trackWall.vertices[trackWall.triangles[i]];
                 newUV[i] = trackWall.uv[trackWall.triangles[i]];
@@ -126,6 +127,7 @@ namespace BnG.TrackData
                 index++;
             }
 
+            /*
             // create wall tiles
             index = 0;
             for (int i = 0; i < tris2.Length - 3; i += 6)
@@ -160,6 +162,7 @@ namespace BnG.TrackData
 
                 index++;
             }
+            */
 
             // create sections
             index = 0;
