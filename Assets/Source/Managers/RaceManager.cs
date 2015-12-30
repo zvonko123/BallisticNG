@@ -5,7 +5,7 @@ using UnityStandardAssets.ImageEffects;
 using System.Collections;
 using System.Collections.Generic;
 
-public class RaceManager : NetworkBehaviour {
+public class RaceManager : MonoBehaviour {
 
     #region VARIABLES
     [Header("[ TRACK DATA ]")]
@@ -17,6 +17,7 @@ public class RaceManager : NetworkBehaviour {
     public bool useSceneSettings = true;
     public int racerCount = 1;
     public int lapCount = 1;
+    public bool hyperSpeed;
     public bool musicManagerEnabled;
 
     public E_SPEEDCLASS speedClass;
@@ -51,14 +52,40 @@ public class RaceManager : NetworkBehaviour {
 
     void Start ()
     {
+        // cap framerate
+        GameSettings.CapFPS(60);
+
+        ResetRaceStates();
+        GatherAmbientSounds();
+        ApplyRaceSettings();
+        SetupTrackData();
+        SpawnShips();
+        SetupInterfaces();
+        SetupManagers();
+        AttachImageEffects();
+	}
+
+    private void ResetRaceStates()
+    {
+
+        // set reference to race manager
+        RaceSettings.raceManager = this;
+
         // reset race values
         RaceSettings.shipsRestrained = true;
         RaceSettings.countdownFinished = false;
         RaceSettings.countdownReady = false;
 
-        // cap framerate
-        GameSettings.CapFPS(60);
+        // clear ships list
+        RaceSettings.SHIPS.Clear();
 
+        // if networked then create the network references
+        if (RaceSettings.isNetworked)
+            RaceSettings.serverReferences = gameObject.AddComponent<ServerReferences>();
+    }
+
+    private void GatherAmbientSounds()
+    {
         // gather all the sounds in the scene (for pausing)
         GameObject[] allObjects = FindObjectsOfType(typeof(GameObject)) as GameObject[];
         for (int i = 0; i < allObjects.Length; ++i)
@@ -66,7 +93,10 @@ public class RaceManager : NetworkBehaviour {
             if (allObjects[i].GetComponent<AudioSource>())
                 ambSounds.Add(allObjects[i]);
         }
+    }
 
+    private void ApplyRaceSettings()
+    {
         // if using the scene settings then override racesettings
         if (useSceneSettings)
         {
@@ -75,20 +105,12 @@ public class RaceManager : NetworkBehaviour {
             RaceSettings.gamemode = gamemode;
             RaceSettings.playerShip = playerShip;
             RaceSettings.isNetworked = isNetworked;
+            RaceSettings.hyperSpeed = hyperSpeed;
         }
 
-        // if networked then create the network references
-        if (RaceSettings.isNetworked)
-            RaceSettings.serverReferences = gameObject.AddComponent<ServerReferences>();
-
-        // set reference to race manager
-        RaceSettings.raceManager = this;
-
-        // clear ships list
-        RaceSettings.SHIPS.Clear();
 
         // set laps based on speed class
-        switch(RaceSettings.speedclass)
+        switch (RaceSettings.speedclass)
         {
             case E_SPEEDCLASS.SPARK:
                 RaceSettings.laps = 2;
@@ -106,7 +128,10 @@ public class RaceManager : NetworkBehaviour {
                 RaceSettings.laps = 5;
                 break;
         }
+    }
 
+    private void SetupTrackData()
+    {
         // copy camera points to settings
         RaceSettings.overviewTransforms = trackCameraPoints;
 
@@ -121,13 +146,10 @@ public class RaceManager : NetworkBehaviour {
         int startIndex = (trackData.spawnCameraLocations.Count - 1) / 2;
         RaceSettings.introCamStart = trackData.spawnCameraLocations[startIndex];
         RaceSettings.introCamEnd = trackData.spawnCameraLocations[0];
+    }
 
-        // ships start restrained
-        RaceSettings.shipsRestrained = true;
-
-        // spawn the ships
-        SpawnShips();
-
+    private void SetupInterfaces()
+    {
         // create new HUD
         GameObject newUI = Instantiate(Resources.Load("RaceUI") as GameObject) as GameObject;
         RaceUI = newUI.GetComponent<HUDManager>();
@@ -154,7 +176,10 @@ public class RaceManager : NetworkBehaviour {
         GameObject optionsUI = Instantiate(Resources.Load("OptionsUI") as GameObject) as GameObject;
         optionsManager = optionsUI;
         optionsUI.SetActive(false);
+    }
 
+    private void SetupManagers()
+    {
         // create ghost manager
         if (RaceSettings.gamemode == E_GAMEMODES.TimeTrial)
         {
@@ -172,10 +197,7 @@ public class RaceManager : NetworkBehaviour {
             musicManager = newObj.AddComponent<MusicManager>();
             musicManager.r = RaceSettings.SHIPS[0];
         }
-
-        // attach image effects
-        AttachImageEffects();
-	}
+    }
 
     private void AttachImageEffects()
     {

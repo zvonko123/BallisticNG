@@ -25,7 +25,7 @@ public class ShipInput : ShipBase {
     private float prevRot;
     private float aiResistance;
 
-    void Start()
+    public override void OnInit()
     {
         // randomize AI
         xStableRatio = Random.Range(0.6f, 0.8f);

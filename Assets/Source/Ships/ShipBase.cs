@@ -6,6 +6,9 @@ using System.Collections;
 public class ShipBase : NetworkBehaviour {
 
     public ShipRefs r;
+
+    public virtual void OnInit() { }
+    public virtual void OnUpdate() { }
 }
 
 public class ShipRefs : NetworkBehaviour
@@ -107,10 +110,27 @@ public class ShipRefs : NetworkBehaviour
             }
         }
 
+        // hypermode setup
+        if (RaceSettings.hyperSpeed)
+        {
+            settings.ENGINE_MAXSPEED_SPARK *= 1.8f;
+            settings.ENGINE_MAXSPEED_TOXIC *= 1.8f;
+            settings.ENGINE_MAXSPEED_APEX *= 1.8f;
+            settings.ENGINE_MAXSPEED_HALBERD *= 1.8f;
+            settings.ENGINE_MAXSPEED_SPECTRE *= 1.8f;
+        }
+
+        // setup ship classes
+        input.OnInit();
+        position.OnInit();
+        effects.OnInit();
     }
 
     void Update()
     {
+        // input update
+        input.OnUpdate();
+
         // weapon update
         if (pickup != null)
             pickup.OnUpdate();
@@ -129,6 +149,16 @@ public class ShipRefs : NetworkBehaviour
 
     private void FixedUpdate()
     {
+
+        // position
+        position.OnUpdate();
+
+        // physics
+        sim.OnUpdate();
+
+        // effects
+        effects.OnUpdate();
+
         if (recharging)
             shield += Time.deltaTime * 20;
 
@@ -426,7 +456,7 @@ public class ShipRefs : NetworkBehaviour
                         canWrite = true;
                     }
 
-                    if (canWrite)
+                    if (canWrite && !RaceSettings.hyperSpeed && RaceSettings.playerShip != E_SHIPS.BARRACUDA)
                      SaveData.WriteTime(Application.loadedLevelName, RaceSettings.speedclass, totalTime);
                 }
             }

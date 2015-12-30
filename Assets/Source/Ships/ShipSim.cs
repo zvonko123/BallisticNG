@@ -54,7 +54,8 @@ public class ShipSim : ShipBase {
     private float collisionBounce;
     private float wantedCollisionBounce;
 
-    void FixedUpdate()
+
+    public override void OnUpdate()
     {
         if (r.isRespawning)
         {
@@ -534,16 +535,6 @@ public class ShipSim : ShipBase {
             // get Impact Direction
             Vector3 impactDir = transform.InverseTransformDirection(other.contacts[0].point);
 
-            // zero out any Y velocity
-            if (transform.InverseTransformDirection(r.body.velocity).y > 0)
-            {
-                Vector3 lv = transform.InverseTransformDirection(r.body.velocity);
-                lv.y = 0;
-                Vector3 wv = transform.TransformDirection(lv);
-                r.body.velocity = wv;
-            }
-
-
             // scrape Check
             float impact = transform.InverseTransformDirection(other.relativeVelocity).x;
             float hitDot = Vector3.Dot(other.contacts[0].normal, transform.forward);
@@ -555,6 +546,11 @@ public class ShipSim : ShipBase {
             {
                 isShipScraping = false;
             }
+            Vector3 pushDir = other.relativeVelocity;
+            pushDir.x = 0.0f;
+            pushDir.z = 0.0f;
+            r.body.AddForce(pushDir, ForceMode.Impulse);
+
         }
     }
 

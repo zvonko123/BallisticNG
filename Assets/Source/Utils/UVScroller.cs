@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class UVScroller : MonoBehaviour {
+public class UVScroller : AnimationBase {
 
     public Vector2 ScrollAmount;
 	public Vector2 startOffset;
@@ -18,7 +18,7 @@ public class UVScroller : MonoBehaviour {
         mat = GetComponent<Renderer>().material;
     }
 
-    void FixedUpdate()
+    public override void OnUpdate()
     {
         if (waterSimulation)
         {

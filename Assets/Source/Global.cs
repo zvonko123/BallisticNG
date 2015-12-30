@@ -24,6 +24,7 @@ public class RaceSettings
     public static E_GAMEMODES gamemode = E_GAMEMODES.TimeTrial;
     public static E_WEAPONCLASSES playerWClass = E_WEAPONCLASSES.MIXED;
     public static bool shipsRestrained = false;
+    public static bool hyperSpeed = false;
 
     // countdown
     public static bool countdownReady;
@@ -89,6 +90,8 @@ public class GameSettings
     // game settings
     public static Vector2 GS_RESOLUTION;
     public static int GS_FRAMECAP = 60;
+    public static int GS_DRAWDISTANCE = 60;
+    public static bool GS_FULLSCREEN = true;
     public static bool GS_BLOOM = false;
     public static bool GS_FXAA = false;
     public static bool GS_CRT = false;

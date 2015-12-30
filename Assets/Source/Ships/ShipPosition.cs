@@ -16,14 +16,14 @@ public class ShipPosition : ShipBase {
     public Vector3 respawnPosition;
     public Quaternion respawnRotation;
 
-    void Start()
+    public override void OnInit()
     {
         // set initial respawn transform
         respawnPosition = transform.position;
         respawnRotation = transform.rotation;
     }
 
-    void FixedUpdate()
+    public override void OnUpdate()
     {
         if (!r.isRespawning)
         {

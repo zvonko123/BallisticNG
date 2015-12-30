@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ObjectRotator : MonoBehaviour {
+public class ObjectRotator : AnimationBase {
 
     public Vector3 rotSpeed;
 
-    void LateUpdate()
+    public override void OnUpdate()
     {
         transform.Rotate(rotSpeed * Time.deltaTime);
     }

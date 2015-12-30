@@ -7,6 +7,7 @@ namespace BnG.Editors
     public class TrackEditorGlobal
     {
         public static Transform[] currentSelection = new Transform[0];
+        public static GameObject currentSelected;
     }
 
     /// <summary>
