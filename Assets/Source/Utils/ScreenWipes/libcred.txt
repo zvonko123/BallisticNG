@@ -1,0 +1,2 @@
+Screen Wipe scripts originally written by Eric Haines (Eric5h5). Located at unifycommunity (http://wiki.unity3d.com/index.php/CrossFade).
+Additional tweaks, and practical scripts (non-example) made by us.
