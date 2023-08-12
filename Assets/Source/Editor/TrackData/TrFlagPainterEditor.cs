@@ -140,16 +140,17 @@ namespace BnG.TrackTools
 
                     // draw label
                     string flip = tile.TILE_SECOND ? "Flipped" : "Normal";
+                    string wet = tile.TILE_ISWET ? "Wet" : "Dry";
 
                     Vector3 pos = tile.TILE_POSITION;
                     col.a = 1.0f;
                     label.normal.textColor = col;
-                    Handles.Label(pos, "Current = " + tile.TILE_TYPE.ToString() + "_" + flip, label);
+                    Handles.Label(pos, "Current = " + tile.TILE_TYPE.ToString() + "_" + flip + "_" + wet, label);
 
                     pos += tile.TILE_SECTION.SECTION_NORMAL * 0.4f;
                     outline.a = 1.0f;
                     label.normal.textColor = outline;
-                    Handles.Label(pos, "Paint = " + currentTileType.ToString() + "_" + flip, label);
+                    Handles.Label(pos, "Paint = " + currentTileType.ToString() + "_" + flip + "_" + wet, label);
 
                     if (Event.current.type == EventType.mouseUp && Event.current.button == 0)
                     {
@@ -165,6 +166,23 @@ namespace BnG.TrackTools
 
                         // cache change
                         thisTarget.DATA_FE.CACHE_TILES[tile.TILE_INDEX] = currentTileType;
+                    }
+
+                    if (Event.current.type == EventType.KeyDown && Event.current.keyCode == KeyCode.Space)
+                    {
+                        // apply change
+                        bool isWet = false;    
+                        if (tile.TILE_ISWET)
+                        {
+                            isWet = false;
+                            tile.TILE_ISWET = false;
+                        } else if (!tile.TILE_ISWET)
+                        {
+                            isWet = true;
+                            tile.TILE_ISWET = true;
+                        }
+                        // cache change
+                        thisTarget.DATA_FE.CACHE_TILESWET[tile.TILE_INDEX] = isWet;
                     }
                 }
                 else if (thisTarget.DATA_FE.PAINT_MODE == E_PAINTMODE.SECTION)
@@ -241,8 +259,6 @@ namespace BnG.TrackTools
                         // apply change
                         tile.TILE_SECTION.SECTION_TYPE = currentSectionType;
 
-                        // cache change
-                        thisTarget.DATA_FE.CACHE_SECTIONS[tile.TILE_SECTION.SECTION_INDEX] = currentSectionType;
                     }
                 }
             }

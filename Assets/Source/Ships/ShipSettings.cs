@@ -33,6 +33,10 @@ public class ShipSettings : MonoBehaviour {
     public float TURN_SPEED;
     public float TURN_GAIN;
     public float TURN_FALLOFF;
+    [Range(0, 1)]
+    public float TURN_NORMAL_MIN;
+    [Range(0, 1)]
+    public float TURN_NORMAL_MAX;
     public float TILT_GAIN;
     public float TILT_FALLOFF;
 
@@ -40,6 +44,10 @@ public class ShipSettings : MonoBehaviour {
     public float AIRBRAKE_SPEED;
     public float AIRBRAKE_GAIN;
     public float AIRBRAKE_FALLOFF;
+    [Range(0, 1)]
+    public float AIRBRAKE_NORMAL_MIN;
+    [Range(0, 1)]
+    public float AIRBRAKE_NORMAL_MAX;
     [Space(5)]
     public float AIRBRAKE_DRAG_GAIN;
     public float AIRBRAKE_DRAG_FALLOFF;
@@ -50,6 +58,8 @@ public class ShipSettings : MonoBehaviour {
     public float GRAVITY_WEIGHT;
     [Range(0, 1)]
     public float GRAVITY_RESISTANCE;
+    public float RESISTANCE_GAIN;
+    public float RESISTANCE_FALLOFF;
 
     [Header("[ ANTI-GRAVITY ]")]
     public float AG_HOVER_HEIGHT;
@@ -87,13 +97,24 @@ public class ShipSettings : MonoBehaviour {
     public AudioClip SFX_SCRAPE;
     public AudioClip SFX_WALLHIT;
     public AudioClip SFX_STARTBOOST;
+    public AudioClip SFX_RECHARGE;
+    public AudioClip SFX_SPRAY;
+    public AudioClip SFX_SHIELDHIT;
 
     [Header("[ REFERENCES ]")]
+    public Color REF_ENGINECOL_BRIGHT;
+    public Color REF_ENGINECOL;
+    public Color REF_HUDCOL;
     public GameObject REF_MESH;
+    public GameObject REF_RECHARGEFX;
+    public ParticleSystem REF_SPRAYFX;
     public TrailRenderer REF_VAPE_LEFT;
     public TrailRenderer REF_VAPE_RIGHT;
     public GameObject REF_ENGINE_FLARE;
     public GameObject REF_ENGINE_TRAIL_PLAYER;
     public TrailRenderer REF_ENGINE_TRAIL_AI;
+    public GameObject REF_DROID;
+    public GameObject REF_SHIELD;
+    public Material REF_SHIELDMAT;
 
 }

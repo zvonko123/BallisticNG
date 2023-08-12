@@ -1,0 +1,204 @@
+fileFormatVersion: 2
+guid: 7ab6b51022e105e4d878425951f073a7
+timeCreated: 1446966432
+licenseType: Pro
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: CrossProfile
+    100002: //RootNode
+    100004: Loft001
+    100006: Object
+    100008: Shape001
+    100010: Shape002
+    100012: TRACK_SHAPE
+    100014: Line001
+    100016: TRACK_FLOOR
+    100018: TRACK_WALLS
+    100020: Object001
+    100022: Object002
+    100024: Object003
+    100026: Shape003
+    100028: Cylinder001
+    100030: Plane001
+    100032: Plane002
+    100034: Plane003
+    100036: Plane004
+    100038: Plane005
+    100040: Plane006
+    100042: Plane007
+    100044: Plane008
+    100046: VEG_PALMTREE001
+    100048: VEG_PALMTREE002
+    100050: VEG_PALMTREE003
+    100052: VEG_PALMTREE004
+    100054: VEG_PALMTREE005
+    100056: VEG_PALMTREE006
+    100058: Shape004
+    400000: CrossProfile
+    400002: //RootNode
+    400004: Loft001
+    400006: Object
+    400008: Shape001
+    400010: Shape002
+    400012: TRACK_SHAPE
+    400014: Line001
+    400016: TRACK_FLOOR
+    400018: TRACK_WALLS
+    400020: Object001
+    400022: Object002
+    400024: Object003
+    400026: Shape003
+    400028: Cylinder001
+    400030: Plane001
+    400032: Plane002
+    400034: Plane003
+    400036: Plane004
+    400038: Plane005
+    400040: Plane006
+    400042: Plane007
+    400044: Plane008
+    400046: VEG_PALMTREE001
+    400048: VEG_PALMTREE002
+    400050: VEG_PALMTREE003
+    400052: VEG_PALMTREE004
+    400054: VEG_PALMTREE005
+    400056: VEG_PALMTREE006
+    400058: Shape004
+    2300000: Loft001
+    2300002: Object
+    2300004: TRACK_FLOOR
+    2300006: TRACK_WALLS
+    2300008: Object001
+    2300010: Object002
+    2300012: Object003
+    2300014: Shape003
+    2300016: Cylinder001
+    2300018: Plane001
+    2300020: Plane002
+    2300022: Plane003
+    2300024: Plane004
+    2300026: Plane005
+    2300028: Plane006
+    2300030: Plane007
+    2300032: Plane008
+    2300034: VEG_PALMTREE001
+    2300036: VEG_PALMTREE002
+    2300038: VEG_PALMTREE003
+    2300040: VEG_PALMTREE004
+    2300042: VEG_PALMTREE005
+    2300044: VEG_PALMTREE006
+    2300046: Shape004
+    3300000: Loft001
+    3300002: Object
+    3300004: TRACK_FLOOR
+    3300006: TRACK_WALLS
+    3300008: Object001
+    3300010: Object002
+    3300012: Object003
+    3300014: Shape003
+    3300016: Cylinder001
+    3300018: Plane001
+    3300020: Plane002
+    3300022: Plane003
+    3300024: Plane004
+    3300026: Plane005
+    3300028: Plane006
+    3300030: Plane007
+    3300032: Plane008
+    3300034: VEG_PALMTREE001
+    3300036: VEG_PALMTREE002
+    3300038: VEG_PALMTREE003
+    3300040: VEG_PALMTREE004
+    3300042: VEG_PALMTREE005
+    3300044: VEG_PALMTREE006
+    3300046: Shape004
+    4300000: Loft001
+    4300002: Object
+    4300004: TRACK_WALLS
+    4300006: TRACK_FLOOR
+    4300008: Object001
+    4300010: Object002
+    4300012: Object003
+    4300014: Shape003
+    4300016: Cylinder001
+    4300018: Plane001
+    4300020: Plane002
+    4300022: Plane003
+    4300024: Plane004
+    4300026: Plane005
+    4300028: Plane006
+    4300030: Plane007
+    4300032: Plane008
+    4300034: VEG_PALMTREE001
+    4300036: VEG_PALMTREE002
+    4300038: VEG_PALMTREE003
+    4300040: VEG_PALMTREE004
+    4300042: VEG_PALMTREE005
+    4300044: VEG_PALMTREE006
+    4300046: Shape004
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

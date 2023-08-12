@@ -7,6 +7,8 @@ public class ShipSim : ShipBase {
     // engine
     public float enginePower;
     public float engineThrust;
+    public float engineAccel;
+    public float engineHyper;
 
     // turning
     public float turnAmount;
@@ -31,6 +33,7 @@ public class ShipSim : ShipBase {
     public float tiltGain;
     public float tiltFalloff;
     public bool tiltGainReset;
+    private float tiltBounce;
 
     // gravity
     private float gravityForce;
@@ -44,11 +47,15 @@ public class ShipSim : ShipBase {
     // resistance
     private float airbrakeResistance;
     private float airResistance;
+    private float pitchResistance;
 
     // collision
     public bool isShipScraping;
+    private float collisionBounce;
+    private float wantedCollisionBounce;
 
-    void FixedUpdate()
+
+    public override void OnUpdate()
     {
         if (r.isRespawning)
         {
@@ -137,10 +144,22 @@ public class ShipSim : ShipBase {
             else
                 enginePower = Mathf.MoveTowards(enginePower, 0.0f, Time.deltaTime * powerFalloff);
         }
+        engineAccel = Mathf.MoveTowards(engineAccel, enginePower, Time.deltaTime * acceleration);
+
+        // hyper thrust
+        if (r.input.ACTION_SPECIAL && r.shield > 25)
+        {
+            engineHyper = 2f;
+            r.shield -= Time.deltaTime * 20;
+        }
+        else
+        {
+            engineHyper = 1.0f;
+        }
 
         // interpolate thrust to maxspeed and use enginepower as a multiplier
         if (!RaceSettings.shipsRestrained && !r.shipRestrained)
-            engineThrust = Mathf.Lerp(engineThrust, maxSpeed * enginePower, Time.deltaTime * acceleration);
+            engineThrust = Mathf.Lerp(engineThrust, ((maxSpeed * engineAccel) * engineHyper) + r.boostAccel, Time.deltaTime * (acceleration * engineHyper));
 
         // apply Force
         r.body.AddRelativeForce(Vector3.forward * engineThrust);
@@ -151,7 +170,9 @@ public class ShipSim : ShipBase {
         // calculate turn force
         float turnForce = r.settings.TURN_SPEED * Time.deltaTime * Mathf.Rad2Deg;
         float turnNormal = (Mathf.Abs(turnVelocity) / turnForce);
-        turnNormal = Mathf.Clamp(turnNormal, 0.5f, 1.0f);
+        float tiltNormal = (Mathf.Abs(tiltVelocity) / 55);
+        turnNormal = Mathf.Clamp(turnNormal, r.settings.TURN_NORMAL_MIN, r.settings.TURN_NORMAL_MAX);
+        tiltNormal = Mathf.Clamp(tiltNormal, 0.35f, 0.6f);
 
         // tilting gain reset
         if ((r.input.AXIS_STEER > 0 && tiltVelocity < 0) || (r.input.AXIS_STEER < 0 && tiltVelocity > 0))
@@ -159,7 +180,7 @@ public class ShipSim : ShipBase {
             if (!tiltGainReset)
             {
                 tiltGainReset = true;
-                tiltGain = 0;
+                //tiltGain = 0;
             }
         }
         else
@@ -179,7 +200,7 @@ public class ShipSim : ShipBase {
 
             tiltFalloff = 0;
             tiltGain = Mathf.Lerp(tiltGain, r.settings.TILT_GAIN, Time.deltaTime * 5.0f);
-            tiltVelocity = Mathf.Lerp(tiltVelocity, r.input.AXIS_STEER * -55.0f, Time.deltaTime * tiltGain);
+            tiltVelocity = Mathf.Lerp(tiltVelocity, r.input.AXIS_STEER * -55.0f, Time.deltaTime * tiltGain * tiltNormal);
         }
         else
         {
@@ -190,7 +211,7 @@ public class ShipSim : ShipBase {
             tiltVelocity = Mathf.Lerp(tiltVelocity, r.input.AXIS_STEER * -55.0f, Time.deltaTime * tiltFalloff);
         }
         prevTurnInput = r.input.AXIS_STEER;
-        tiltAmount = Mathf.Lerp(tiltAmount, tiltVelocity, Time.deltaTime * 5.0f);
+        tiltAmount = Mathf.Lerp(tiltAmount, tiltVelocity, Time.deltaTime * r.settings.TILT_GAIN);
         turnAmount = Mathf.MoveTowards(turnAmount, turnVelocity, Time.deltaTime * 5);
 
         // calculate Airbrake force
@@ -198,7 +219,7 @@ public class ShipSim : ShipBase {
         float airbrakeSpeed = ((transform.InverseTransformDirection(r.body.velocity).z * 10) * Time.deltaTime) * airbrakeForce;
 
         float airbrakeNormal = (Mathf.Abs(airbrakeVelocity) / airbrakeForce);
-        airbrakeNormal = Mathf.Clamp(airbrakeNormal, 0.5f, 1.0f);
+        airbrakeNormal = Mathf.Clamp(airbrakeNormal, r.settings.AIRBRAKE_NORMAL_MIN, r.settings.AIRBRAKE_NORMAL_MAX);
 
         if (Mathf.Abs(r.input.AXIS_BOTHAIRBRAKES) >= Mathf.Abs(prevAirbrakeInput) && r.input.AXIS_BOTHAIRBRAKES != 0)
         {
@@ -221,7 +242,13 @@ public class ShipSim : ShipBase {
         transform.Rotate(Vector3.up * (turnAmount + airbrakeAmount));
 
         // apply tilt
-        r.axis.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, tiltAmount);
+        r.axis.transform.localRotation = Quaternion.Euler(0.0f, 0.0f, tiltAmount + tiltBounce);
+
+        // wall bounce
+        wantedCollisionBounce = Mathf.Lerp(wantedCollisionBounce, 0.0f, Time.deltaTime * 10.0f);
+        collisionBounce = Mathf.Lerp(collisionBounce, wantedCollisionBounce, Time.deltaTime * 50.0f);
+        tiltBounce = Mathf.Lerp(tiltBounce, (-collisionBounce * 80), Time.deltaTime * 5);
+        transform.Rotate(Vector3.up * collisionBounce);
     }
 
     private void ShipGravity()
@@ -264,6 +291,8 @@ public class ShipSim : ShipBase {
                 if (hitForce >= 1)
                 {
                     r.body.AddForce(transform.up * hitForce, ForceMode.Impulse);
+                    engineAccel *= 0.8f;
+
                     r.PlayOneShot(r.settings.SFX_WALLHIT);
                 }
 
@@ -309,8 +338,18 @@ public class ShipSim : ShipBase {
         }
 
         // Respawn if under track
-        if (transform.position.y < ground - r.settings.AG_HOVER_HEIGHT * 50)
+        if (transform.position.y < ground - r.settings.AG_HOVER_HEIGHT * 10)
             r.isRespawning = true;
+
+        if (transform.position.y > ground + (r.settings.AG_HOVER_HEIGHT * 8))
+        {
+            r.jumpHeight = true;
+        }
+        else
+        {
+            if (isShipGrounded)
+                r.jumpHeight = false;
+        }
 
         // Rotate Ship
         Quaternion wantedRotation = Quaternion.LookRotation(Vector3.Cross(transform.right, trackNormal), trackNormal);
@@ -351,9 +390,16 @@ public class ShipSim : ShipBase {
         }
 
         if (isShipGrounded)
-            airResistance = Mathf.Lerp(airResistance, 0.0f, Time.deltaTime * 4.5f);
+        {
+            airResistance = Mathf.Lerp(airResistance, 0.0f, Time.deltaTime * r.settings.RESISTANCE_FALLOFF);
+        }
         else
-            airResistance = Mathf.Lerp(airResistance, r.settings.GRAVITY_RESISTANCE, Time.deltaTime * 0.01f);
+        {
+            if (r.jumpHeight)
+                airResistance = Mathf.Lerp(airResistance, r.settings.GRAVITY_RESISTANCE * 0.1f, Time.deltaTime * r.settings.RESISTANCE_GAIN);
+            else
+                airResistance = Mathf.Lerp(airResistance, r.settings.GRAVITY_RESISTANCE, Time.deltaTime * r.settings.RESISTANCE_GAIN);
+        }
 
         // brakes drag
         if (isShipBraking)
@@ -367,6 +413,17 @@ public class ShipSim : ShipBase {
             brakeFalloff = Mathf.Lerp(brakeFalloff, 100.0f, Time.deltaTime);
             brakeDrag = Mathf.Lerp(brakeDrag, 0.0f, Time.deltaTime * brakeFalloff);
         }
+
+        // pitch resistance
+        float dot = Vector3.Dot(transform.forward, BnG.Helpers.TrackDataHelper.SectionGetRotation(r.currentSection) * Vector3.up);
+        float resistmult = (dot > 0) ? 1.8f : 1;
+        dot = Mathf.Abs(dot);
+        dot = Mathf.Clamp(dot, 0.0f, 0.4f);
+
+        if (dot > 0.2f * resistmult)
+            pitchResistance = Mathf.Lerp(pitchResistance, dot * 0.08f, Time.deltaTime * 0.5f);
+        else
+            pitchResistance = Mathf.Lerp(pitchResistance, 0.0f, Time.deltaTime);
 
         // setup for applying drag
         float localZ = transform.InverseTransformDirection(r.body.velocity).z * 10.0f;
@@ -385,7 +442,7 @@ public class ShipSim : ShipBase {
         // air density
         lv.z *= 1 - (0.0015f + (Mathf.Abs(localZ) * Time.deltaTime) * 0.007f);
         // other resistances
-        lv.z *= 1 - (airbrakeResistance + brakeDrag + airResistance);
+        lv.z *= 1 - (airbrakeResistance + brakeDrag + airResistance + pitchResistance);
         Vector3 wv = transform.TransformDirection(lv);
 
         // finally apply drag
@@ -400,33 +457,51 @@ public class ShipSim : ShipBase {
             // Get Collision impact
             float impact = Vector3.Dot(other.contacts[0].normal, other.relativeVelocity);
             float hitDot = Vector3.Dot(other.contacts[0].normal, transform.forward);
+            Vector3 impactDir = transform.InverseTransformPoint(other.contacts[0].point);
 
             if (Mathf.Abs(impact) > 1 && hitDot < 0.1f)
             {
                 // Zero out relative Z velocity
-                r.PlayOneShot(r.settings.SFX_WALLHIT);
+                if (!r.shieldActivate)
+                    r.PlayOneShot(r.settings.SFX_WALLHIT);
+
                 Vector3 lv = transform.InverseTransformDirection(r.body.velocity);
                 lv.y = 0;
                 lv.z = 0;
                 Vector3 wv = transform.TransformDirection(lv);
-                r.body.velocity = wv;
+                r.body.velocity = Vector3.zero;
 
                 // Reduce engine power and thrust
-                enginePower *= 0.2f;
+                engineAccel *= 0.1f;
                 engineThrust *= 0.2f;
 
                 // Push ship away from wall
                 Vector3 dir = other.contacts[0].normal;
                 dir.y = 0;
-                r.body.AddForce(dir * Mathf.Abs(impact), ForceMode.Impulse);
+
+                Vector3 pushForce = dir * Mathf.Abs(impact);
+                pushForce = Vector3.ClampMagnitude(pushForce, 3.0f);
+                r.body.AddForce(pushForce, ForceMode.Impulse);
+
+                wantedCollisionBounce = (-impactDir.x * Mathf.Abs(impact));
+
 
                 // Spawn hit particle
-                GameObject particle = Instantiate(Resources.Load("Particles/CollisionHit") as GameObject) as GameObject;
-                particle.transform.position = other.contacts[0].point;
-                particle.transform.forward = -transform.forward;
+                if (!r.shieldActivate)
+                {
+                    GameObject particle = Instantiate(Resources.Load("Particles/CollisionHit") as GameObject) as GameObject;
+                    particle.transform.position = other.contacts[0].point;
+                    particle.transform.forward = -transform.forward;
+                }
 
                 // Ship take damage
-                r.shield -= Mathf.Abs(impact * 2);
+                if (!r.shieldActivate)
+                    r.TakeDamage(Mathf.Abs(impact * 1.5f));
+
+                // change shield color
+                r.ShieldDamage();
+
+                r.perfectLap = false;
 
             }
         }
@@ -444,7 +519,6 @@ public class ShipSim : ShipBase {
                 r.body.velocity = wv;
 
             // Slow ship down slightly
-            enginePower *= 0.8f;
             engineThrust *= 0.8f;
 
             // Push away from other ship
@@ -461,16 +535,6 @@ public class ShipSim : ShipBase {
             // get Impact Direction
             Vector3 impactDir = transform.InverseTransformDirection(other.contacts[0].point);
 
-            // zero out any Y velocity
-            if (transform.InverseTransformDirection(r.body.velocity).y > 0)
-            {
-                Vector3 lv = transform.InverseTransformDirection(r.body.velocity);
-                lv.y = 0;
-                Vector3 wv = transform.TransformDirection(lv);
-                r.body.velocity = wv;
-            }
-
-
             // scrape Check
             float impact = transform.InverseTransformDirection(other.relativeVelocity).x;
             float hitDot = Vector3.Dot(other.contacts[0].normal, transform.forward);
@@ -482,6 +546,11 @@ public class ShipSim : ShipBase {
             {
                 isShipScraping = false;
             }
+            Vector3 pushDir = other.relativeVelocity;
+            pushDir.x = 0.0f;
+            pushDir.z = 0.0f;
+            r.body.AddForce(pushDir, ForceMode.Impulse);
+
         }
     }
 
@@ -489,5 +558,14 @@ public class ShipSim : ShipBase {
     {
         // ship is no longer scraping
         isShipScraping = false;
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        if (other.gameObject.tag == "TurbZone")
+        {
+            TrTurbZone tz = other.GetComponent<TrTurbZone>();
+            r.body.AddForce(tz.windDirection * tz.windSpeed);
+        }
     }
 }

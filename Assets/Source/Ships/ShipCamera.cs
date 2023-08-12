@@ -14,6 +14,7 @@ public class ShipCamera : ShipBase {
     private float tcDirectionLag;
     private Vector3 tcActualOffset;
     private float tcPitchOffset;
+    private float tcPitchHeight;
     private float tcInputOffset;
 
     private Vector3 tcTrackOffset;
@@ -146,15 +147,17 @@ public class ShipCamera : ShipBase {
 
         // interpolate positions
         tcX = Mathf.Lerp(tcX, -tcTrackOffset.x * r.settings.CAMERA_OFFSET_SENSITIVITY.x, Time.deltaTime * (r.settings.CAMERA_OFFSET_SPEED.x));
-        tcY = Mathf.Lerp(tcY, Mathf.Abs(tcFinalOffset.x) * r.settings.CAMERA_OFFSET_SENSITIVITY.y, Time.deltaTime * (r.settings.CAMERA_OFFSET_SPEED.y * 0.15f));
-        tcZ = Mathf.Lerp(tcZ, (Mathf.Abs(cameraOffset.x) * r.settings.CAMERA_OFFSET_SENSITIVITY.z) * (sideFinal * (1 - Mathf.Abs(tcDirectionLag))), Time.deltaTime * (r.settings.CAMERA_OFFSET_SPEED.z * 0.4f));
+        tcY = Mathf.Lerp(tcY, Mathf.Abs(tcFinalOffset.x) * r.settings.CAMERA_OFFSET_SENSITIVITY.y, Time.deltaTime * (r.settings.CAMERA_OFFSET_SPEED.y));
+        tcZ = Mathf.Lerp(tcZ, (Mathf.Abs(cameraOffset.x) * r.settings.CAMERA_OFFSET_SENSITIVITY.z) * (sideFinal * (1 - Mathf.Abs(tcDirectionLag))), Time.deltaTime * (r.settings.CAMERA_OFFSET_SPEED.z));
 
         // increase/decrease distance to ship on slopes
         float upDir = Vector3.Dot(Vector3.up, r.transform.forward);
-        tcPitchOffset = Mathf.Lerp(tcPitchOffset, upDir * 0.2f, Time.deltaTime * tcSpeed);
+        float trackDir = Vector3.Dot(TrackDataHelper.SectionGetRotation(r.currentSection) * Vector3.up, r.transform.forward);
+        tcPitchOffset = Mathf.Lerp(tcPitchOffset, upDir * 0.3f, Time.deltaTime * tcSpeed);
+        tcPitchHeight = Mathf.Lerp(tcPitchHeight, trackDir * 0.1f, Time.deltaTime * (tcSpeed * 0.3f));
 
         // fall Offsets
-        if (r.sim.isShipGrounded)
+        if (r.sim.isShipGrounded || !r.jumpHeight)
         {
             tcFallTimer = 0;
             tcFallTimerGain = 0;
@@ -164,7 +167,7 @@ public class ShipCamera : ShipBase {
             tcFallTimer += Time.deltaTime;
         }
 
-        if (tcFallTimer > 0.2f)
+        if (tcFallTimer > 0.0f)
         {
             tcFallTimerGain = Mathf.Lerp(tcFallTimerGain, 0.8f, Time.deltaTime);
             tcFallLagY = Mathf.Lerp(tcFallLagY, 0.4f, Time.deltaTime * tcFallTimerGain);
@@ -177,8 +180,16 @@ public class ShipCamera : ShipBase {
             tcFallLagZ = Mathf.Lerp(tcFallLagZ, 0.0f, Time.deltaTime * 4);
         }
 
+        if (r.transform.InverseTransformDirection(r.body.velocity).y > 0)
+        {
+            tcFallOffset = Mathf.Lerp(tcFallOffset, r.transform.InverseTransformDirection(r.body.velocity).y * 0.008f, Time.deltaTime * (tcSpeed * 0.4f));
+        } else
+        {
+            tcFallOffset = Mathf.Lerp(tcFallOffset, 0.0f, Time.deltaTime * (tcSpeed * 0.3f));
+        }
+
         // apply camera offset
-        transform.localPosition = new Vector3(r.settings.CAMERA_OFFSET_TRACK.x + tcX, r.settings.CAMERA_OFFSET_TRACK.y + tcY + tcFallLagY, r.settings.CAMERA_OFFSET_TRACK.z + tcZ + tcPitchOffset + tcFallLagZ);
+        transform.localPosition = new Vector3(r.settings.CAMERA_OFFSET_TRACK.x + tcX, r.settings.CAMERA_OFFSET_TRACK.y + tcY + tcFallLagY + tcPitchHeight + tcFallOffset, r.settings.CAMERA_OFFSET_TRACK.z + tcZ + tcPitchOffset + tcFallLagZ);
 
         // update Rotation
         transform.rotation = r.transform.rotation;

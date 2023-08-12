@@ -29,6 +29,9 @@ public class ShipConstructor : MonoBehaviour {
         prefab.transform.parent = axis.transform;
         prefab.transform.localPosition = Vector3.zero;
         prefab.transform.localRotation = Quaternion.identity;
+        settings.REF_RECHARGEFX.transform.parent = transform;
+        settings.REF_SHIELD.transform.parent = anim.transform;
+        settings.REF_DROID.transform.parent = transform;
 
         // create rigibody
         Rigidbody body = gameObject.AddComponent<Rigidbody>();
@@ -61,6 +64,7 @@ public class ShipConstructor : MonoBehaviour {
         // attach mesh collider to mesh
         MeshCollider mc = r.mesh.AddComponent<MeshCollider>();
         mc.convex = true;
+        gameObject.tag = "Ship";
 
         // add frictionless physics manterial to collider
         PhysicMaterial shipMat = new PhysicMaterial();
@@ -75,6 +79,10 @@ public class ShipConstructor : MonoBehaviour {
         r.isAI = isAI;
 
         // destroy this class (it's no longer needed)
+        RaceSettings.SHIPS.Add(r);
+        if (RaceSettings.isNetworked)
+            RaceSettings.serverReferences.players.Add(r);
+
         Destroy(this);
 
     }
@@ -87,6 +95,7 @@ public class ShipConstructor : MonoBehaviour {
 
         // attach all components needed for cameras
         Camera c = newCamera.AddComponent<Camera>();
+        c.backgroundColor = Color.black;
         newCamera.AddComponent<GUILayer>();
         newCamera.AddComponent<FlareLayer>();
         newCamera.AddComponent<AudioListener>();

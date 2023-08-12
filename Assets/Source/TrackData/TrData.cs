@@ -30,6 +30,7 @@ namespace BnG.TrackData
         public bool PAINT_FLAGS;
         public bool EDIT_SECITIONPOSITIONS;
         public int SECTION_CURRENT;
+        public int SECTION_NEXT;
         public float Section_MOVEAMOUNT;
         public bool SECTION_MOVELEFT;
         public bool SECTION_MOVERIGHT;
@@ -44,8 +45,21 @@ namespace BnG.TrackData
 
         // cached data
         public E_TILETYPE[] CACHE_TILES;
+        public bool[] CACHE_TILESWET;
         public E_SECTIONTYPE[] CACHE_SECTIONS;
         public List<Vector3> CACHE_SECTIONPOSITIONS = new List<Vector3>();
+        public List<int> CACHE_SECTIONNEXT= new List<int>();
+
+        public List<int> ANIM_RECHARGE = new List<int>();
+        public List<int> ANIM_WEAPONS = new List<int>();
+        public Color32 WeaponCol1;
+        public Color32 WeaponCol2;
+        private Color32 weaponCol;
+        private float weaponLerp;
+        private float weaponTimer;
+
+        private Color32 rechargeColor;
+        private float rechargeTimer;
 
         // original vert lenghts
         private bool hasCachedVerts;
@@ -82,10 +96,14 @@ namespace BnG.TrackData
 
                 // draw sphere and line
                 gizmoColor = Color.white;
-                if ((TR_FLAGPAINTER != null && TRACK_DATA.SECTIONS[i] == highlightedSection && PAINT_MODE == E_PAINTMODE.SECTION) 
-                    || (EDIT_SECITIONPOSITIONS && i == SECTION_CURRENT)) 
+                if (i == SECTION_CURRENT)
                 {
                     gizmoColor = Color.red;
+                }
+
+                if (i == SECTION_NEXT)
+                {
+                    gizmoColor = Color.green;
                 }
                 Gizmos.color = gizmoColor;
                 Gizmos.DrawWireSphere(pos, 0.2f);
@@ -95,7 +113,7 @@ namespace BnG.TrackData
                 // draw line between sections
                 if (i < TRACK_DATA.SECTIONS.Count - 1)
                 {
-                    pos2 = TRACK_DATA.SECTIONS[i + 1].SECTION_POSITION;
+                    pos2 = TRACK_DATA.SECTIONS[i].SECTION_NEXT.SECTION_POSITION;
                     Gizmos.DrawLine(pos, pos2);
                 }
 
@@ -112,6 +130,7 @@ namespace BnG.TrackData
             UpdateTrackData();
             ResetTRTypes();
             UpdateTileColors();
+            TrackAnimations();
             reloadTrackData = false;
 
             if (EDIT_SECITIONPOSITIONS)
@@ -120,9 +139,11 @@ namespace BnG.TrackData
             if (cacheSectionPosition)
             {
                 CACHE_SECTIONPOSITIONS.Clear();
+                CACHE_SECTIONNEXT.Clear();
                 for (int i = 0; i < TRACK_DATA.SECTIONS.Count; i++)
                 {
                     CACHE_SECTIONPOSITIONS.Add(TRACK_DATA.SECTIONS[i].SECTION_POSITION);
+                    CACHE_SECTIONNEXT.Add(TRACK_DATA.SECTIONS[i].SECTION_NEXT.SECTION_INDEX);
                 }
                 cacheSectionPosition = false;
             }
@@ -186,6 +207,14 @@ namespace BnG.TrackData
                     }
                 }
 
+                if (CACHE_TILESWET.Length > 0)
+                {
+                    for (int i = 0; i < CACHE_TILESWET.Length; i++)
+                    {
+                        TRACK_DATA.TILES_FLOOR[i].TILE_ISWET = CACHE_TILESWET[i];
+                    }
+                }
+
                 if (CACHE_SECTIONS.Length > 0)
                 {
                     for (int i = 0; i < CACHE_SECTIONS.Length; i++)
@@ -200,12 +229,16 @@ namespace BnG.TrackData
                 if (CACHE_SECTIONS.Length != TRACK_DATA.SECTIONS.Count)
                     CACHE_SECTIONS = new E_SECTIONTYPE[TRACK_DATA.SECTIONS.Count];
 
+                if (CACHE_TILESWET.Length != TRACK_DATA.TILES_FLOOR.Count)
+                    CACHE_TILESWET = new bool[TRACK_DATA.TILES_FLOOR.Count];
+
                 // load cached section positions
                 if (CACHE_SECTIONPOSITIONS.Count > 0)
                 {
                     for (int i = 0; i < CACHE_SECTIONPOSITIONS.Count; i++)
                     {
                         TRACK_DATA.SECTIONS[i].SECTION_POSITION = CACHE_SECTIONPOSITIONS[i];
+                        TRACK_DATA.SECTIONS[i].SECTION_NEXT = TrackDataHelper.SectionFromIndex(CACHE_SECTIONNEXT[i], TRACK_DATA);
                     }
                 }
 
@@ -246,18 +279,24 @@ namespace BnG.TrackData
             for (int i = 0; i < TRACK_DATA.TILES_FLOOR.Count; i++)
                 TRACK_DATA.TILES_FLOOR[i].TILE_TYPE = E_TILETYPE.FLOOR;
 
+            for (int i = 0; i < TRACK_DATA.TILES_FLOOR.Count; i++)
+                TRACK_DATA.TILES_FLOOR[i].TILE_ISWET = false;
+
             for (int i = 0; i < TRACK_DATA.SECTIONS.Count; i++)
                 TRACK_DATA.SECTIONS[i].SECTION_TYPE = E_SECTIONTYPE.NORMAL;
 
             resetTypes = false;
         }
 
-        private void UpdateTileColors()
+        public void UpdateTileColors()
         {
             if (!setTileColors)
                 return;
             else
                 setTileColors = false;
+
+            ANIM_RECHARGE.Clear();
+            ANIM_WEAPONS.Clear();
 
             Color32[] cols = MESH_TRACKFLOOR.sharedMesh.colors32;
             for (int i = 0; i < MESH_TRACKFLOOR.sharedMesh.triangles.Length; i += 3)
@@ -265,10 +304,31 @@ namespace BnG.TrackData
                 TrTile tile = TrackDataHelper.TileFromTriangleIndex(i / 3, E_TRACKMESH.FLOOR, TRACK_DATA);
                 if (tile.TILE_TYPE == E_TILETYPE.BOOST)
                 {
-                    Debug.Log("Found boost!");
-                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 0]] = Color.blue;
-                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 1]] = Color.blue;
-                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 2]] = Color.blue;
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 0]] = new Color(0.2f, 0.5f, 1.0f);
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 1]] = new Color(0.2f, 0.5f, 1.0f);
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 2]] = new Color(0.2f, 0.5f, 1.0f);
+                }
+
+                if (tile.TILE_TYPE == E_TILETYPE.RECHARGE)
+                {
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 0]] = new Color(0.0f, 0.4f, 1.0f);
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 1]] = new Color(0.0f, 0.4f, 1.0f);
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 2]] = new Color(0.0f, 0.4f, 1.0f);
+
+                    ANIM_RECHARGE.Add(MESH_TRACKFLOOR.sharedMesh.triangles[i + 0]);
+                    ANIM_RECHARGE.Add(MESH_TRACKFLOOR.sharedMesh.triangles[i + 1]);
+                    ANIM_RECHARGE.Add(MESH_TRACKFLOOR.sharedMesh.triangles[i + 2]);
+                }
+
+                if (tile.TILE_TYPE == E_TILETYPE.WEAPON)
+                {
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 0]] = WeaponCol1;
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 1]] = WeaponCol1;
+                    cols[MESH_TRACKFLOOR.sharedMesh.triangles[i + 2]] = WeaponCol1;
+
+                    ANIM_WEAPONS.Add(MESH_TRACKFLOOR.sharedMesh.triangles[i + 0]);
+                    ANIM_WEAPONS.Add(MESH_TRACKFLOOR.sharedMesh.triangles[i + 1]);
+                    ANIM_WEAPONS.Add(MESH_TRACKFLOOR.sharedMesh.triangles[i + 2]);
                 }
             }
             MESH_TRACKFLOOR.sharedMesh.colors32 = cols;
@@ -303,6 +363,45 @@ namespace BnG.TrackData
                 Vector3 back = TrackDataHelper.SectionGetRotation(TRACK_DATA.SECTIONS[SECTION_CURRENT]) * Vector3.back;
                 TRACK_DATA.SECTIONS[SECTION_CURRENT].SECTION_POSITION += back * Section_MOVEAMOUNT;
                 SECTION_MOVEBACK = false;
+            }
+        }
+
+        private void TrackAnimations()
+        {
+            // recharge color
+            rechargeTimer += Time.deltaTime * 2;
+            float rechargeSin = Mathf.Abs(Mathf.Sin(rechargeTimer));
+            rechargeColor = Color.Lerp(new Color(0.0f, 0.2f, 0.6f), new Color(0.0f, 0.5f, 1.0f), rechargeSin);
+
+            Color32[] cols = MESH_TRACKFLOOR.sharedMesh.colors32;
+            int i = 0;
+            for (i = 0; i < ANIM_RECHARGE.Count; i++)
+            {
+                cols[ANIM_RECHARGE[i]] = rechargeColor; 
+            }
+
+            // weapon color
+            if (RaceSettings.gamemode == E_GAMEMODES.TimeTrial || RaceSettings.gamemode == E_GAMEMODES.Survival)
+            {
+                for (i = 0; i < ANIM_WEAPONS.Count; i++)
+                {
+                    cols[ANIM_WEAPONS[i]] = Color.gray;
+                }
+
+                MESH_TRACKFLOOR.sharedMesh.colors32 = cols;
+            }
+            else
+            {
+                weaponTimer += Time.deltaTime * 2;
+                float weaponSin = Mathf.Abs(Mathf.Sin(weaponTimer));
+                weaponCol = Color.Lerp(WeaponCol1, WeaponCol2, weaponSin);
+
+                for (i = 0; i < ANIM_WEAPONS.Count; i++)
+                {
+                    cols[ANIM_WEAPONS[i]] = weaponCol;
+                }
+
+                MESH_TRACKFLOOR.sharedMesh.colors32 = cols;
             }
         }
 

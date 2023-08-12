@@ -1,0 +1,175 @@
+fileFormatVersion: 2
+guid: df48221793c18d842b09cc72433d9b7b
+timeCreated: 1446419369
+licenseType: Pro
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: CrossProfile
+    100002: Line001
+    100004: Shape
+    100006: TRACK_FLOOR
+    100008: TRACK_WALL
+    100010: //RootNode
+    100012: Object
+    100014: Box001
+    100016: DropBarrier
+    100018: Tunnel
+    100020: Canyon_Rocks
+    100022: TrackSpline
+    100024: SplitBuilding
+    100026: Adverts1
+    100028: StartCorner
+    100030: Object002
+    100032: Object004
+    100034: Object006
+    100036: Object008
+    100038: Cylinder001
+    100040: Object010
+    100042: Object012
+    100044: Object014
+    400000: CrossProfile
+    400002: Line001
+    400004: Shape
+    400006: TRACK_FLOOR
+    400008: TRACK_WALL
+    400010: //RootNode
+    400012: Object
+    400014: Box001
+    400016: DropBarrier
+    400018: Tunnel
+    400020: Canyon_Rocks
+    400022: TrackSpline
+    400024: SplitBuilding
+    400026: Adverts1
+    400028: StartCorner
+    400030: Object002
+    400032: Object004
+    400034: Object006
+    400036: Object008
+    400038: Cylinder001
+    400040: Object010
+    400042: Object012
+    400044: Object014
+    2300000: Shape
+    2300002: TRACK_FLOOR
+    2300004: TRACK_WALL
+    2300006: Object
+    2300008: Box001
+    2300010: DropBarrier
+    2300012: Tunnel
+    2300014: Canyon_Rocks
+    2300016: SplitBuilding
+    2300018: Adverts1
+    2300020: StartCorner
+    2300022: Object002
+    2300024: Object004
+    2300026: Object006
+    2300028: Object008
+    2300030: Cylinder001
+    2300032: Object010
+    2300034: Object012
+    2300036: Object014
+    3300000: Shape
+    3300002: TRACK_FLOOR
+    3300004: TRACK_WALL
+    3300006: Object
+    3300008: Box001
+    3300010: DropBarrier
+    3300012: Tunnel
+    3300014: Canyon_Rocks
+    3300016: SplitBuilding
+    3300018: Adverts1
+    3300020: StartCorner
+    3300022: Object002
+    3300024: Object004
+    3300026: Object006
+    3300028: Object008
+    3300030: Cylinder001
+    3300032: Object010
+    3300034: Object012
+    3300036: Object014
+    4300000: Shape
+    4300002: TRACK_WALL
+    4300004: TRACK_FLOOR
+    4300006: Object
+    4300008: Tunnel
+    4300010: DropBarrier
+    4300012: Box001
+    4300014: Canyon_Rocks
+    4300016: SplitBuilding
+    4300018: StartCorner
+    4300020: Adverts1
+    4300022: Object002
+    4300024: Object004
+    4300026: Object006
+    4300028: Object008
+    4300030: Cylinder001
+    4300032: Object010
+    4300034: Object012
+    4300036: Object014
+    9500000: //RootNode
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
